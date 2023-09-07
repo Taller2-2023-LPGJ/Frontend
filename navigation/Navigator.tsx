@@ -6,6 +6,8 @@ import Register from "../screens/Initial Screens/Register";
 import ForgotPassword from "../screens/Initial Screens/ForgotPassword";
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { TabNavigator } from "../screens/Main App/TabNavigator";
+import EditProfile from "../screens/Main App/EditProfile";
+import { Button } from "react-native-paper";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -39,6 +41,19 @@ export default function AppNavigator() {
           options={{ headerShown: false, gestureEnabled: false }}
           name="TabNavigator"
           component={TabNavigator}
+        />
+        <Stack.Screen
+          options={{ headerTitle: "Edit profile",headerTitleAlign: "center", headerRight: () => (
+            <Button
+            onPress={() => {
+              // Handle
+            }}
+            >
+            Save
+            </Button>
+          )}}
+          name="EditProfile" 
+          component={EditProfile} 
         />
       </Stack.Navigator>
     </NavigationContainer>
