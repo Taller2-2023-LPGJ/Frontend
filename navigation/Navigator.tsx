@@ -6,6 +6,8 @@ import Register from "../screens/Initial Screens/Register";
 import ForgotPassword from "../screens/Initial Screens/ForgotPassword";
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { TabNavigator } from "../screens/Main App/TabNavigator";
+import EditProfile from "../screens/Main App/Profile/EditProfile";
+import { Button } from "react-native-paper";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -21,17 +23,17 @@ export default function AppNavigator() {
           component={StartScreen}
         />
         <Stack.Screen
-          options={{ headerTitleAlign: "center" }}
+          options={{ headerTitleAlign: "center",title:"" }}
           name="Login"
           component={Login}
         />
         <Stack.Screen
-          options={{ headerTitleAlign: "center" }}
+          options={{ headerTitleAlign: "center",title:"" }}
           name="Register"
           component={Register}
         />
         <Stack.Screen
-          options={{ headerTitleAlign: "center" }}
+          options={{ headerTitleAlign: "center", title:""}}
           name="ForgotPassword"
           component={ForgotPassword}
         />

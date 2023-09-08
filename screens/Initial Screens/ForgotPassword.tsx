@@ -49,7 +49,7 @@ const ForgotPassword = ({ navigation }: Props) => {
         mode="contained"
         onPress={() => handleForgotPassword()}
       >
-        SEND INSTRUCTIONS
+        Send Instructions
       </Button>
 
     </View>

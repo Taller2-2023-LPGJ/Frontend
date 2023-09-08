@@ -15,7 +15,7 @@ const StartScreen = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
       <Logo />
-      <Text style={styles.text} variant="headlineMedium">
+      <Text style={styles.text}>
         SnapMsg
       </Text>
 
@@ -25,7 +25,7 @@ const StartScreen = ({ navigation }: Props) => {
           mode="contained"
           onPress={() => navigation.navigate("Login")}
         >
-          LOGIN
+          Login
         </Button>
 
         <Button
@@ -33,7 +33,7 @@ const StartScreen = ({ navigation }: Props) => {
           mode="contained"
           onPress={() => navigation.navigate("Register")}
         >
-          SIGN UP
+          Sign Up
         </Button>
       </View>
     </View>
@@ -50,11 +50,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    margin: 10,
+    margin: 8,
     width: width*0.65,
   },
   text: {
-    marginBottom: 10,
+    marginBottom: 40,
     fontSize:width*0.05
   },
 });

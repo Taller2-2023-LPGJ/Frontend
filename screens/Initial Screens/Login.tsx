@@ -52,7 +52,7 @@ const Login = ({ navigation }: Props) => {
       </View>
 
       <Text
-        style={{ marginLeft: width * 0.35 }}
+        style={{ marginLeft: width * 0.35,fontWeight:"bold" }}
         onPress={() => navigation.navigate("ForgotPassword")}
       >
         Forgot your password?
@@ -69,7 +69,7 @@ const Login = ({ navigation }: Props) => {
       <View style={{ flexDirection: "row" }}>
         <Text>Don't have an account?</Text>
         <Text
-          style={{ fontStyle: "italic" }}
+          style={{ fontStyle: "italic",fontWeight:"bold"  }}
           onPress={() => navigation.navigate("Register")}
         >
           {" "}
