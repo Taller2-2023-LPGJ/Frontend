@@ -1,18 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { Button } from "react-native-paper";
+import { Navigation } from "../../../navigation/types";
 
-const Profile = () => {
+
+interface ProfileProps {
+  navigation: Navigation;
+}
+
+const Profile = ({ navigation }: ProfileProps) => {
   
-  const navigation = useNavigation();
-
-  React.useEffect(() =>
-    navigation.addListener("beforeRemove", (e) => {
-      e.preventDefault();
-    })
-  );
-
   const user = {
     displayname: "John Doe",
     username: "@johndoe123",

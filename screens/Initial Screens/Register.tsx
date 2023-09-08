@@ -12,6 +12,7 @@ const { width } = Dimensions.get("window");
 
 const Register = ({ navigation }: Props) => {
   const [mail, setMail] = React.useState("");
+  const [username, setUsername] = React.useState("");
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
 
@@ -21,7 +22,12 @@ const Register = ({ navigation }: Props) => {
   }
 
   function handleRegister() {
-    if (mail === "" || pass === "" || passConfirmation === "") {
+    if (
+      mail === "" ||
+      username === "" ||
+      pass === "" ||
+      passConfirmation === ""
+    ) {
       alert("Empty input fields");
     } else {
       if (pass !== passConfirmation) {
@@ -29,7 +35,7 @@ const Register = ({ navigation }: Props) => {
         alert("Passwords don't match");
       } else {
         // sign up request
-        console.log(`sign up request mail: ${mail} pass: ${pass}`);
+        console.log(`sign up request user: ${username}, mail: ${mail}, pass: ${pass}`);
         alert("Successful registration. Login.");
         navigation.navigate("Login");
       }
@@ -50,6 +56,14 @@ const Register = ({ navigation }: Props) => {
           mode="outlined"
           onChangeText={(mail) => setMail(mail)}
         />
+
+        <TextInput
+          label="Username"
+          value={username}
+          mode="outlined"
+          onChangeText={(username) => setUsername(username)}
+        />
+
         <TextInput
           label="Password"
           secureTextEntry
@@ -79,7 +93,7 @@ const Register = ({ navigation }: Props) => {
       <View style={{ flexDirection: "row" }}>
         <Text>Already have an account?</Text>
         <Text
-          style={{ fontStyle: "italic" }}
+          style={{ fontStyle: "italic",fontWeight:"bold"  }}
           onPress={() => navigation.navigate("Login")}
         >
           {" "}
@@ -100,7 +114,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginBottom: 10,
-    fontSize:width*0.05
+    fontSize: width * 0.05,
   },
   inputContainer: {
     marginVertical: 10,

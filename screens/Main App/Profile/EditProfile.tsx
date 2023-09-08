@@ -3,6 +3,7 @@ import { StyleSheet, View, Image, TextInput, Text } from "react-native";
 import { Button } from "react-native-paper";
 
 const EditProfile = () => {
+  
   const [displayName, setDisplayName] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
