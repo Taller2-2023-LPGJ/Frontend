@@ -16,5 +16,13 @@ React Navigation: https://reactnavigation.org/docs/getting-started/
 * npm install @react-navigation/bottom-tabs
 * npm install @react-navigation/material-bottom-tabs react-native-paper react-native-vector-icons
 
+Axios
+
+* npm install axios
+
+Expo-Secure-Store
+
+* npm install expo-secure-store
+
 
 Material design icons: https://pictogrammers.com/library/mdi/

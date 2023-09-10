@@ -3,7 +3,7 @@ import React from "react";
 import { Button, TextInput, Text } from "react-native-paper";
 import { Navigation } from "../../navigation/types";
 import Logo from "../../components/Logo";
-
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   navigation: Navigation;
@@ -13,7 +13,7 @@ const { width } = Dimensions.get("window");
 
 const Login = ({ navigation }: Props) => {
 
-  function handleLogin() {
+  function testHandleLogin() {
     if (mail === "" || pass === "") {
       alert("Empty input fields");
     } else {
@@ -25,7 +25,18 @@ const Login = ({ navigation }: Props) => {
 
   const [mail, setMail] = React.useState("");
   const [pass, setPass] = React.useState("");
+  const { onLogin } = useAuth();
 
+  const login = async () => {
+    const result = await onLogin!(mail, pass);
+
+    if (result && result.error) {
+      alert(result.msg);
+    } else {
+      console.log(`logged in: mail: ${mail} pass: ${pass}`);
+      navigation.navigate("TabNavigator");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -45,14 +56,14 @@ const Login = ({ navigation }: Props) => {
         <TextInput
           label="Password"
           mode="outlined"
-          secureTextEntry 
+          secureTextEntry
           value={pass}
           onChangeText={(pass) => setPass(pass)}
         />
       </View>
 
       <Text
-        style={{ marginLeft: width * 0.35,fontWeight:"bold" }}
+        style={{ marginLeft: width * 0.35, fontWeight: "bold" }}
         onPress={() => navigation.navigate("ForgotPassword")}
       >
         Forgot your password?
@@ -61,7 +72,7 @@ const Login = ({ navigation }: Props) => {
       <Button
         style={{ width: width * 0.65, marginVertical: 20 }}
         mode="contained"
-        onPress={() => handleLogin()}
+        onPress={() => login()}
       >
         Login
       </Button>
@@ -69,7 +80,7 @@ const Login = ({ navigation }: Props) => {
       <View style={{ flexDirection: "row" }}>
         <Text>Don't have an account?</Text>
         <Text
-          style={{ fontStyle: "italic",fontWeight:"bold"  }}
+          style={{ fontStyle: "italic", fontWeight: "bold" }}
           onPress={() => navigation.navigate("Register")}
         >
           {" "}
@@ -90,7 +101,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginBottom: 10,
-    fontSize:width*0.05
+    fontSize: width * 0.05,
   },
   inputContainer: {
     marginVertical: 10,

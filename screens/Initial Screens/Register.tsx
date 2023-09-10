@@ -1,8 +1,9 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { Button, TextInput, Text } from "react-native-paper";
 import Logo from "../../components/Logo";
 import { Navigation } from "../../navigation/types";
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   navigation: Navigation;
@@ -16,12 +17,24 @@ const Register = ({ navigation }: Props) => {
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
 
+  const { onRegister } = useAuth();
+
+  const register = async () => {
+    const result = await onRegister!(mail, pass);
+    if (result && result.error) {
+      alert(result.msg);
+    } else {
+      Alert.alert('Success', 'You can now login with your account');
+      navigation.navigate("Login");
+    }
+  };
+
   function clearPasswordInputs() {
     setPass("");
     setPassConfirmation("");
   }
 
-  function handleRegister() {
+  function testHandleRegister() {
     if (
       mail === "" ||
       username === "" ||
@@ -35,7 +48,9 @@ const Register = ({ navigation }: Props) => {
         alert("Passwords don't match");
       } else {
         // sign up request
-        console.log(`sign up request user: ${username}, mail: ${mail}, pass: ${pass}`);
+        console.log(
+          `sign up request user: ${username}, mail: ${mail}, pass: ${pass}`
+        );
         alert("Successful registration. Login.");
         navigation.navigate("Login");
       }
@@ -85,7 +100,7 @@ const Register = ({ navigation }: Props) => {
       <Button
         style={{ width: width * 0.65, marginVertical: 20 }}
         mode="contained"
-        onPress={() => handleRegister()}
+        onPress={() => register()}
       >
         Sign Up
       </Button>
@@ -93,7 +108,7 @@ const Register = ({ navigation }: Props) => {
       <View style={{ flexDirection: "row" }}>
         <Text>Already have an account?</Text>
         <Text
-          style={{ fontStyle: "italic",fontWeight:"bold"  }}
+          style={{ fontStyle: "italic", fontWeight: "bold" }}
           onPress={() => navigation.navigate("Login")}
         >
           {" "}
