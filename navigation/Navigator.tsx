@@ -7,6 +7,7 @@ import ForgotPassword from "../screens/Initial Screens/ForgotPassword";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { TabNavigator } from "../screens/Main App/TabNavigator";
 import { useAuth } from "../context/AuthContext";
+import Interests from "../screens/Initial Screens/Interests";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -46,8 +47,11 @@ export default function AppNavigator() {
           name="ForgotPassword"
           component={ForgotPassword}
         />
-
-        
+        <Stack.Screen
+          options={{ headerTitleAlign: "center", title: "" }}
+          name="Interests"
+          component={Interests}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

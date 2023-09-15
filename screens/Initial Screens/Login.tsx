@@ -12,28 +12,17 @@ type Props = {
 const { width } = Dimensions.get("window");
 
 const Login = ({ navigation }: Props) => {
-
-  function testHandleLogin() {
-    if (mail === "" || pass === "") {
-      alert("Empty input fields");
-    } else {
-      // login request
-      console.log(`login request mail: ${mail} pass: ${pass}`);
-      navigation.navigate("TabNavigator");
-    }
-  }
-
-  const [mail, setMail] = React.useState("");
+  const [identifier, setIdentifier] = React.useState("");
   const [pass, setPass] = React.useState("");
   const { onLogin } = useAuth();
 
   const login = async () => {
-    const result = await onLogin!(mail, pass);
+    const result = await onLogin!(identifier, pass);
 
     if (result && result.error) {
       alert(result.msg);
     } else {
-      console.log(`logged in: mail: ${mail} pass: ${pass}`);
+      console.log(`logged in: mail: ${identifier} pass: ${pass}`);
       navigation.navigate("TabNavigator");
     }
   };
@@ -47,11 +36,11 @@ const Login = ({ navigation }: Props) => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          label="Email"
-          value={mail}
+          label="Email or Username"
+          value={identifier}
           mode="outlined"
           style={{ marginBottom: 10 }}
-          onChangeText={(mail) => setMail(mail)}
+          onChangeText={(mail) => setIdentifier(mail)}
         />
         <TextInput
           label="Password"
