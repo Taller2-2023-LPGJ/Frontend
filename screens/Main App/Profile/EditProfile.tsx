@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topContainer: {
+    borderRadius: 10,
     flexDirection: "row",
     backgroundColor: "#ccc",
     padding: 20,
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   bottomContainer: {
+    borderRadius: 10,
     flex: 1,
     width: "90%",
     backgroundColor: "#ccc",

@@ -1,8 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, ScrollView, Text, View, Image, Dimensions } from "react-native";
 import { Button } from "react-native-paper";
 import { Navigation } from "../../../navigation/types";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import ProfileSnapMSGs from "./ProfileSnapMSGs";
+import ProfileLikes from "./ProfileLikes";
 
+const Tab = createMaterialTopTabNavigator();
+const { height } = Dimensions.get("window");
+const edge_rounding = 25
 
 interface ProfileProps {
   navigation: Navigation;
@@ -21,7 +27,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={{
           uri:
@@ -57,14 +63,24 @@ const Profile = ({ navigation }: ProfileProps) => {
       </View>
 
       
-      <View style={styles.tweetsContainer}></View>
-    </View>
+      <View style={styles.tweetsContainer}>
+        <Tab.Navigator
+        screenOptions={{
+          tabBarIndicatorStyle:{backgroundColor:"#739998", height:5},
+          tabBarLabelStyle: { fontSize: 15, textTransform: "none"},
+          tabBarStyle: { backgroundColor: "#cfcfcf", borderTopLeftRadius: edge_rounding, borderTopRightRadius: edge_rounding },
+        }}
+        >
+          <Tab.Screen name="SnapMSGs" component={ProfileSnapMSGs} />
+          <Tab.Screen name="Likes" component={ProfileLikes} />
+        </Tab.Navigator>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
   },
   profileImage: {
@@ -80,6 +96,7 @@ const styles = StyleSheet.create({
     height: 45,
   },
   userInfoContainer: {
+    borderRadius: 10,
     backgroundColor: "#ccc",
     width: "90%",
     padding: 10,
@@ -101,7 +118,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tweetsContainer: {
-    flex: 1,
+    borderTopLeftRadius: edge_rounding,
+    borderTopRightRadius: edge_rounding,
+    height: height - 165,
     width: "90%",
     backgroundColor: "#ccc",
   },
