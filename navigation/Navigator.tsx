@@ -8,6 +8,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { TabNavigator } from "../screens/Main App/TabNavigator";
 import { useAuth } from "../context/AuthContext";
 import Interests from "../screens/Initial Screens/Interests";
+import PinConfirmation from "../screens/Initial Screens/PinConfirmation";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -51,6 +52,11 @@ export default function AppNavigator() {
           options={{ headerTitleAlign: "center", title: "" }}
           name="Interests"
           component={Interests}
+        />
+        <Stack.Screen
+          options={{ headerTitleAlign: "center", title: "" }}
+          name="PinConfirmation"
+          component={PinConfirmation}
         />
       </Stack.Navigator>
     </NavigationContainer>
