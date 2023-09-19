@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from 'react-native'
 import React from 'react'
-import { Navigation } from '../../navigation/types';
+import { Navigation } from '../../types/types';
 import { TextInput,Text, Button } from 'react-native-paper';
 import Logo from '../../components/Logo';
 

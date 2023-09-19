@@ -27,37 +27,39 @@ export default function AppNavigator() {
             component={TabNavigator}
           />
         ) : (
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="StartScreen"
-            component={StartScreen}
-          />
+          <>
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="StartScreen"
+              component={StartScreen}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Login"
+              component={Login}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Register"
+              component={Register}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="ForgotPassword"
+              component={ForgotPassword}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Interests"
+              component={Interests}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="PinConfirmation"
+              component={PinConfirmation}
+            />
+          </>
         )}
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="Login"
-          component={Login}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="Register"
-          component={Register}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="ForgotPassword"
-          component={ForgotPassword}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="Interests"
-          component={Interests}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="PinConfirmation"
-          component={PinConfirmation}
-        />
       </Stack.Navigator>
     </NavigationContainer>
   );

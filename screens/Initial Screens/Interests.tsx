@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
-import { Navigation } from "../../navigation/types";
+import { Navigation } from "../../types/types";
 import { Button, Chip, Text } from "react-native-paper";
 
 type Props = {

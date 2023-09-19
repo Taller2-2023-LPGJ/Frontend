@@ -58,6 +58,9 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const login = async (userIdentifier: string, password: string) => {
+
+    console.log(apiUrl)
+
     try {
       const result = await axios.post(`${apiUrl}/signin`, {
         userIdentifier,
@@ -89,6 +92,9 @@ export const AuthProvider = ({ children }: any) => {
       token: null,
       authenticated: null,
     });
+
+
+
   };
 
   const value = {

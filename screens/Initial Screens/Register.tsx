@@ -2,7 +2,7 @@ import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { Button, TextInput, Text } from "react-native-paper";
 import Logo from "../../components/Logo";
-import { Navigation } from "../../navigation/types";
+import { Navigation } from "../../types/types";
 import { useAuth } from "../../context/AuthContext";
 
 type Props = {
