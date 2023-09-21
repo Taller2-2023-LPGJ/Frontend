@@ -24,9 +24,12 @@ const ForgotPassword = ({ navigation }: Props) => {
         await axios.post(`${apiUrl}/recoverPassword`, {
           username,
         });
-        navigation.navigate("PinConfirmation", { username: username, mode: 'resetPass' });
+        navigation.navigate("PinConfirmation", {
+          username: username,
+          mode: "resetPass",
+        });
       } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
+        alert((e as any).response.data.message);
       }
     }
   };

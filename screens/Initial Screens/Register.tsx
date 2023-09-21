@@ -74,7 +74,7 @@ const Register = ({ navigation }: Props) => {
     const result = await onRegister!(username, mail, pass);
 
     if (result && result.error) {
-      alert(result.msg);
+      alert(result.message);
     } else {
       navigation.navigate("Interests");
     }

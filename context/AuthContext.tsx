@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: any) => {
 
       return result;
     } catch (e) {
-      return { error: true, msg: (e as any).response.data.msg };
+      return { error: true, message: (e as any).response.data.message };
     }
   };
 
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: any) => {
 
       return result;
     } catch (e) {
-      return { error: true, msg: (e as any).response.data.message };
+      return { error: true, message: (e as any).response.data.message };
     }
   };
 

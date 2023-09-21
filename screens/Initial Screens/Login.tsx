@@ -20,7 +20,7 @@ const Login = ({ navigation }: Props) => {
     const result = await onLogin!(identifier, pass);
 
     if (result && result.error) {
-      alert(result.msg);
+      alert(result.message);
     } else {
       navigation.navigate("TabNavigator");
     }
