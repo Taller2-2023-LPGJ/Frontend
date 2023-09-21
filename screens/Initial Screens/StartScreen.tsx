@@ -11,13 +11,10 @@ type Props = {
 const { width } = Dimensions.get("window");
 
 const StartScreen = ({ navigation }: Props) => {
-
   return (
     <View style={styles.container}>
       <Logo />
-      <Text style={styles.text}>
-        SnapMsg
-      </Text>
+      <Text style={styles.text}>SnapMsg</Text>
 
       <View>
         <Button
@@ -51,10 +48,10 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 8,
-    width: width*0.65,
+    width: width * 0.65,
   },
   text: {
     marginBottom: 40,
-    fontSize:width*0.05
+    fontSize: width * 0.05,
   },
 });

@@ -22,7 +22,6 @@ const Login = ({ navigation }: Props) => {
     if (result && result.error) {
       alert(result.msg);
     } else {
-      console.log(`logged in: mail: ${identifier} pass: ${pass}`);
       navigation.navigate("TabNavigator");
     }
   };

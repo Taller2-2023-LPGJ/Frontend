@@ -22,7 +22,6 @@ const Register = ({ navigation }: Props) => {
   const { onRegister } = useAuth();
 
   const validInputs = () => {
-
     if (
       mail === "" ||
       username === "" ||

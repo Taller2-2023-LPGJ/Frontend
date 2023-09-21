@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper";
+import { API_URL } from "@env";
+import axios from "axios";
 
 import {
   CodeField,
@@ -10,11 +12,39 @@ import {
 } from "react-native-confirmation-code-field";
 import Logo from "../../components/Logo";
 import { Button } from "react-native-paper";
+import { Navigation } from "../../types/types";
+import { useRoute } from "@react-navigation/native";
 
 const CELL_COUNT = 6;
 const { width } = Dimensions.get("window");
+const apiUrl = API_URL;
 
-const PinConfirmation = () => {
+type Props = {
+  navigation: Navigation;
+};
+
+type RouteParams = {
+  params: any;
+  key: string;
+  name: string;
+  path?: string | undefined;
+};
+
+const PinConfirmation = ({ navigation }: Props) => {
+  const route = useRoute<RouteParams>();
+  const data = route.params;
+  const username = data.username;
+  const mode = data.mode;
+
+  let screenTitle = "Reset your password";
+  let fullUrl = `${apiUrl}/verifyCodeRecoverPassword`;
+  let passReset = true;
+  if (mode !== "resetPass") {
+    screenTitle = "Authentication";
+    fullUrl = `${apiUrl}/2fa`;
+    passReset = false;
+  }
+
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -22,11 +52,38 @@ const PinConfirmation = () => {
     setValue,
   });
 
+  const handleVerify = async () => {
+    let code = value;
+
+    // Request for password reset
+    try {
+      await axios.post(fullUrl, {
+        username,
+        code,
+      });
+
+      navigation.navigate("ChangePassword", { code: code, username: username });
+    } catch (e) {
+      alert((e as any).response.data.message);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      await axios.post(`${apiUrl}/recoverPassword`, {
+        username,
+      });
+      alert("Email sent. Check your inbox");
+    } catch (e) {
+      alert((e as any).response.data.message);
+    }
+  };
+
   return (
     <View style={styles.root}>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
-        Authentication
+        {screenTitle}
       </Text>
       <Text variant="bodyMedium">
         Check your inbox for an authentication code.
@@ -52,8 +109,8 @@ const PinConfirmation = () => {
         )}
       />
       <Button
-        style={{ width: width * 0.65, marginBottom: 40 }}
-        onPress={() => console.log("Resend code")}
+        style={{ width: width * 0.65, marginBottom: 30 }}
+        onPress={() => handleResend()}
       >
         Resend Code
       </Button>
@@ -61,7 +118,7 @@ const PinConfirmation = () => {
       <Button
         style={{ width: width * 0.65, marginVertical: 10 }}
         mode="contained"
-        onPress={() => console.log(`Verify code: ${value}`)}
+        onPress={() => handleVerify()}
       >
         Verify
       </Button>
@@ -97,5 +154,9 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 10,
     fontSize: width * 0.05,
+  },
+  inputContainer: {
+    marginVertical: 10,
+    width: width * 0.7,
   },
 });
