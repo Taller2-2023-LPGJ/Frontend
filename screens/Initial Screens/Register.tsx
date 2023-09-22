@@ -76,7 +76,10 @@ const Register = ({ navigation }: Props) => {
     if (result && result.error) {
       alert(result.message);
     } else {
-      navigation.navigate("Interests");
+      navigation.navigate("PinConfirmation", {
+        username: "test",
+        mode: "confirmReg",
+      });
     }
   };
 

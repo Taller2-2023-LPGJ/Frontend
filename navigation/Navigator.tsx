@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import Interests from "../screens/Initial Screens/Interests";
 import PinConfirmation from "../screens/Initial Screens/PinConfirmation";
 import ChangePassword from "../screens/Initial Screens/ChangePassword";
+import ChooseLocation from "../screens/Initial Screens/ChooseLocation";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -63,6 +64,11 @@ export default function AppNavigator() {
               options={{ headerTitleAlign: "center", title: "" }}
               name="ChangePassword"
               component={ChangePassword}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="ChooseLocation"
+              component={ChooseLocation}
             />
           </>
         )}
