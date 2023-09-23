@@ -9,6 +9,7 @@ type Props = {
   navigation: Navigation;
 };
 
+
 const { width } = Dimensions.get("window");
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{7,32}$/;
 const usernameRegex = /^[a-zA-Z0-9_]{4,15}$/;
@@ -19,7 +20,7 @@ const Register = ({ navigation }: Props) => {
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
 
-  const { onRegister } = useAuth();
+  const { onRegister, setLogout } = useAuth();
 
   const validInputs = () => {
     if (
@@ -66,6 +67,8 @@ const Register = ({ navigation }: Props) => {
     return true;
   };
 
+  
+
   const register = async () => {
     if (!validInputs()) {
       return;
@@ -75,11 +78,15 @@ const Register = ({ navigation }: Props) => {
 
     if (result && result.error) {
       alert(result.message);
+
     } else {
+
+      setLogout!();
       navigation.navigate("PinConfirmation", {
         username: "test",
         mode: "confirmReg",
       });
+
     }
   };
 

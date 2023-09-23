@@ -40,10 +40,22 @@ export default function AppNavigator() {
               name="Login"
               component={Login}
             />
+            
             <Stack.Screen
               options={{ headerTitleAlign: "center", title: "" }}
               name="Register"
               component={Register}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="PinConfirmation"
+              component={PinConfirmation}
+            />
+            
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="ChangePassword"
+              component={ChangePassword}
             />
             <Stack.Screen
               options={{ headerTitleAlign: "center", title: "" }}
@@ -52,23 +64,13 @@ export default function AppNavigator() {
             />
             <Stack.Screen
               options={{ headerTitleAlign: "center", title: "" }}
-              name="Interests"
-              component={Interests}
-            />
-            <Stack.Screen
-              options={{ headerTitleAlign: "center", title: "" }}
-              name="PinConfirmation"
-              component={PinConfirmation}
-            />
-            <Stack.Screen
-              options={{ headerTitleAlign: "center", title: "" }}
-              name="ChangePassword"
-              component={ChangePassword}
-            />
-            <Stack.Screen
-              options={{ headerTitleAlign: "center", title: "" }}
               name="ChooseLocation"
               component={ChooseLocation}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Interests"
+              component={Interests}
             />
           </>
         )}

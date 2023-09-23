@@ -70,6 +70,7 @@ const PinConfirmation = ({ navigation }: Props) => {
       */
       navigation.navigate("Interests");
     } else {
+      
       // Request for password reset
       try {
         await axios.post(fullUrl, {

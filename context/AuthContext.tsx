@@ -11,6 +11,8 @@ interface AuthProps {
   ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
+  setLogout?: () => void;
+  setLoggedIn?: () => void;
 }
 
 const apiUrl = API_URL;
@@ -91,10 +93,31 @@ export const AuthProvider = ({ children }: any) => {
     });
   };
 
+  const setAuthIn = () => {
+  
+    // update auth state
+    setAuthState({
+      ...authState,
+      authenticated: true,
+    });
+  };
+
+  const setAuthOut = () => {
+  
+    // update auth state
+    setAuthState({
+      ...authState,
+      authenticated: false,
+    });
+  };
+
+
   const value = {
     onRegister: register,
     onLogin: login,
     onLogout: logout,
+    setLogout: setAuthOut,
+    setLoggedIn: setAuthIn,
     authState,
   };
 

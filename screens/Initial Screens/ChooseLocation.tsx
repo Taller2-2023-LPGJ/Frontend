@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Navigation } from "../../types/types";
 import { Button, Text, TextInput } from "react-native-paper";
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   navigation: Navigation;
@@ -9,16 +10,22 @@ type Props = {
 
 const ChooseLocation = ({ navigation }: Props) => {
   const [location, setLocation] = React.useState("");
+  const { setLoggedIn } = useAuth();
 
-  const handleGo = () => {
+  const launchApp = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    navigation.navigate("TabNavigator");
+  };
+
+  const handleGo = async () => {
     if (location.length === 0) {
       console.log("blank location...");
     } else {
       // axios post setLocation...
       console.log(`set user location as ${location}`);
     }
-
-    navigation.navigate("TabNavigator");
+    setLoggedIn!();
+    await launchApp();
   };
 
   return (
