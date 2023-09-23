@@ -1,14 +1,17 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { Button, TextInput, Text } from "react-native-paper";
 import Logo from "../../components/Logo";
-import { Navigation } from "../../navigation/types";
+import { Navigation } from "../../types/types";
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   navigation: Navigation;
 };
 
 const { width } = Dimensions.get("window");
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{7,32}$/;
+const usernameRegex = /^[a-zA-Z0-9_]{4,15}$/;
 
 const Register = ({ navigation }: Props) => {
   const [mail, setMail] = React.useState("");
@@ -16,31 +19,69 @@ const Register = ({ navigation }: Props) => {
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
 
-  function clearPasswordInputs() {
-    setPass("");
-    setPassConfirmation("");
-  }
+  const { onRegister } = useAuth();
 
-  function handleRegister() {
+  const validInputs = () => {
     if (
       mail === "" ||
       username === "" ||
       pass === "" ||
       passConfirmation === ""
     ) {
-      alert("Empty input fields");
-    } else {
-      if (pass !== passConfirmation) {
-        clearPasswordInputs();
-        alert("Passwords don't match");
-      } else {
-        // sign up request
-        console.log(`sign up request user: ${username}, mail: ${mail}, pass: ${pass}`);
-        alert("Successful registration. Login.");
-        navigation.navigate("Login");
-      }
+      Alert.alert("Error", "Empty input fields.");
+      return false;
     }
-  }
+
+    if (username.length > 15 || username.length < 4) {
+      Alert.alert("Error", "Username length must be between 4 and 15.");
+      return false;
+    }
+
+    if (!usernameRegex.test(username)) {
+      Alert.alert(
+        "Error",
+        "Username can consist of only alphanumeric characters and underscores."
+      );
+      return false;
+    }
+
+    if (pass.length > 32 || pass.length < 7) {
+      Alert.alert("Error", "Password length must be between 7 and 32.");
+      return false;
+    }
+
+    if (!passwordRegex.test(pass)) {
+      Alert.alert(
+        "Error",
+        "Password must contain at least 1 uppercase letter and one digit."
+      );
+      return false;
+    }
+
+    if (pass !== passConfirmation) {
+      Alert.alert("Error", "Passwords must match.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const register = async () => {
+    if (!validInputs()) {
+      return;
+    }
+
+    const result = await onRegister!(username, mail, pass);
+
+    if (result && result.error) {
+      alert(result.message);
+    } else {
+      navigation.navigate("PinConfirmation", {
+        username: "test",
+        mode: "confirmReg",
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -85,7 +126,7 @@ const Register = ({ navigation }: Props) => {
       <Button
         style={{ width: width * 0.65, marginVertical: 20 }}
         mode="contained"
-        onPress={() => handleRegister()}
+        onPress={() => register()}
       >
         Sign Up
       </Button>
@@ -93,7 +134,7 @@ const Register = ({ navigation }: Props) => {
       <View style={{ flexDirection: "row" }}>
         <Text>Already have an account?</Text>
         <Text
-          style={{ fontStyle: "italic",fontWeight:"bold"  }}
+          style={{ fontStyle: "italic", fontWeight: "bold" }}
           onPress={() => navigation.navigate("Login")}
         >
           {" "}
