@@ -35,13 +35,12 @@ const PinConfirmation = ({ navigation }: Props) => {
   const data = route.params;
   const username = data.username;
   const mode = data.mode;
+  const codeLenght = 6;
 
   let screenTitle = "Reset your password";
-  let fullUrl = `${apiUrl}/verifyCodeRecoverPassword`;
   let passReset = true;
   if (mode !== "resetPass") {
     screenTitle = "Authentication";
-    fullUrl = `${apiUrl}/2fa`;
     passReset = false;
   }
 
@@ -54,17 +53,37 @@ const PinConfirmation = ({ navigation }: Props) => {
 
   const handleVerify = async () => {
     let code = value;
+    console.log(`code length: ${code}`);
 
-    // Request for password reset
-    try {
-      await axios.post(fullUrl, {
-        username,
-        code,
-      });
+    if (code.length !== codeLenght) {
+      alert("Incomplete code");
+      return;
+    }
 
-      navigation.navigate("ChangePassword", { code: code, username: username });
-    } catch (e) {
-      alert((e as any).response.data.message);
+    let fullUrl = `${apiUrl}/verifyCodeRecoverPassword`;
+    if (!passReset) {
+      fullUrl = `${apiUrl}/2fa`;
+      //post 2fa request
+      console.log(`2FA log attempt `);
+      /*
+      try catch...
+      */
+      navigation.navigate("Interests");
+    } else {
+      // Request for password reset
+      try {
+        await axios.post(fullUrl, {
+          username,
+          code,
+        });
+
+        navigation.navigate("ChangePassword", {
+          code: code,
+          username: username,
+        });
+      } catch (e) {
+        alert((e as any).response.data.message);
+      }
     }
   };
 

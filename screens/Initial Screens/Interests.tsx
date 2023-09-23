@@ -25,7 +25,7 @@ const Interests = ({ navigation }: Props) => {
       alert("You must select at least 1 interest");
     } else {
       console.log("Selected categories: ", selectedCategories);
-      navigation.navigate("TabNavigator");
+      navigation.navigate("ChooseLocation");
     }
   }
 
