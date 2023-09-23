@@ -1,14 +1,22 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Searchbar } from 'react-native-paper';
 
-const UserProfile = () => {
+interface User {
+  displayname: string;
+  username: string;
+  bio: string;
+}
+
+
+const UserProfile: React.FC<{ user: User }> = ({ user }) => {
+
   const handlePress = () => {
-    console.log("Opened profile")
+    console.log("Opened " + user.username + "'s profile")
   };
 
-
   return (
-    
     <TouchableWithoutFeedback  onPress={handlePress} style={styles.buttonContainer}>
       <View style={styles.userProfileContainer}>
       <Image
@@ -20,10 +28,10 @@ const UserProfile = () => {
       />
       <View>
         <View style={styles.namesContainer}>
-          <Text style={styles.displayname}>DisplayName </Text>
-          <Text style={styles.username}>@Username </Text>
+          <Text style={styles.displayname}>{user.displayname} </Text>
+          <Text style={styles.username}>{user.username} </Text>
         </View>
-        <Text>Bio </Text>
+        <Text>{user.bio} </Text>
       </View>
       </View>
     </TouchableWithoutFeedback >
@@ -33,15 +41,38 @@ const UserProfile = () => {
 
 
 function SearchUser() {
+  const navigation = useNavigation();
+
+  React.useEffect(() =>
+  navigation.addListener("beforeRemove", (e) => {
+    e.preventDefault();
+  })
+  );
+
+  const initialUsers = [
+    {
+      displayname: "John Doe",
+      username: "@johndoe123",
+      bio: "Software Developer",
+    },
+    {
+      displayname: "Jane Doe",
+      username: "@sdas123",
+      bio: "Ssaddasr",
+    },
+  ];
+
+  const [users, setUsers] = useState(initialUsers);
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
+  const onSubmitEditing = (_: any) => setUsers(initialUsers)
 
   const [isPressEnabled, setIsPressEnabled] = useState(true);
-
-
   const handleScrollBegin = () => {
     // Disable pressing when scrolling begins
     setIsPressEnabled(false);
   };
-
   const handleScrollEnd = () => {
     // Enable pressing when scrolling ends
     setIsPressEnabled(true);
@@ -53,12 +84,15 @@ function SearchUser() {
       onScrollBeginDrag={handleScrollBegin}
       onScrollEndDrag={handleScrollEnd}
     >
-      <UserProfile/>
-      <UserProfile/>
-      <UserProfile/>
-      <UserProfile/>
-      <UserProfile/>
-      <UserProfile/>
+      <Searchbar
+      style={styles.searchBar}
+      placeholder="Search"
+      onChangeText={onChangeSearch}
+      onSubmitEditing={onSubmitEditing}
+      value={searchQuery} />
+      {users.map((user, index) => (
+        <UserProfile key={index} user={user} />
+      ))}
     </ScrollView>
   );
 }
@@ -98,5 +132,12 @@ const styles = StyleSheet.create({
     buttonContainer:{
       width: "100%",
       alignItems: "center",
-    }
+    },
+    searchBar: {
+      width: '90%',
+      alignSelf: 'center',
+      marginBottom: 10,
+      marginTop: 10,
+      backgroundColor: "#cfcfcf",
+    },
 });

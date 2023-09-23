@@ -13,23 +13,10 @@ const Tab = createMaterialTopTabNavigator();
 const Search = () => {
   const navigation = useNavigation();
 
-  React.useEffect(() =>
-    navigation.addListener("beforeRemove", (e) => {
-      e.preventDefault();
-    })
-  );
-  const [searchQuery, setSearchQuery] = React.useState('');
-
-  const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
-  const onSubmitEditing = (_: any) => console.log("User searched: " + searchQuery) // Acá habría que buscar
+  
 
   return (
-    <><Searchbar
-      style={styles.searchBar}
-      placeholder="Search"
-      onChangeText={onChangeSearch}
-      onSubmitEditing={onSubmitEditing}
-      value={searchQuery} />
+    <>
       <Tab.Navigator
         screenOptions={{
           tabBarIndicatorStyle:{backgroundColor:"#739998", height:5},
