@@ -79,6 +79,17 @@ const EditProfile = () => {
             onChangeText={(text) => setBirthDate(text)}
           />
         </View>
+
+        <Button
+            style={styles.removeButton}
+            mode="outlined"
+            onPress={() => {
+              // Handle
+            }}
+          >
+            Save
+        </Button>
+
       </View>
     </View>
   );
@@ -90,6 +101,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topContainer: {
+    borderRadius: 10,
     flexDirection: "row",
     backgroundColor: "#ccc",
     padding: 20,
@@ -116,7 +128,12 @@ const styles = StyleSheet.create({
     width: 120,
     marginBottom: 10,
   },
+  saveButton: {
+    width: 120,
+    marginBottom: 10,
+  },
   bottomContainer: {
+    borderRadius: 10,
     flex: 1,
     width: "90%",
     backgroundColor: "#ccc",
