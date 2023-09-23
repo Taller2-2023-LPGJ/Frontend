@@ -1,6 +1,6 @@
 import React from "react";
-import { StyleSheet, ScrollView, Text, View, Image, Dimensions } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, ScrollView, View, Image, Dimensions } from "react-native";
+import { Button, Text } from "react-native-paper";
 import { Navigation } from "../../../navigation/types";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ProfileSnapMSGs from "./ProfileSnapMSGs";
@@ -17,6 +17,7 @@ interface ProfileProps {
 const Profile = ({ navigation }: ProfileProps) => {
   
   const user = {
+    profilepic: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     displayname: "John Doe",
     username: "@johndoe123",
     location: "Buenos Aires",
@@ -31,7 +32,7 @@ const Profile = ({ navigation }: ProfileProps) => {
       <Image
         source={{
           uri:
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+            user.profilepic,
         }}
         style={styles.profileImage}
       />
