@@ -12,11 +12,6 @@ const ChooseLocation = ({ navigation }: Props) => {
   const [location, setLocation] = React.useState("");
   const { setLoggedIn } = useAuth();
 
-  // const launchApp = async () => {
-  //   //await new Promise((resolve) => setTimeout(resolve, 200));
-  //   navigation.navigate("TabNavigator");
-  // };
-
   const handleGo = async () => {
     if (location.length === 0) {
       console.log("blank location...");
@@ -33,8 +28,8 @@ const ChooseLocation = ({ navigation }: Props) => {
       <Text style={styles.text} variant="headlineMedium">
         Set your location
       </Text>
-      <Text style={{ marginLeft: 3.5 }} variant="bodyMedium">
-        Feel free to skip sharing your location if you'd like
+      <Text style={{ marginLeft: 0 }} variant="bodyMedium">
+      If you'd rather keep your location private, feel free to leave this field blank. 
       </Text>
 
       <View style={styles.inputContainer}>

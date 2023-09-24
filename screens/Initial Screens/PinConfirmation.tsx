@@ -70,7 +70,6 @@ const PinConfirmation = ({ navigation }: Props) => {
       */
       navigation.navigate("Interests");
     } else {
-      
       // Request for password reset
       try {
         await axios.post(fullUrl, {
@@ -128,12 +127,22 @@ const PinConfirmation = ({ navigation }: Props) => {
           </Text>
         )}
       />
-      <Button
+
+      {passReset ? (
+        <Button
         style={{ width: width * 0.65, marginBottom: 30 }}
         onPress={() => handleResend()}
       >
         Resend Code
       </Button>
+      ) : null}
+      
+      {/* <Button
+        style={{ width: width * 0.65, marginBottom: 30 }}
+        onPress={() => handleResend()}
+      >
+        Resend Code
+      </Button> */}
 
       <Button
         style={{ width: width * 0.65, marginVertical: 10 }}
