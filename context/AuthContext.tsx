@@ -18,6 +18,7 @@ interface AuthProps {
     email: string,
   ) => Promise<any>;
   onLoginGoogle?: (email: string) => Promise<any>;
+  setToken?: (token: string) => void;
 }
 
 const apiUrl = API_URL;
@@ -164,6 +165,15 @@ export const AuthProvider = ({ children }: any) => {
     });
   };
 
+  const setToken = (token: string) => {
+  
+    // update token
+    setAuthState({
+      ...authState,
+      token: token,
+    });
+  };
+
   const value = {
     onRegister: register,
     onLogin: login,
@@ -172,6 +182,7 @@ export const AuthProvider = ({ children }: any) => {
     setLoggedIn: setAuthIn,
     onLoginGoogle: loginGoogle,
     onRegisterGoogle: registerGoogle,
+    setToken: setToken,
     authState,
   };
 
