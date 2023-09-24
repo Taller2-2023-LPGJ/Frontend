@@ -12,10 +12,10 @@ const ChooseLocation = ({ navigation }: Props) => {
   const [location, setLocation] = React.useState("");
   const { setLoggedIn } = useAuth();
 
-  const launchApp = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    navigation.navigate("TabNavigator");
-  };
+  // const launchApp = async () => {
+  //   //await new Promise((resolve) => setTimeout(resolve, 200));
+  //   navigation.navigate("TabNavigator");
+  // };
 
   const handleGo = async () => {
     if (location.length === 0) {
@@ -25,7 +25,7 @@ const ChooseLocation = ({ navigation }: Props) => {
       console.log(`set user location as ${location}`);
     }
     setLoggedIn!();
-    await launchApp();
+    navigation.navigate("TabNavigator");
   };
 
   return (

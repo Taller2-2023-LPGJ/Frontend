@@ -1,14 +1,18 @@
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, TextInput, Text } from "react-native-paper";
 import Logo from "../../components/Logo";
 import { Navigation } from "../../types/types";
 import { useAuth } from "../../context/AuthContext";
 
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+
 type Props = {
   navigation: Navigation;
 };
 
+WebBrowser.maybeCompleteAuthSession();
 
 const { width } = Dimensions.get("window");
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{7,32}$/;
@@ -20,7 +24,67 @@ const Register = ({ navigation }: Props) => {
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
 
-  const { onRegister, setLogout } = useAuth();
+  const { onRegister, setLogout, onRegisterGoogle } = useAuth();
+
+  const [userInfo, setUserInfo] = React.useState(null);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId:
+      "463820808275-497078tjprmogvgrjb35apbp172eemnu.apps.googleusercontent.com",
+    webClientId:
+      "463820808275-1e2fcu04hn09dvcn8aujhl1op5hlhbep.apps.googleusercontent.com",
+  });
+
+  const getUserInfo = async (token: string) => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const user = await response.json();
+      //await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+    } catch (error) {
+      // alert error
+    }
+  };
+
+  React.useEffect(() => {
+    handleEffect();
+  }, [response]);
+
+  async function handleEffect() {
+    if (response?.type === "success" && response.authentication) {
+      getUserInfo(response.authentication.accessToken);
+    } else {
+      return;
+    }
+
+    let email = null;
+    let name = null;
+    if (userInfo) {
+      email = (userInfo as any).email;
+      name = (userInfo as any).name;
+    } else {
+      return;
+    }
+    let result = null;
+    if (email) {
+      result = await onRegisterGoogle!(name, email);
+    } else {
+      return;
+    }
+
+    if (result && result.error) {
+      alert(result.message);
+    } else {
+      navigation.navigate("TabNavigator");
+    }
+  }
 
   const validInputs = () => {
     if (
@@ -67,8 +131,6 @@ const Register = ({ navigation }: Props) => {
     return true;
   };
 
-  
-
   const register = async () => {
     if (!validInputs()) {
       return;
@@ -78,17 +140,18 @@ const Register = ({ navigation }: Props) => {
 
     if (result && result.error) {
       alert(result.message);
-
     } else {
-
       setLogout!();
       navigation.navigate("PinConfirmation", {
         username: "test",
         mode: "confirmReg",
       });
-
     }
   };
+
+  const handleGoogleRegister = async () => {
+    await promptAsync();
+  }
 
   return (
     <View style={styles.container}>
@@ -138,7 +201,18 @@ const Register = ({ navigation }: Props) => {
         Sign Up
       </Button>
 
-      <View style={{ flexDirection: "row" }}>
+      <Button
+        style={{ width: width * 0.65, marginVertical: 0 }}
+        mode="contained"
+        onPress={() => {
+          handleGoogleRegister();
+        }}
+        icon="google"
+      >
+        Sign up with Google
+      </Button>
+
+      <View style={{ flexDirection: "row", marginVertical: 25 }}>
         <Text>Already have an account?</Text>
         <Text
           style={{ fontStyle: "italic", fontWeight: "bold" }}

@@ -7,7 +7,6 @@ import { useAuth } from "../../context/AuthContext";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Props = {
   navigation: Navigation;
@@ -20,9 +19,8 @@ const { width } = Dimensions.get("window");
 const Login = ({ navigation }: Props) => {
   const [identifier, setIdentifier] = React.useState("");
   const [pass, setPass] = React.useState("");
-  const { onLogin } = useAuth();
+  const { onLogin, onLoginGoogle } = useAuth();
 
-  const [token, setToken] = useState("");
   const [userInfo, setUserInfo] = useState(null);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
@@ -31,7 +29,7 @@ const Login = ({ navigation }: Props) => {
     webClientId:
       "463820808275-1e2fcu04hn09dvcn8aujhl1op5hlhbep.apps.googleusercontent.com",
   });
-
+  
   const login = async () => {
     const result = await onLogin!(identifier, pass);
 
@@ -44,37 +42,48 @@ const Login = ({ navigation }: Props) => {
 
   useEffect(() => {
     handleEffect();
-  }, [response, token]);
+  }, [response]);
 
   async function handleEffect() {
-    const user = await getLocalUser();
-    console.log("user", user);
-    if (!user) {
-      if (response?.type === "success" && response.authentication) {
-        // setToken(response.authentication.accessToken);
-        console.log("getting user info");
-        getUserInfo(response.authentication.accessToken);
-      }
+    
+  
+    if (response?.type === "success" && response.authentication) {
+      
+      await getUserInfo(response.authentication.accessToken); /// ES ACA???!!!
     } else {
-      setUserInfo(user);
-      console.log("loaded locally");
+      return;
+    }
+
+  
+    let email = null;
+    if (userInfo) {
+      
+      email = (userInfo as any).email;
+    } else {
+      
+      return;
+    }
+    let result = null;
+    if (email) {
+     
+      result = await onLoginGoogle!((userInfo as any).email);
+    } else {
+      return;
+    }
+
+   
+    if (result && result.error) {
+      alert(result.message);
+    } else {
+      navigation.navigate("TabNavigator");
     }
   }
 
-  const getLocalUser = async () => {
-    const data = await AsyncStorage.getItem("@user");
-    if (!data) return null;
-    return JSON.parse(data);
-  };
-
-  const handleRemove = async () => {
-    await AsyncStorage.removeItem("@user");
-    alert("removed local user info");
-  };
-
   const getUserInfo = async (token: string) => {
+   
     if (!token) return;
     try {
+      
       const response = await fetch(
         "https://www.googleapis.com/userinfo/v2/me",
         {
@@ -82,13 +91,21 @@ const Login = ({ navigation }: Props) => {
         }
       );
 
+      
       const user = await response.json();
-      await AsyncStorage.setItem("@user", JSON.stringify(user));
+     
+      //await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserInfo(user);
     } catch (error) {
+      
+
       // handle error
     }
   };
+
+  const handleGoogleSignIn = async () => {
+    await promptAsync();
+  }
 
   return (
     <View style={styles.container}>
@@ -132,33 +149,15 @@ const Login = ({ navigation }: Props) => {
       <Button
         style={{ width: width * 0.65, marginVertical: 0 }}
         mode="contained"
-        onPress={() => promptAsync()}
+        onPress={() => {
+          handleGoogleSignIn();
+        }}
         icon="google"
       >
         Login with Google
       </Button>
 
-      <Button
-        style={{ width: width * 0.65, marginVertical: 10 }}
-        mode="contained"
-        onPress={() =>
-          userInfo
-            ? alert(`${(userInfo as any).email}, ${(userInfo as any).name}`)
-            : alert("nada")
-        }
-      >
-        Alert User Info test
-      </Button>
-
-      <Button
-        style={{ width: width * 0.65, marginVertical: 10 }}
-        mode="contained"
-        onPress={() => handleRemove()}
-      >
-        Remove local store test
-      </Button>
-
-      <View style={{ flexDirection: "row", marginVertical: 20 }}>
+      <View style={{ flexDirection: "row", marginVertical: 25 }}>
         <Text>Don't have an account?</Text>
         <Text
           style={{ fontStyle: "italic", fontWeight: "bold" }}

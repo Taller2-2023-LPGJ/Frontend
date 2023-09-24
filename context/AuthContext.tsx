@@ -13,6 +13,11 @@ interface AuthProps {
   onLogout?: () => Promise<any>;
   setLogout?: () => void;
   setLoggedIn?: () => void;
+  onRegisterGoogle?:  (
+    name: string,
+    email: string,
+  ) => Promise<any>;
+  onLoginGoogle?: (email: string) => Promise<any>;
 }
 
 const apiUrl = API_URL;
@@ -93,6 +98,54 @@ export const AuthProvider = ({ children }: any) => {
     });
   };
 
+
+  const registerGoogle = async (
+    name: string,
+    email: string,
+  ) => {
+    try {
+      const result = await axios.post(`${apiUrl}/signupgoogle`, {
+        name,
+        email,
+      });
+
+      setAuthState({
+        token: result.data.token,
+        authenticated: true,
+      });
+
+      // Attach token to header
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${result.data.token}`;
+
+      return result;
+    } catch (e) {
+      return { error: true, message: (e as any).response.data.message };
+    }
+  };
+
+  const loginGoogle = async (email: string) => {
+    try {
+      const result = await axios.post(`${apiUrl}/signingoogle`, {
+        email,
+      });
+
+      setAuthState({
+        token: result.data.token,
+        authenticated: true,
+      });
+
+      // Attach token to header
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${result.data.token}`;
+      return result;
+    } catch (e) {
+      return { error: true, message: (e as any).response.data.message };
+    }
+  };
+
   const setAuthIn = () => {
   
     // update auth state
@@ -111,13 +164,14 @@ export const AuthProvider = ({ children }: any) => {
     });
   };
 
-
   const value = {
     onRegister: register,
     onLogin: login,
     onLogout: logout,
     setLogout: setAuthOut,
     setLoggedIn: setAuthIn,
+    onLoginGoogle: loginGoogle,
+    onRegisterGoogle: registerGoogle,
     authState,
   };
 
