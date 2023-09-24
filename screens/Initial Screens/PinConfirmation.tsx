@@ -53,7 +53,6 @@ const PinConfirmation = ({ navigation }: Props) => {
 
   const handleVerify = async () => {
     let code = value;
-    console.log(`code length: ${code}`);
 
     if (code.length !== codeLenght) {
       alert("Incomplete code");

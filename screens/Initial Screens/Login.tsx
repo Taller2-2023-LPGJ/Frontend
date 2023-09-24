@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button, TextInput, Text } from "react-native-paper";
 import { Navigation } from "../../types/types";
@@ -31,6 +31,16 @@ const Login = ({ navigation }: Props) => {
   });
   
   const login = async () => {
+
+
+    if (
+      identifier === "" ||
+      pass === ""
+    ) {
+      Alert.alert("Error", "Empty input fields.");
+      return false;
+    }
+
     const result = await onLogin!(identifier, pass);
 
     if (result && result.error) {
