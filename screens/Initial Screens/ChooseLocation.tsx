@@ -24,7 +24,7 @@ const ChooseLocation = ({ navigation }: Props) => {
       // axios post setLocation...
       console.log(`set user location as ${location}`);
     }
-    setLoggedIn!();
+    await setLoggedIn!();
     navigation.navigate("TabNavigator");
   };
 
