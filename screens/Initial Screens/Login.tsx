@@ -61,7 +61,7 @@ const Login = ({ navigation }: Props) => {
   
     if (response?.type === "success" && response.authentication) {
       
-      await getUserInfo(response.authentication.accessToken); /// ES ACA???!!!
+      await getUserInfo(response.authentication.accessToken); 
     } else {
       return;
     }
@@ -72,7 +72,7 @@ const Login = ({ navigation }: Props) => {
       
       email = (userInfo as any).email;
     } else {
-      
+      alert("Failed to fetch from Google. Please try again.")
       return;
     }
     let result = null;
@@ -80,6 +80,7 @@ const Login = ({ navigation }: Props) => {
      
       result = await onLoginGoogle!((userInfo as any).email);
     } else {
+      alert("Failed to fetch from Google. Please try again.")
       return;
     }
 
@@ -128,7 +129,7 @@ const Login = ({ navigation }: Props) => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          label="Email or Username"
+          label="Username"
           value={identifier}
           mode="outlined"
           style={{ marginBottom: 10 }}

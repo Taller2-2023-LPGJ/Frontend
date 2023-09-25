@@ -13,10 +13,7 @@ interface AuthProps {
   onLogout?: () => Promise<any>;
   setLogout?: () => void;
   setLoggedIn?: () => void;
-  onRegisterGoogle?:  (
-    name: string,
-    email: string,
-  ) => Promise<any>;
+  onRegisterGoogle?: (name: string, email: string) => Promise<any>;
   onLoginGoogle?: (email: string) => Promise<any>;
   setToken?: (token: string) => void;
 }
@@ -42,8 +39,7 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string
   ) => {
-
-    console.log(`${apiUrl}/users/signup`)
+    //console.log(`${apiUrl}/users/signup`);
     try {
       const result = await axios.post(`${apiUrl}/users/signup`, {
         username,
@@ -70,9 +66,7 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       // Attach token to header
-      axios.defaults.headers.common[
-        "token"
-      ] = `${result.data.token}`;
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       return result;
     } catch (e) {
@@ -82,7 +76,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const logout = async () => {
     // reset axios header
-    axios.defaults.headers.common["Authorization"] = "";
+    axios.defaults.headers.common["token"] = "";
 
     // reset auth state
     setAuthState({
@@ -91,11 +85,7 @@ export const AuthProvider = ({ children }: any) => {
     });
   };
 
-
-  const registerGoogle = async (
-    name: string,
-    email: string,
-  ) => {
+  const registerGoogle = async (name: string, email: string) => {
     try {
       const result = await axios.post(`${apiUrl}/users/signupgoogle`, {
         name,
@@ -108,9 +98,7 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       // Attach token to header
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${result.data.token}`;
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       return result;
     } catch (e) {
@@ -130,9 +118,7 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       // Attach token to header
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${result.data.token}`;
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
       return result;
     } catch (e) {
       return { error: true, message: (e as any).response.data.message };
@@ -140,7 +126,6 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const setAuthIn = () => {
-  
     // update auth state
     setAuthState({
       ...authState,
@@ -149,7 +134,6 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const setAuthOut = () => {
-  
     // update auth state
     setAuthState({
       ...authState,
@@ -158,7 +142,6 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const setToken = (token: string) => {
-  
     // update token
     setAuthState({
       ...authState,

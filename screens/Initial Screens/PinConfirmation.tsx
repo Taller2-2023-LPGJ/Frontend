@@ -61,7 +61,7 @@ const PinConfirmation = ({ navigation }: Props) => {
 
     let fullUrl = `${apiUrl}/users/verifyCodeRecoverPassword`;
     if (!passReset) {
-      fullUrl = `${apiUrl}/users/signupconfirm`; // TODO
+      fullUrl = `${apiUrl}/users/signupconfirm`; 
       //post 2fa request
       try {
         const result = await axios.post(fullUrl, {
@@ -69,19 +69,16 @@ const PinConfirmation = ({ navigation }: Props) => {
           code,
         });
 
-        // set token: result.data.token,
         // set axios header:
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${result.data.token}`;
+        // Attach token to header
+        axios.defaults.headers.common["token"] = `${result.data.token}`;
 
         // estoy en modo offline ya.
         navigation.navigate("Interests");
       } catch (e) {
         alert((e as any).response.data.message);
+        return;
       }
-
-      navigation.navigate("Interests");
     } else {
       // Request for password reset
       try {
@@ -96,6 +93,7 @@ const PinConfirmation = ({ navigation }: Props) => {
         });
       } catch (e) {
         alert((e as any).response.data.message);
+        return;
       }
     }
   };

@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Props = {
   navigation: Navigation;
@@ -69,6 +70,7 @@ const Register = ({ navigation }: Props) => {
     if (userInfo) {
       email = (userInfo as any).email;
       name = (userInfo as any).name;
+      alert("Failed to fetch from Google. Please try again.")
     } else {
       return;
     }
@@ -76,6 +78,7 @@ const Register = ({ navigation }: Props) => {
     if (email) {
       result = await onRegisterGoogle!(name, email);
     } else {
+      alert("Failed to fetch from Google. Please try again.")
       return;
     }
 
@@ -145,7 +148,7 @@ const Register = ({ navigation }: Props) => {
     } else {
 
       // await setLogout!(); 
-
+      await AsyncStorage.setItem('username', username);
       navigation.navigate("PinConfirmation", {
         username: username,
         mode: "confirmReg",
