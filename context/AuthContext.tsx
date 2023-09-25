@@ -11,6 +11,14 @@ interface AuthProps {
   ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
+  setLogout?: () => void;
+  setLoggedIn?: () => void;
+  onRegisterGoogle?:  (
+    name: string,
+    email: string,
+  ) => Promise<any>;
+  onLoginGoogle?: (email: string) => Promise<any>;
+  setToken?: (token: string) => void;
 }
 
 const apiUrl = API_URL;
@@ -34,32 +42,24 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string
   ) => {
+
+    console.log(`${apiUrl}/users/signup`)
     try {
-      const result = await axios.post(`${apiUrl}/signup`, {
+      const result = await axios.post(`${apiUrl}/users/signup`, {
         username,
         email,
         password,
       });
 
-      setAuthState({
-        token: result.data.token,
-        authenticated: true,
-      });
-
-      // Attach token to header
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${result.data.token}`;
-
       return result;
     } catch (e) {
-      return { error: true, msg: (e as any).response.data.msg };
+      return { error: true, message: (e as any).response.data.message };
     }
   };
 
   const login = async (userIdentifier: string, password: string) => {
     try {
-      const result = await axios.post(`${apiUrl}/signin`, {
+      const result = await axios.post(`${apiUrl}/users/signin`, {
         userIdentifier,
         password,
       });
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: any) => {
 
       return result;
     } catch (e) {
-      return { error: true, msg: (e as any).response.data.msg };
+      return { error: true, message: (e as any).response.data.message };
     }
   };
 
@@ -91,10 +91,90 @@ export const AuthProvider = ({ children }: any) => {
     });
   };
 
+
+  const registerGoogle = async (
+    name: string,
+    email: string,
+  ) => {
+    try {
+      const result = await axios.post(`${apiUrl}/users/signupgoogle`, {
+        name,
+        email,
+      });
+
+      setAuthState({
+        token: result.data.token,
+        authenticated: true,
+      });
+
+      // Attach token to header
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${result.data.token}`;
+
+      return result;
+    } catch (e) {
+      return { error: true, message: (e as any).response.data.message };
+    }
+  };
+
+  const loginGoogle = async (email: string) => {
+    try {
+      const result = await axios.post(`${apiUrl}/users/signingoogle`, {
+        email,
+      });
+
+      setAuthState({
+        token: result.data.token,
+        authenticated: true,
+      });
+
+      // Attach token to header
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${result.data.token}`;
+      return result;
+    } catch (e) {
+      return { error: true, message: (e as any).response.data.message };
+    }
+  };
+
+  const setAuthIn = () => {
+  
+    // update auth state
+    setAuthState({
+      ...authState,
+      authenticated: true,
+    });
+  };
+
+  const setAuthOut = () => {
+  
+    // update auth state
+    setAuthState({
+      ...authState,
+      authenticated: false,
+    });
+  };
+
+  const setToken = (token: string) => {
+  
+    // update token
+    setAuthState({
+      ...authState,
+      token: token,
+    });
+  };
+
   const value = {
     onRegister: register,
     onLogin: login,
     onLogout: logout,
+    setLogout: setAuthOut,
+    setLoggedIn: setAuthIn,
+    onLoginGoogle: loginGoogle,
+    onRegisterGoogle: registerGoogle,
+    setToken: setToken,
     authState,
   };
 

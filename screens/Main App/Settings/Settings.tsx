@@ -5,11 +5,11 @@ import { Button } from "react-native-paper";
 
 const Settings = () => {
   const { onLogout } = useAuth();
-  //<Button onPress={onLogout}> Logout</Button>
 
   return (
     <View style={styles.container}>
       <Text>Settings Page</Text>
+      <Button onPress={onLogout}> Logout</Button>
     </View>
   );
 };

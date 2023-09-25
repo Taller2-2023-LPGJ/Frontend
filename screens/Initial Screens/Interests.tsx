@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
-import { Navigation } from "../../navigation/types";
+import { Navigation } from "../../types/types";
 import { Button, Chip, Text } from "react-native-paper";
 
 type Props = {
@@ -25,7 +25,7 @@ const Interests = ({ navigation }: Props) => {
       alert("You must select at least 1 interest");
     } else {
       console.log("Selected categories: ", selectedCategories);
-      navigation.navigate("TabNavigator");
+      navigation.navigate("ChooseLocation");
     }
   }
 

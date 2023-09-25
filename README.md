@@ -21,9 +21,9 @@ Axios
 
 * npm install axios
 
-Expo-Secure-Store
+React-Native-DotEnv
 
-* npm install expo-secure-store
+* npm i react-native-dotenv
 
 
 Material design icons: https://pictogrammers.com/library/mdi/

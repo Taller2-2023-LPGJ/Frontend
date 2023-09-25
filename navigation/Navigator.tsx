@@ -8,6 +8,9 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { TabNavigator } from "../screens/Main App/TabNavigator";
 import { useAuth } from "../context/AuthContext";
 import Interests from "../screens/Initial Screens/Interests";
+import PinConfirmation from "../screens/Initial Screens/PinConfirmation";
+import ChangePassword from "../screens/Initial Screens/ChangePassword";
+import ChooseLocation from "../screens/Initial Screens/ChooseLocation";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -26,32 +29,51 @@ export default function AppNavigator() {
             component={TabNavigator}
           />
         ) : (
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="StartScreen"
-            component={StartScreen}
-          />
+          <>
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="StartScreen"
+              component={StartScreen}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Login"
+              component={Login}
+            />
+            
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Register"
+              component={Register}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="PinConfirmation"
+              component={PinConfirmation}
+            />
+            
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="ChangePassword"
+              component={ChangePassword}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="ForgotPassword"
+              component={ForgotPassword}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="ChooseLocation"
+              component={ChooseLocation}
+            />
+            <Stack.Screen
+              options={{ headerTitleAlign: "center", title: "" }}
+              name="Interests"
+              component={Interests}
+            />
+          </>
         )}
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="Login"
-          component={Login}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="Register"
-          component={Register}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="ForgotPassword"
-          component={ForgotPassword}
-        />
-        <Stack.Screen
-          options={{ headerTitleAlign: "center", title: "" }}
-          name="Interests"
-          component={Interests}
-        />
       </Stack.Navigator>
     </NavigationContainer>
   );
