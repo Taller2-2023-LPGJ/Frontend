@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Navigation } from "../../types/types";
 import { Button, Text, TextInput } from "react-native-paper";
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   navigation: Navigation;
@@ -9,15 +10,16 @@ type Props = {
 
 const ChooseLocation = ({ navigation }: Props) => {
   const [location, setLocation] = React.useState("");
+  const { setLoggedIn } = useAuth();
 
-  const handleGo = () => {
+  const handleGo = async () => {
     if (location.length === 0) {
       console.log("blank location...");
     } else {
       // axios post setLocation...
       console.log(`set user location as ${location}`);
     }
-
+    await setLoggedIn!();
     navigation.navigate("TabNavigator");
   };
 
@@ -26,8 +28,8 @@ const ChooseLocation = ({ navigation }: Props) => {
       <Text style={styles.text} variant="headlineMedium">
         Set your location
       </Text>
-      <Text style={{ marginLeft: 3.5 }} variant="bodyMedium">
-        Feel free to skip sharing your location if you'd like
+      <Text style={{ marginLeft: 0 }} variant="bodyMedium">
+      If you'd rather keep your location private, feel free to leave this field blank. 
       </Text>
 
       <View style={styles.inputContainer}>

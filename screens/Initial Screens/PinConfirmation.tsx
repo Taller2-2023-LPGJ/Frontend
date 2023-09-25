@@ -53,7 +53,6 @@ const PinConfirmation = ({ navigation }: Props) => {
 
   const handleVerify = async () => {
     let code = value;
-    console.log(`code length: ${code}`);
 
     if (code.length !== codeLenght) {
       alert("Incomplete code");
@@ -127,12 +126,22 @@ const PinConfirmation = ({ navigation }: Props) => {
           </Text>
         )}
       />
-      <Button
+
+      {passReset ? (
+        <Button
         style={{ width: width * 0.65, marginBottom: 30 }}
         onPress={() => handleResend()}
       >
         Resend Code
       </Button>
+      ) : null}
+      
+      {/* <Button
+        style={{ width: width * 0.65, marginBottom: 30 }}
+        onPress={() => handleResend()}
+      >
+        Resend Code
+      </Button> */}
 
       <Button
         style={{ width: width * 0.65, marginVertical: 10 }}
