@@ -71,8 +71,8 @@ export const AuthProvider = ({ children }: any) => {
 
       // Attach token to header
       axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${result.data.token}`;
+        "token"
+      ] = `${result.data.token}`;
 
       return result;
     } catch (e) {

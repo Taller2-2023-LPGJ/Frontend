@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {
   navigation: Navigation;
@@ -46,6 +47,7 @@ const Login = ({ navigation }: Props) => {
     if (result && result.error) {
       alert(result.message);
     } else {
+      await AsyncStorage.setItem('username', identifier);
       navigation.navigate("TabNavigator");
     }
   };
