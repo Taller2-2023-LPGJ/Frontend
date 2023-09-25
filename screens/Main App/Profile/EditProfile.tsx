@@ -1,25 +1,66 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Image, TextInput, Text } from "react-native";
 import { Button } from "react-native-paper";
 import axios, { AxiosResponse } from "axios";
 import { API_URL } from "@env";
+import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+
+
+
 
 const EditProfile = () => {
-  
+  const navigation = useNavigation()
   const [displayName, setDisplayName] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
   const [birthDate, setBirthDate] = React.useState("");
 
-  const tryEditProfile = async () => { 
+  useFocusEffect(
+    React.useCallback(() => {
+      getData()
+    }, [])
+  );
+
+  const getData = async () => { 
     const result = await AsyncStorage.getItem('username');
-    if (result !== null) {
+    if (result != null) {
       let api_result: AxiosResponse<any, any>
       try {
-          console.log(result) // API Edit profile
+        api_result = await axios.get(`${API_URL}/profile/${result}`);
+        setDisplayName(api_result.data.displayName)
+        setLocation(api_result.data.location)
+        setBio(api_result.data.biography)
+      } catch (e) {
+        alert((e as any).response.data.message)
+      }
+    }
+  }
+  useEffect(() => {
+    getData();
+  }, []);
+  
+
+  const tryEditProfile = async () => { 
+    if (displayName == "") {
+      alert("Can't leave your display name empty")
+    } else {
+      const result = await AsyncStorage.getItem('username');
+      if (result != null) {
+        let api_result: AxiosResponse<any, any>
+        try {
+          const body = {
+            "displayName": displayName,
+            "location": location,
+            "biography": bio,
+            "dateOfBirth": "2002-05-16"
+          }
+          api_result = await axios.put(`${API_URL}/profile`,body);
+          navigation.goBack()
         } catch (e) {
-          alert((e as any).response.data.message)
+            alert((e as any).response.data.message)
+        }
       }
     }
   }
