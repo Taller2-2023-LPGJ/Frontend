@@ -1,18 +1,28 @@
 import { API_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 import axios, { AxiosResponse } from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Searchbar } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface User {
   displayName: string;
   username: string;
 }
 
+
 const UserProfile: React.FC<{ user: User }> = ({ user }) => {
-  const handlePress = () => {
-    console.log("Opened " + user.username)
+  const navigation = useNavigation()
+
+
+  const handlePress = async () => {
+    let username = await AsyncStorage.getItem('username');
+    if (username == user.username){
+      navigation.navigate("Profile")
+    } else {
+      navigation.navigate("OtherProfile", {username: user.username})
+    }
   };
   return (
     <TouchableWithoutFeedback  onPress={handlePress} style={styles.buttonContainer}>
@@ -38,6 +48,7 @@ const UserProfile: React.FC<{ user: User }> = ({ user }) => {
 
 function SearchUser() {
   const navigation = useNavigation();
+
 
   React.useEffect(() =>
   navigation.addListener("beforeRemove", (e) => {
