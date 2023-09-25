@@ -139,11 +139,15 @@ const Register = ({ navigation }: Props) => {
     const result = await onRegister!(username, mail, pass);
 
     if (result && result.error) {
+
       alert(result.message);
+
     } else {
-      await setLogout!();
+
+      // await setLogout!(); 
+
       navigation.navigate("PinConfirmation", {
-        username: "test",
+        username: username,
         mode: "confirmReg",
       });
     }

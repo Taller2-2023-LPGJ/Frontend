@@ -16,7 +16,7 @@ const ChooseLocation = ({ navigation }: Props) => {
     if (location.length === 0) {
       console.log("blank location...");
     } else {
-      // axios post setLocation...
+      // axios update location...
       console.log(`set user location as ${location}`);
     }
     await setLoggedIn!();

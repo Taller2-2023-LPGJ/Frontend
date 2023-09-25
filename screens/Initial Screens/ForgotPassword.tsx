@@ -21,7 +21,7 @@ const ForgotPassword = ({ navigation }: Props) => {
       alert("Empty input fields");
     } else {
       try {
-        await axios.post(`${apiUrl}/recoverPassword`, {
+        await axios.post(`${apiUrl}/users/recoverPassword`, {
           username,
         });
         navigation.navigate("PinConfirmation", {
