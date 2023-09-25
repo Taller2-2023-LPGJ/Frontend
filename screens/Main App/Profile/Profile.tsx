@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, ScrollView, View, Image, Dimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { Navigation } from "../../../navigation/types";
+import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ProfileSnapMSGs from "./ProfileSnapMSGs";
 import ProfileLikes from "./ProfileLikes";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from "@env";
+import axios, { AxiosResponse } from "axios";
+
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -14,18 +18,39 @@ interface ProfileProps {
   navigation: Navigation;
 }
 
-const Profile = ({ navigation }: ProfileProps) => {
-  
-  const user = {
+const Profile = ({ navigation }: ProfileProps) => { 
+  const getData = async () => { 
+    const result = await AsyncStorage.getItem('username');
+    if (result !== null) {
+      setUser((prevData: any) => ({...prevData, username: result}))
+      
+      let api_result: AxiosResponse<any, any>
+
+      try {
+        api_result = await axios.get(`${API_URL}/profile/${user.username}`);
+        setUser((prevData: any) => ({...prevData, displayname: api_result.data.displayName, bio: api_result.data.biography}))
+      } catch (e) {
+        alert((e as any).response.data.message)
+      }
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const initialUser = {
     profilepic: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     displayname: "John Doe",
-    username: "@johndoe123",
+    username: "",
     location: "Buenos Aires",
     bio: "Software Developer",
     birthdate: "January 1, 2000",
     followers: 10,
     following: 6,
   };
+
+  const [user, setUser] = useState(initialUser);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -50,7 +75,7 @@ const Profile = ({ navigation }: ProfileProps) => {
       
       <View style={styles.userInfoContainer}>
         <Text style={styles.displayname}>{user.displayname}</Text>
-        <Text style={styles.bio}>{user.username}</Text>
+        <Text style={styles.bio}>{"@"}{user.username}</Text>
         <Text style={styles.bio}>{user.bio}</Text>
         <Text>
           <Text style={styles.bio}>{user.location}</Text>{", "}
@@ -128,3 +153,6 @@ const styles = StyleSheet.create({
 });
 
 export default Profile;
+
+
+

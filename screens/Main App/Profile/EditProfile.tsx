@@ -1,6 +1,9 @@
 import React from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Image, TextInput, Text } from "react-native";
 import { Button } from "react-native-paper";
+import axios, { AxiosResponse } from "axios";
+import { API_URL } from "@env";
 
 const EditProfile = () => {
   
@@ -8,6 +11,18 @@ const EditProfile = () => {
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
   const [birthDate, setBirthDate] = React.useState("");
+
+  const tryEditProfile = async () => { 
+    const result = await AsyncStorage.getItem('username');
+    if (result !== null) {
+      let api_result: AxiosResponse<any, any>
+      try {
+          console.log(result) // API Edit profile
+        } catch (e) {
+          alert((e as any).response.data.message)
+      }
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -84,7 +99,7 @@ const EditProfile = () => {
             style={styles.removeButton}
             mode="outlined"
             onPress={() => {
-              // Handle
+              tryEditProfile()
             }}
           >
             Save
