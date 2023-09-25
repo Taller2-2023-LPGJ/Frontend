@@ -1,31 +1,39 @@
-import { Dimensions, StyleSheet, View } from 'react-native'
-import React from 'react'
-import { Navigation } from '../../navigation/types';
-import { TextInput,Text, Button } from 'react-native-paper';
-import Logo from '../../components/Logo';
+import { Dimensions, StyleSheet, View } from "react-native";
+import React from "react";
+import { Navigation } from "../../types/types";
+import { TextInput, Text, Button } from "react-native-paper";
+import Logo from "../../components/Logo";
+import { API_URL } from "@env";
+import axios from "axios";
 
 type Props = {
   navigation: Navigation;
 };
 
+const apiUrl = API_URL;
 const { width } = Dimensions.get("window");
 
 const ForgotPassword = ({ navigation }: Props) => {
+  const [username, setUsername] = React.useState("");
 
-  const [mail, setMail] = React.useState("");
-
-  function handleForgotPassword() {
-    
-    if (mail === "") {
+  const handleForgotPassword = async () => {
+    if (username === "") {
       alert("Empty input fields");
     } else {
-      // password reset request
-      console.log(`sending password reset instructions to: ${mail}`);
-      navigation.navigate("StartScreen");
+      try {
+        await axios.post(`${apiUrl}/users/recoverPassword`, {
+          username,
+        });
+        navigation.navigate("PinConfirmation", {
+          username: username,
+          mode: "resetPass",
+        });
+      } catch (e) {
+        alert((e as any).response.data.message);
+      }
     }
+  };
 
-  }
-  
   return (
     <View style={styles.container}>
       <Logo />
@@ -35,13 +43,12 @@ const ForgotPassword = ({ navigation }: Props) => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          label="Email"
-          value={mail}
+          label="Username"
+          value={username}
           mode="outlined"
           style={{ marginBottom: 10 }}
-          onChangeText={(mail) => setMail(mail)}
+          onChangeText={(username) => setUsername(username)}
         />
-        
       </View>
 
       <Button
@@ -49,9 +56,8 @@ const ForgotPassword = ({ navigation }: Props) => {
         mode="contained"
         onPress={() => handleForgotPassword()}
       >
-        SEND INSTRUCTIONS
+        Send Instructions
       </Button>
-
     </View>
   );
 };
@@ -66,7 +72,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginBottom: 10,
-    fontSize:width*0.05
+    fontSize: width * 0.05,
   },
   inputContainer: {
     marginVertical: 10,

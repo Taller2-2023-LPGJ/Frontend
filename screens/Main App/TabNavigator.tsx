@@ -1,9 +1,9 @@
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import Feed from "./Feed";
-import Search from "./Search";
-import Profile from "./Profile";
-import Settings from "./Settings";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import ProfileStackScreen from "./Profile/ProfileStackScreen";
+import FeedStackScreen from "./Feed/FeedStackScreen";
+import SearchStackScreen from "./Search/SearchStackScreen";
+import SettingsStackScreen from "./Settings/SettingsStackScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -23,7 +23,7 @@ export function TabNavigator() {
           },
         }}
         name="Feed"
-        component={Feed}
+        component={FeedStackScreen}
       />
       <Tab.Screen
         options={{
@@ -38,7 +38,7 @@ export function TabNavigator() {
           },
         }}
         name="Search"
-        component={Search}
+        component={SearchStackScreen}
       />
       <Tab.Screen
         options={{
@@ -55,7 +55,7 @@ export function TabNavigator() {
           },
         }}
         name="Profile"
-        component={Profile}
+        component={ProfileStackScreen}
       />
       <Tab.Screen
         options={{
@@ -70,7 +70,7 @@ export function TabNavigator() {
           },
         }}
         name="Settings"
-        component={Settings}
+        component={SettingsStackScreen}
       />
     </Tab.Navigator>
   );
