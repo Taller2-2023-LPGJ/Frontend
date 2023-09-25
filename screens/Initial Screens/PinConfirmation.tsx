@@ -13,7 +13,7 @@ import {
 import Logo from "../../components/Logo";
 import { Button } from "react-native-paper";
 import { Navigation } from "../../types/types";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const CELL_COUNT = 6;
 const { width } = Dimensions.get("window");
@@ -42,6 +42,15 @@ const PinConfirmation = ({ navigation }: Props) => {
   if (mode !== "resetPass") {
     screenTitle = "Authentication";
     passReset = false;
+  }
+
+  if (!passReset) {
+    const navigation2 = useNavigation();
+    React.useEffect(() =>
+      navigation2.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+      })
+    );
   }
 
   const [value, setValue] = useState("");
@@ -77,7 +86,6 @@ const PinConfirmation = ({ navigation }: Props) => {
         navigation.navigate("Interests", {
           username: username,
         });
-        
       } catch (e) {
         alert((e as any).response.data.message);
         return;

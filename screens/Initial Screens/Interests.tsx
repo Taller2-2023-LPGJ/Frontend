@@ -2,7 +2,7 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Navigation } from "../../types/types";
 import { Button, Chip, Text } from "react-native-paper";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 type Props = {
   navigation: Navigation;
@@ -23,6 +23,12 @@ const Interests = ({ navigation }: Props) => {
   const route = useRoute<RouteParams>();
   const data = route.params;
   const username = data.username;
+
+  const navigation2 = useNavigation();
+    React.useEffect(() =>
+      navigation2.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+      }));
 
   const handleSelect = (val: string) => {
     setSelectedCategories((prev: string[]) =>

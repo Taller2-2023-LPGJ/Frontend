@@ -5,7 +5,7 @@ import { Button, Text, TextInput } from "react-native-paper";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { API_URL } from "@env";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 type Props = {
   navigation: Navigation;
@@ -29,6 +29,12 @@ const ChooseLocation = ({ navigation }: Props) => {
   const data = route.params;
   const username = data.username;
 
+  const navigation2 = useNavigation();
+    React.useEffect(() =>
+      navigation2.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+      }));
+
   const handleGo = async () => {
     if (location.length === 0) {
       console.log("Blank location...");
@@ -37,7 +43,7 @@ const ChooseLocation = ({ navigation }: Props) => {
         alert("Location must be under 50 characters long");
       } else {
         // Update user location
-        console.log(username)
+        //console.log(username)
         try {
           const body = {
             username: username,
