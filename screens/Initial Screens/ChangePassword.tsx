@@ -37,7 +37,7 @@ const ChangePassword = ({ navigation }: Props) => {
     }
 
     try {
-      await axios.post(`${apiUrl}/setPassword`, {
+      await axios.post(`${apiUrl}/users/setPassword`, {
         username,
         code,
         password,

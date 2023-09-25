@@ -59,14 +59,28 @@ const PinConfirmation = ({ navigation }: Props) => {
       return;
     }
 
-    let fullUrl = `${apiUrl}/verifyCodeRecoverPassword`;
+    let fullUrl = `${apiUrl}/users/verifyCodeRecoverPassword`;
     if (!passReset) {
-      fullUrl = `${apiUrl}/2fa`;
+      fullUrl = `${apiUrl}/users/signupconfirm`; // TODO
       //post 2fa request
-      console.log(`2FA log attempt `);
-      /*
-      try catch...
-      */
+      try {
+        const result = await axios.post(fullUrl, {
+          username,
+          code,
+        });
+
+        // set token: result.data.token,
+        // set axios header:
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${result.data.token}`;
+
+        // estoy en modo offline ya.
+        navigation.navigate("Interests");
+      } catch (e) {
+        alert((e as any).response.data.message);
+      }
+
       navigation.navigate("Interests");
     } else {
       // Request for password reset
@@ -88,7 +102,7 @@ const PinConfirmation = ({ navigation }: Props) => {
 
   const handleResend = async () => {
     try {
-      await axios.post(`${apiUrl}/recoverPassword`, {
+      await axios.post(`${apiUrl}/users/recoverPassword`, {
         username,
       });
       alert("Email sent. Check your inbox");
@@ -129,13 +143,13 @@ const PinConfirmation = ({ navigation }: Props) => {
 
       {passReset ? (
         <Button
-        style={{ width: width * 0.65, marginBottom: 30 }}
-        onPress={() => handleResend()}
-      >
-        Resend Code
-      </Button>
+          style={{ width: width * 0.65, marginBottom: 30 }}
+          onPress={() => handleResend()}
+        >
+          Resend Code
+        </Button>
       ) : null}
-      
+
       {/* <Button
         style={{ width: width * 0.65, marginBottom: 30 }}
         onPress={() => handleResend()}

@@ -42,22 +42,14 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string
   ) => {
+
+    console.log(`${apiUrl}/users/signup`)
     try {
-      const result = await axios.post(`${apiUrl}/signup`, {
+      const result = await axios.post(`${apiUrl}/users/signup`, {
         username,
         email,
         password,
       });
-
-      setAuthState({
-        token: result.data.token,
-        authenticated: true,
-      });
-
-      // Attach token to header
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${result.data.token}`;
 
       return result;
     } catch (e) {
@@ -67,7 +59,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const login = async (userIdentifier: string, password: string) => {
     try {
-      const result = await axios.post(`${apiUrl}/signin`, {
+      const result = await axios.post(`${apiUrl}/users/signin`, {
         userIdentifier,
         password,
       });
@@ -105,7 +97,7 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
   ) => {
     try {
-      const result = await axios.post(`${apiUrl}/signupgoogle`, {
+      const result = await axios.post(`${apiUrl}/users/signupgoogle`, {
         name,
         email,
       });
@@ -128,7 +120,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const loginGoogle = async (email: string) => {
     try {
-      const result = await axios.post(`${apiUrl}/signingoogle`, {
+      const result = await axios.post(`${apiUrl}/users/signingoogle`, {
         email,
       });
 
