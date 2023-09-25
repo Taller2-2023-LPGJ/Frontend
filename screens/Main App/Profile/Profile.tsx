@@ -13,7 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
-const edge_rounding = 25
+const edgeRounding = 25
 
 interface ProfileProps {
   navigation: Navigation;
@@ -96,7 +96,7 @@ const Profile = ({ navigation }: ProfileProps) => {
         screenOptions={{
           tabBarIndicatorStyle:{backgroundColor:"#739998", height:5},
           tabBarLabelStyle: { fontSize: 15, textTransform: "none"},
-          tabBarStyle: { backgroundColor: "#cfcfcf", borderTopLeftRadius: edge_rounding, borderTopRightRadius: edge_rounding },
+          tabBarStyle: { backgroundColor: "#cfcfcf", borderTopLeftRadius: edgeRounding, borderTopRightRadius: edgeRounding },
         }}
         >
           <Tab.Screen name="SnapMSGs" component={ProfileSnapMSGs} />
@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tweetsContainer: {
-    borderTopLeftRadius: edge_rounding,
-    borderTopRightRadius: edge_rounding,
+    borderTopLeftRadius: edgeRounding,
+    borderTopRightRadius: edgeRounding,
     height: height - 165,
     width: "90%",
     backgroundColor: "#ccc",
