@@ -1,21 +1,19 @@
+import { API_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
+import axios, { AxiosResponse } from 'axios';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Searchbar } from 'react-native-paper';
 
 interface User {
-  displayname: string;
+  displayName: string;
   username: string;
-  bio: string;
 }
 
-
 const UserProfile: React.FC<{ user: User }> = ({ user }) => {
-
   const handlePress = () => {
-    console.log("Opened " + user.username + "'s profile")
+    console.log("Opened " + user.username)
   };
-
   return (
     <TouchableWithoutFeedback  onPress={handlePress} style={styles.buttonContainer}>
       <View style={styles.userProfileContainer}>
@@ -28,14 +26,12 @@ const UserProfile: React.FC<{ user: User }> = ({ user }) => {
       />
       <View>
         <View style={styles.namesContainer}>
-          <Text style={styles.displayname}>{user.displayname} </Text>
-          <Text style={styles.username}>{user.username} </Text>
+          <Text style={styles.displayname}>{user.displayName} </Text>
+          <Text style={styles.username}>{"@"}{user.username} </Text>
         </View>
-        <Text>{user.bio} </Text>
       </View>
       </View>
     </TouchableWithoutFeedback >
-    
   )
 }
 
@@ -49,24 +45,23 @@ function SearchUser() {
   })
   );
 
-  const initialUsers = [
-    {
-      displayname: "John Doe",
-      username: "@johndoe123",
-      bio: "Software Developer",
-    },
-    {
-      displayname: "Jane Doe",
-      username: "@sdas123",
-      bio: "Ssaddasr",
-    },
-  ];
+  const [users, setUsers] = useState([]);
 
-  const [users, setUsers] = useState(initialUsers);
+  const getUsers = async () => {
+    let api_result: AxiosResponse<any, any>
+
+      try {
+        api_result = await axios.get(`${API_URL}/profile?username=${searchQuery}`);
+        setUsers(api_result.data)
+      } catch (e) {
+        alert((e as any).response.data.message)
+      }
+  }
+
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
-  const onSubmitEditing = (_: any) => setUsers(initialUsers)
+  const onSubmitEditing = (_: any) => getUsers()
 
   const [isPressEnabled, setIsPressEnabled] = useState(true);
   const handleScrollBegin = () => {
@@ -89,6 +84,9 @@ function SearchUser() {
       placeholder="Search"
       onChangeText={onChangeSearch}
       onSubmitEditing={onSubmitEditing}
+      onClearIconPress={() => {
+        setUsers([])
+      }}
       value={searchQuery} />
       {users.map((user, index) => (
         <UserProfile key={index} user={user} />
@@ -120,14 +118,14 @@ const styles = StyleSheet.create({
       marginRight: 15
     },
     displayname: {
-      fontSize: 15,
+      fontSize: 18,
       fontWeight: "bold",
     },
     username: {
       fontSize: 15,
     },
     namesContainer:{
-      flexDirection:"row"
+      flexDirection:"column",
     },
     buttonContainer:{
       width: "100%",

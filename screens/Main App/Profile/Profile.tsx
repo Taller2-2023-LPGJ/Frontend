@@ -21,14 +21,11 @@ interface ProfileProps {
 const Profile = ({ navigation }: ProfileProps) => { 
   const getData = async () => { 
     const result = await AsyncStorage.getItem('username');
-    if (result !== null) {
-      setUser((prevData: any) => ({...prevData, username: result}))
-      
+    if (result != null) {
       let api_result: AxiosResponse<any, any>
-
       try {
-        api_result = await axios.get(`${API_URL}/profile/${user.username}`);
-        setUser((prevData: any) => ({...prevData, displayname: api_result.data.displayName, bio: api_result.data.biography}))
+        api_result = await axios.get(`${API_URL}/profile/${result}`);
+        setUser((prevData: any) => ({...prevData, username: result, displayname: api_result.data.displayName, bio: api_result.data.biography}))
       } catch (e) {
         alert((e as any).response.data.message)
       }
