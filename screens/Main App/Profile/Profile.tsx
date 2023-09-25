@@ -8,6 +8,7 @@ import ProfileLikes from "./ProfileLikes";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from "@env";
 import axios, { AxiosResponse } from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -19,22 +20,23 @@ interface ProfileProps {
 }
 
 const Profile = ({ navigation }: ProfileProps) => { 
+  useFocusEffect(
+    React.useCallback(() => {
+      getData()
+    }, [])
+  );
   const getData = async () => { 
     const result = await AsyncStorage.getItem('username');
-    if (result !== null) {
-      setUser((prevData: any) => ({...prevData, username: result}))
-      
+    if (result != null) {
       let api_result: AxiosResponse<any, any>
-
       try {
-        api_result = await axios.get(`${API_URL}/profile/${user.username}`);
-        setUser((prevData: any) => ({...prevData, displayname: api_result.data.displayName, bio: api_result.data.biography}))
+        api_result = await axios.get(`${API_URL}/profile/${result}`);
+        setUser((prevData: any) => ({...prevData,username: result, location: api_result.data.location, displayname: api_result.data.displayName, bio: api_result.data.biography}))
       } catch (e) {
         alert((e as any).response.data.message)
       }
     }
   }
-
   useEffect(() => {
     getData();
   }, []);
