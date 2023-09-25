@@ -2,15 +2,27 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Navigation } from "../../types/types";
 import { Button, Chip, Text } from "react-native-paper";
+import { useRoute } from "@react-navigation/native";
 
 type Props = {
   navigation: Navigation;
+};
+
+type RouteParams = {
+  params: any;
+  key: string;
+  name: string;
+  path?: string | undefined;
 };
 
 const categories = ["Politics", "Technology", "Music", "Travel", "Business"];
 
 const Interests = ({ navigation }: Props) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const route = useRoute<RouteParams>();
+  const data = route.params;
+  const username = data.username;
 
   const handleSelect = (val: string) => {
     setSelectedCategories((prev: string[]) =>
@@ -25,7 +37,9 @@ const Interests = ({ navigation }: Props) => {
       alert("You must select at least 1 interest");
     } else {
       console.log("Selected categories: ", selectedCategories);
-      navigation.navigate("ChooseLocation");
+      navigation.navigate("ChooseLocation", {
+        username: username,
+      });
     }
   }
 

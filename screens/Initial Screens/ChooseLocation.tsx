@@ -3,22 +3,56 @@ import React, { useState } from "react";
 import { Navigation } from "../../types/types";
 import { Button, Text, TextInput } from "react-native-paper";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
+import { API_URL } from "@env";
+import { useRoute } from "@react-navigation/native";
 
 type Props = {
   navigation: Navigation;
 };
 
+type RouteParams = {
+  params: any;
+  key: string;
+  name: string;
+  path?: string | undefined;
+};
+
+const default_bio = "Welcome to my profile!";
+
 const ChooseLocation = ({ navigation }: Props) => {
+
   const [location, setLocation] = React.useState("");
   const { setLoggedIn } = useAuth();
 
+  const route = useRoute<RouteParams>();
+  const data = route.params;
+  const username = data.username;
+
   const handleGo = async () => {
     if (location.length === 0) {
-      console.log("blank location...");
+      console.log("Blank location...");
     } else {
-      // axios update location...
-      console.log(`set user location as ${location}`);
+      if (location.length > 49) {
+        alert("Location must be under 50 characters long");
+      } else {
+        // Update user location
+        console.log(username)
+        try {
+          const body = {
+            username: username,
+            displayName: username,
+            location: location,
+            biography: default_bio,
+          };
+
+          await axios.put(`${API_URL}/profile`, body);
+        } catch (e) {
+          alert((e as any).response.data.message);
+        }
+      }
     }
+
     await setLoggedIn!();
     navigation.navigate("TabNavigator");
   };
@@ -29,7 +63,8 @@ const ChooseLocation = ({ navigation }: Props) => {
         Set your location
       </Text>
       <Text style={{ marginLeft: 0 }} variant="bodyMedium">
-      If you'd rather keep your location private, feel free to leave this field blank. 
+        If you'd rather keep your location private, feel free to leave this
+        field blank.
       </Text>
 
       <View style={styles.inputContainer}>
