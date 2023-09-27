@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string
   ) => {
-    //console.log(`${apiUrl}/users/signup`);
+    
     try {
       const result = await axios.post(`${apiUrl}/users/signup`, {
         username,
@@ -78,6 +79,9 @@ export const AuthProvider = ({ children }: any) => {
     // reset axios header
     axios.defaults.headers.common["token"] = "";
 
+    // remove stored username
+    await AsyncStorage.removeItem('username');
+
     // reset auth state
     setAuthState({
       token: null,
@@ -94,7 +98,7 @@ export const AuthProvider = ({ children }: any) => {
 
       setAuthState({
         token: result.data.token,
-        authenticated: true,
+        authenticated: false,
       });
 
       // Attach token to header

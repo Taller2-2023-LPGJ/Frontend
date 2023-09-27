@@ -7,11 +7,16 @@ import { useAuth } from "../../context/AuthContext";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { API_URL } from "@env";
 
 type Props = {
   navigation: Navigation;
 };
+
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,14 +35,9 @@ const Login = ({ navigation }: Props) => {
     webClientId:
       "463820808275-1e2fcu04hn09dvcn8aujhl1op5hlhbep.apps.googleusercontent.com",
   });
-  
+
   const login = async () => {
-
-
-    if (
-      identifier === "" ||
-      pass === ""
-    ) {
+    if (identifier === "" || pass === "") {
       Alert.alert("Error", "Empty input fields.");
       return false;
     }
@@ -47,7 +47,23 @@ const Login = ({ navigation }: Props) => {
     if (result && result.error) {
       alert(result.message);
     } else {
-      await AsyncStorage.setItem('username', identifier);
+      if (identifier.includes("@")) {
+        try {
+          const response = await axios.get(
+            `${USERS_SEARCH_URL}${identifier}`,
+            {}
+          );
+          const username = response.data.name;
+          await AsyncStorage.setItem("username", username);
+          //console.log(`stored username: ${username}`);
+        } catch (e) {
+          //await AsyncStorage.setItem("username", username); store error user "x"
+          //console.log((e as any).response.data.message);
+        }
+      } else {
+        await AsyncStorage.setItem("username", identifier);
+      }
+
       navigation.navigate("TabNavigator");
     }
   };
@@ -57,46 +73,51 @@ const Login = ({ navigation }: Props) => {
   }, [response]);
 
   async function handleEffect() {
-    
-  
     if (response?.type === "success" && response.authentication) {
-      
-      await getUserInfo(response.authentication.accessToken); 
+      await getUserInfo(response.authentication.accessToken);
     } else {
       return;
     }
 
-  
     let email = null;
     if (userInfo) {
-      
       email = (userInfo as any).email;
     } else {
-      alert("Failed to fetch from Google. Please try again.")
+      alert("Failed to fetch from Google. Please try again.");
       return;
     }
     let result = null;
     if (email) {
-     
       result = await onLoginGoogle!((userInfo as any).email);
     } else {
-      alert("Failed to fetch from Google. Please try again.")
+      alert("Failed to fetch from Google. Please try again.");
       return;
     }
 
-   
     if (result && result.error) {
       alert(result.message);
     } else {
+
+      try {
+        const response = await axios.get(
+          `${USERS_SEARCH_URL}${identifier}`,
+          {}
+        );
+        const username = response.data.name;
+        await AsyncStorage.setItem("username", username);
+        //console.log(`stored username: ${username}`);
+      } catch (e) {
+        await AsyncStorage.setItem("username", "-1");
+        //console.log((e as any).response.data.message);
+      }
+
       navigation.navigate("TabNavigator");
     }
   }
 
   const getUserInfo = async (token: string) => {
-   
     if (!token) return;
     try {
-      
       const response = await fetch(
         "https://www.googleapis.com/userinfo/v2/me",
         {
@@ -104,21 +125,18 @@ const Login = ({ navigation }: Props) => {
         }
       );
 
-      
       const user = await response.json();
-     
+
       //await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserInfo(user);
     } catch (error) {
-      
-
       // handle error
     }
   };
 
   const handleGoogleSignIn = async () => {
     await promptAsync();
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -129,7 +147,7 @@ const Login = ({ navigation }: Props) => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          label="Username"
+          label="Username or email"
           value={identifier}
           mode="outlined"
           style={{ marginBottom: 10 }}

@@ -8,10 +8,14 @@ import { useAuth } from "../../context/AuthContext";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 type Props = {
   navigation: Navigation;
 };
+
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -70,22 +74,36 @@ const Register = ({ navigation }: Props) => {
     if (userInfo) {
       email = (userInfo as any).email;
       name = (userInfo as any).name;
-      alert("Failed to fetch from Google. Please try again.")
     } else {
+      alert("Failed to fetch from Google. Please try again.");
       return;
     }
     let result = null;
-    if (email) {
+    if (email && name) {
       result = await onRegisterGoogle!(name, email);
     } else {
-      alert("Failed to fetch from Google. Please try again.")
+      alert("Failed to fetch from Google. Please try again.");
       return;
     }
 
     if (result && result.error) {
       alert(result.message);
     } else {
-      navigation.navigate("TabNavigator");
+      try {
+        const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
+        const username = response.data.name;
+        await AsyncStorage.setItem("username", username);
+        //console.log(`stored username: ${username}`);
+        navigation.navigate("Interests", {
+          username: username,
+        });
+      } catch (e) {
+        //console.log((e as any).response.data.message);
+        let fixedName = name.replace(" ", "_");
+        navigation.navigate("Interests", {
+          username: fixedName,
+        });
+      }
     }
   }
 
@@ -142,13 +160,9 @@ const Register = ({ navigation }: Props) => {
     const result = await onRegister!(username, mail, pass);
 
     if (result && result.error) {
-
       alert(result.message);
-
     } else {
-
-      // await setLogout!(); 
-      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem("username", username);
       navigation.navigate("PinConfirmation", {
         username: username,
         mode: "confirmReg",
@@ -158,7 +172,7 @@ const Register = ({ navigation }: Props) => {
 
   const handleGoogleRegister = async () => {
     await promptAsync();
-  }
+  };
 
   return (
     <View style={styles.container}>
