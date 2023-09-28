@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: any) => {
 
       return result;
     } catch (e) {
-      return { error: true, message: (e as any).response.data.message };
+      return { error: true};
     }
   };
 
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: any) => {
       axios.defaults.headers.common["token"] = `${result.data.token}`;
       return result;
     } catch (e) {
-      return { error: true, message: (e as any).response.data.message };
+      return {error: true};
     }
   };
 

@@ -17,6 +17,8 @@ type Props = {
 const USERS_SEARCH_URL =
   "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
 
+const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
+
 WebBrowser.maybeCompleteAuthSession();
 
 const { width } = Dimensions.get("window");
@@ -31,8 +33,6 @@ const Register = ({ navigation }: Props) => {
 
   const { onRegister, setLogout, onRegisterGoogle } = useAuth();
 
-  const [userInfo, setUserInfo] = React.useState(null);
-
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
       "463820808275-497078tjprmogvgrjb35apbp172eemnu.apps.googleusercontent.com",
@@ -41,20 +41,24 @@ const Register = ({ navigation }: Props) => {
   });
 
   const getUserInfo = async (token: string) => {
+
     if (!token) return;
     try {
-      const response = await fetch(
+      const response = await axios.get(
         "https://www.googleapis.com/userinfo/v2/me",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      const user = await response.json();
-      //await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserInfo(user);
+      const userInfo = await response.data;
+      return userInfo;
+
     } catch (error) {
-      // alert error
+      alert(GOOGLE_ERR_MSG);
+      return null;
     }
   };
 
@@ -63,8 +67,9 @@ const Register = ({ navigation }: Props) => {
   }, [response]);
 
   async function handleEffect() {
+    let userInfo = null;
     if (response?.type === "success" && response.authentication) {
-      getUserInfo(response.authentication.accessToken);
+      userInfo = await getUserInfo(response.authentication.accessToken);
     } else {
       return;
     }
@@ -75,35 +80,23 @@ const Register = ({ navigation }: Props) => {
       email = (userInfo as any).email;
       name = (userInfo as any).name;
     } else {
-      alert("Failed to fetch from Google. Please try again.");
+      alert(GOOGLE_ERR_MSG);
       return;
     }
     let result = null;
     if (email && name) {
       result = await onRegisterGoogle!(name, email);
     } else {
-      alert("Failed to fetch from Google. Please try again.");
+      alert(GOOGLE_ERR_MSG);
       return;
     }
 
     if (result && result.error) {
-      alert(result.message);
+      alert(GOOGLE_ERR_MSG);
     } else {
-      try {
-        const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
-        const username = response.data.name;
-        await AsyncStorage.setItem("username", username);
-        //console.log(`stored username: ${username}`);
-        navigation.navigate("Interests", {
-          username: username,
-        });
-      } catch (e) {
-        //console.log((e as any).response.data.message);
-        let fixedName = name.replace(" ", "_");
-        navigation.navigate("Interests", {
-          username: fixedName,
-        });
-      }
+      navigation.navigate("Interests", {
+        username: email,
+      });
     }
   }
 

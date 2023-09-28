@@ -15,8 +15,7 @@ type Props = {
   navigation: Navigation;
 };
 
-const USERS_SEARCH_URL =
-  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
+const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -26,8 +25,6 @@ const Login = ({ navigation }: Props) => {
   const [identifier, setIdentifier] = React.useState("");
   const [pass, setPass] = React.useState("");
   const { onLogin, onLoginGoogle } = useAuth();
-
-  const [userInfo, setUserInfo] = useState(null);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -47,23 +44,7 @@ const Login = ({ navigation }: Props) => {
     if (result && result.error) {
       alert(result.message);
     } else {
-      if (identifier.includes("@")) {
-        try {
-          const response = await axios.get(
-            `${USERS_SEARCH_URL}${identifier}`,
-            {}
-          );
-          const username = response.data.name;
-          await AsyncStorage.setItem("username", username);
-          //console.log(`stored username: ${username}`);
-        } catch (e) {
-          //await AsyncStorage.setItem("username", username); store error user "x"
-          //console.log((e as any).response.data.message);
-        }
-      } else {
-        await AsyncStorage.setItem("username", identifier);
-      }
-
+      await AsyncStorage.setItem("username", identifier);
       navigation.navigate("TabNavigator");
     }
   };
@@ -73,69 +54,60 @@ const Login = ({ navigation }: Props) => {
   }, [response]);
 
   async function handleEffect() {
+
+    let userInfo = null;
     if (response?.type === "success" && response.authentication) {
-      await getUserInfo(response.authentication.accessToken);
+      userInfo = await getUserInfo(response.authentication.accessToken);
     } else {
       return;
     }
-
     let email = null;
-    if (userInfo) {
+    if (userInfo !== null) {
       email = (userInfo as any).email;
     } else {
-      alert("Failed to fetch from Google. Please try again.");
+      alert(GOOGLE_ERR_MSG);
       return;
     }
     let result = null;
     if (email) {
       result = await onLoginGoogle!((userInfo as any).email);
     } else {
-      alert("Failed to fetch from Google. Please try again.");
+      alert(GOOGLE_ERR_MSG);
       return;
     }
 
     if (result && result.error) {
-      alert(result.message);
+      alert(GOOGLE_ERR_MSG);
     } else {
-
-      try {
-        const response = await axios.get(
-          `${USERS_SEARCH_URL}${identifier}`,
-          {}
-        );
-        const username = response.data.name;
-        await AsyncStorage.setItem("username", username);
-        //console.log(`stored username: ${username}`);
-      } catch (e) {
-        await AsyncStorage.setItem("username", "-1");
-        //console.log((e as any).response.data.message);
-      }
-
+      await AsyncStorage.setItem("username", email);
       navigation.navigate("TabNavigator");
     }
   }
 
   const getUserInfo = async (token: string) => {
+
     if (!token) return;
     try {
-      const response = await fetch(
+      const response = await axios.get(
         "https://www.googleapis.com/userinfo/v2/me",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      const user = await response.json();
+      const userInfo = await response.data;
+      return userInfo;
 
-      //await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserInfo(user);
     } catch (error) {
-      // handle error
+      alert(GOOGLE_ERR_MSG);
+      return null;
     }
   };
 
   const handleGoogleSignIn = async () => {
-    await promptAsync();
+    promptAsync();
   };
 
   return (
