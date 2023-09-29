@@ -1,4 +1,4 @@
-import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -14,25 +14,35 @@ const SnapMSG = () => {
     }
 
     const sharePost = () => {
-        console.log("Pressed share");
-        isShared ? setisShared(false) : setisShared(true);
+      console.log("Pressed share");
+      isShared ? setisShared(false) : setisShared(true);
     }
 
     const replyToPost = () => {
-        console.log("Pressed reply");
+      console.log("Pressed reply");
+    }
+
+    const openSnapMSG = () => {
+      console.log("Opened SnapMSG")
+    }
+
+    const openProfile = () => {
+      console.log("Opened profile")
     }
 
     return (
         <>
-        <View style={styles.snapMSGContainer}>
+        <TouchableOpacity style={styles.snapMSGContainer} onPress={openSnapMSG}>
             <View style={styles.row}>
                 <View style={{flexDirection: 'row', width: 200}}>
-                    <Image
-                        source={{
-                        uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-                        }}
-                        style={styles.profileImage}
-                    />
+                  <TouchableOpacity onPress={openProfile}>
+                      <Image
+                          source={{
+                          uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                          }}
+                          style={styles.profileImage}
+                      />
+                    </TouchableOpacity>
                     <Text style={{marginLeft:10, fontSize:15, fontWeight: "bold"}}>DisplayName</Text>
                     <Text style={{marginLeft:5, fontSize:15}}>@username</Text>
                 </View>
@@ -44,19 +54,19 @@ const SnapMSG = () => {
             </View>
 
             <View style={[styles.row, styles.centeredRow]}>
-                <Icon size={20} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={() => {likePost()}}/>
+                <Icon size={20} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
                 <Text style={{marginHorizontal:3}}>0</Text>
                 
                 
                 <View style={{width:"50%", flexDirection: 'row', justifyContent:"center"}}>
-                    <Icon size={20} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={() => {sharePost()}}/>
+                    <Icon size={20} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
                     <Text style={{marginHorizontal:3}}>0</Text>
                 </View>
 
-                <Icon size={20} name={"message-outline"} onPress={() => {replyToPost()}}/>
+                <Icon size={20} name={"message-outline"} onPress={replyToPost}/>
                 <Text style={{marginHorizontal:3}}>0</Text>
             </View>
-        </View>
+        </TouchableOpacity>
         <View style={styles.separatorBar}></View>
         </>
     )
@@ -73,7 +83,7 @@ const FeedTemplate = () => {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.containerContent} style={styles.container}>
+    <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true}>
         <SnapMSG></SnapMSG>
         <SnapMSG></SnapMSG>
         <SnapMSG></SnapMSG>
@@ -115,9 +125,9 @@ const styles = StyleSheet.create({
     paddingTop: 10
   },
   row: {
-    flexDirection: 'row', // Arrange items horizontally
-    justifyContent: 'space-between', // Space between items in the row
-    marginBottom: 10, // Margin between rows
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    marginBottom: 10,
   },
   snapMSGText: {
     flex: 1, // Expand to take available space

@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import FeedTemplate from '../Feed/FeedTemplate';
 
 function ProfileSnapMSGs() {
   return (
-    <View
-    style={styles.container}
-    >
-      <Text>Profile SnapMSGs</Text>
-    </View>
+    <ScrollView nestedScrollEnabled={true}>
+      <FeedTemplate></FeedTemplate>
+    </ScrollView>
   );
 }
 

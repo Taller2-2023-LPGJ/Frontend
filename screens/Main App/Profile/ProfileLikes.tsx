@@ -1,13 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 function ProfileLikes() {
   return (
-    <View
-    style={styles.container}
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <Text>Profile Likes</Text>
-    </View>
+    </ScrollView>
   );
 }
 
