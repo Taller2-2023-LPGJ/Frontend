@@ -11,10 +11,7 @@ import { Searchbar } from 'react-native-paper';
 const Tab = createMaterialTopTabNavigator();
 
 const Search = () => {
-  const navigation = useNavigation();
-
   
-
   return (
     <>
       <Tab.Navigator
