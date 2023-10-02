@@ -130,6 +130,23 @@ const Profile = ({ navigation }: ProfileProps) => {
             </Text>
           </View>
 
+          <View style={styles.tweetsContainer}>
+            <Tab.Navigator
+              screenOptions={{
+                tabBarIndicatorStyle: { backgroundColor: "#739998", height: 5 },
+                tabBarLabelStyle: { fontSize: 15, textTransform: "none" },
+                tabBarStyle: {
+                  backgroundColor: "#cfcfcf",
+                  borderTopLeftRadius: edgeRounding,
+                  borderTopRightRadius: edgeRounding,
+                },
+              }}
+            >
+              <Tab.Screen name="SnapMSGs" component={ProfileSnapMSGs} />
+              <Tab.Screen name="Likes" component={ProfileLikes} />
+            </Tab.Navigator>
+          </View>
+
         </ScrollView>
       )}
     </View>
