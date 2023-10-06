@@ -35,7 +35,7 @@ const Register = ({ navigation }: Props) => {
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
-      "463820808275-497078tjprmogvgrjb35apbp172eemnu.apps.googleusercontent.com",
+      "463820808275-tjqtu14eadrj8cvhig35seb0luvprp15.apps.googleusercontent.com",
     webClientId:
       "463820808275-1e2fcu04hn09dvcn8aujhl1op5hlhbep.apps.googleusercontent.com",
   });

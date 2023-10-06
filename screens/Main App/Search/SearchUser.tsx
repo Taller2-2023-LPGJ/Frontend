@@ -5,15 +5,20 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Navigation } from '../../../types/types';
 
 interface User {
   displayName: string;
   username: string;
 }
 
+type Props = {
+  navigation: Navigation;
+};
 
-const UserProfile: React.FC<{ user: User }> = ({ user }) => {
-  const navigation = useNavigation()
+
+const UserProfile: React.FC<{ user: User, navigation: Navigation }> = ({ user,navigation }) => {
+  //const navigation = useNavigation()
 
 
   const handlePress = async () => {
@@ -45,13 +50,13 @@ const UserProfile: React.FC<{ user: User }> = ({ user }) => {
   )
 }
 
+const SearchUser = ({ navigation }: Props) => {
 
-function SearchUser() {
-  const navigation = useNavigation();
+  const navigation2 = useNavigation();
 
 
   React.useEffect(() =>
-  navigation.addListener("beforeRemove", (e) => {
+  navigation2.addListener("beforeRemove", (e) => {
     e.preventDefault();
   })
   );
@@ -100,7 +105,7 @@ function SearchUser() {
       }}
       value={searchQuery} />
       {users.map((user, index) => (
-        <UserProfile key={index} user={user} />
+        <UserProfile key={index} user={user} navigation={navigation}/>
       ))}
     </ScrollView>
   );

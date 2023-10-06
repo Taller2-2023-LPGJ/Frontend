@@ -146,6 +146,7 @@ const Profile = ({ navigation }: ProfileProps) => {
               <Tab.Screen name="Likes" component={ProfileLikes} />
             </Tab.Navigator>
           </View>
+
         </ScrollView>
       )}
     </View>
