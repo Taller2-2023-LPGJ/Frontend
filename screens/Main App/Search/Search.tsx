@@ -5,20 +5,20 @@ import { useNavigation } from "@react-navigation/native";
 import SearchUser from './SearchUser';
 import SearchHashtag from './SearchHashtag';
 import SearchSnapMSG from "./SearchSnapMSG";
+import { Searchbar } from 'react-native-paper';
 
 
 const Tab = createMaterialTopTabNavigator();
 
 const Search = () => {
-  const navigation = useNavigation();
-
+  
   return (
     <>
       <Tab.Navigator
         screenOptions={{
           tabBarIndicatorStyle:{backgroundColor:"#739998", height:5},
           tabBarLabelStyle: { fontSize: 15, textTransform: "none"},
-          tabBarStyle: { backgroundColor: "#EDF2F4" },
+          tabBarStyle: { backgroundColor: "#cfcfcf" },
         }}
       >
         <Tab.Screen name="Users" component={SearchUser} />
