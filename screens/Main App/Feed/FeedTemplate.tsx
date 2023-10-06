@@ -15,7 +15,7 @@ type Props = {
   navigation: Navigation;
 };
 
-export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number }> = ({ snapMSGInfo,navigation, scale }) => {
+export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
 
     const [isLiked, setisLiked] = useState(false);
     const [isShared, setisShared] = useState(false);
@@ -44,7 +44,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
     return (
         <>
-        <TouchableOpacity style={styles.snapMSGContainer} onPress={openSnapMSG}>
+        <TouchableOpacity style={styles.snapMSGContainer} onPress={openSnapMSG} disabled={disabled}>
             <View style={styles.row}>
                 <View style={{flexDirection: 'row', width: 200}}>
                   <TouchableOpacity onPress={openProfile}>
@@ -96,16 +96,13 @@ const FeedTemplate = ({ navigation }: Props) => {
 
   return (
     <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true}>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
     </ScrollView>
   );
 };
