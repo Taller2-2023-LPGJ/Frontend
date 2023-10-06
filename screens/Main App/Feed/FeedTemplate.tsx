@@ -2,8 +2,20 @@ import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, To
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Navigation } from "../../../types/types";
 
-const SnapMSG = () => {
+interface SnapMSGInfo {
+  displayName: string;
+  username: string;
+  timePosted: string;
+  content: string;
+}
+
+type Props = {
+  navigation: Navigation;
+};
+
+const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation }> = ({ snapMSGInfo,navigation }) => {
 
     const [isLiked, setisLiked] = useState(false);
     const [isShared, setisShared] = useState(false);
@@ -23,7 +35,7 @@ const SnapMSG = () => {
     }
 
     const openSnapMSG = () => {
-      console.log("Opened SnapMSG")
+      navigation.navigate("SnapMSGDetails")
     }
 
     const openProfile = () => {
@@ -73,27 +85,34 @@ const SnapMSG = () => {
 }
 
 
-const FeedTemplate = () => {
-  const navigation = useNavigation();
+const FeedTemplate = ({ navigation }: Props) => {
+  const navigation2 = useNavigation();
 
   React.useEffect(() =>
-    navigation.addListener("beforeRemove", (e) => {
+    navigation2.addListener("beforeRemove", (e) => {
       e.preventDefault();
     })
   );
 
+  const snapMSGInfo = {
+    displayName: "string",
+    username: "string",
+    timePosted: "string",
+    content: "string",
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true}>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
-        <SnapMSG></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
     </ScrollView>
   );
 };
@@ -121,7 +140,7 @@ const styles = StyleSheet.create({
   },
   snapMSGContainer: {
     width: "100%",
-    paddingHorizontal: 16, // Padding around the content
+    paddingHorizontal: 16, 
     paddingTop: 10
   },
   row: {
@@ -130,16 +149,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   snapMSGText: {
-    flex: 1, // Expand to take available space
+    flex: 1, 
   },
   date: {
-    flex: 1, // Expand to take available space
-    textAlign: 'right', // Align text to the right
+    flex: 1, 
+    textAlign: 'right', 
   },
   centeredRow: {
-    justifyContent: 'center', // Center items in the row
+    justifyContent: 'center', 
   },
   centeredText: {
-    textAlign: 'center', // Center text within the row
+    textAlign: 'center', 
   },
 });

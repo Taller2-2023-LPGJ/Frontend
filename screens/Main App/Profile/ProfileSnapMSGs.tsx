@@ -1,11 +1,16 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import FeedTemplate from '../Feed/FeedTemplate';
+import { Navigation } from '../../../types/types';
 
-function ProfileSnapMSGs() {
+type Props = {
+  navigation: Navigation;
+};
+
+function ProfileSnapMSGs({ navigation }: Props) {
   return (
     <ScrollView nestedScrollEnabled={true}>
-      <FeedTemplate></FeedTemplate>
+      <FeedTemplate navigation={navigation}></FeedTemplate>
     </ScrollView>
   );
 }

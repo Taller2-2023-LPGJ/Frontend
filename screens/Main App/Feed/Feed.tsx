@@ -3,12 +3,17 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "react-native-paper";
 import FeedTemplate from "./FeedTemplate";
+import { Navigation } from "../../../types/types";
 
-const Feed = () => {
-  const navigation = useNavigation();
+type Props = {
+  navigation: Navigation;
+};
+
+const Feed = ({ navigation }: Props) => {
+  const navigation2 = useNavigation();
 
   React.useEffect(() =>
-    navigation.addListener("beforeRemove", (e) => {
+    navigation2.addListener("beforeRemove", (e) => {
       e.preventDefault();
     })
   );
@@ -16,7 +21,7 @@ const Feed = () => {
   return (
     <View style={styles.container}>
       <View style={styles.feedContainer}>
-        <FeedTemplate></FeedTemplate>
+        <FeedTemplate navigation={navigation}></FeedTemplate>
       </View>
       <View style={styles.buttonContainer}>
         <Button 

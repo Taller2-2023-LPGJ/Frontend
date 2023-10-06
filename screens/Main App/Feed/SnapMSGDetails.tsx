@@ -6,7 +6,7 @@ function SnapMSGDetails() {
     <View
     style={styles.container}
     >
-      <Text>SnapMSG</Text>
+      
     </View>
   );
 }
