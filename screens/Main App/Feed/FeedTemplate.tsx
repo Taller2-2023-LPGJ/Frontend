@@ -15,7 +15,7 @@ type Props = {
   navigation: Navigation;
 };
 
-const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation }> = ({ snapMSGInfo,navigation }) => {
+export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number }> = ({ snapMSGInfo,navigation, scale }) => {
 
     const [isLiked, setisLiked] = useState(false);
     const [isShared, setisShared] = useState(false);
@@ -52,31 +52,31 @@ const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation }> = 
                           source={{
                           uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
                           }}
-                          style={styles.profileImage}
+                          style={{width: (45*scale),height: (45*scale),borderRadius:75}}
                       />
                     </TouchableOpacity>
-                    <Text style={{marginLeft:10, fontSize:15, fontWeight: "bold"}}>DisplayName</Text>
-                    <Text style={{marginLeft:5, fontSize:15}}>@username</Text>
+                    <Text style={{marginLeft:10, fontSize:(15*scale), fontWeight: "bold"}}>DisplayName</Text>
+                    <Text style={{marginLeft:5, fontSize:(15*scale)}}>@username</Text>
                 </View>
-                <Text style={styles.date}>Date</Text>
+                <Text style={{flex: 1, textAlign: 'right', fontSize:(15*scale)}}>Date</Text>
             </View>
 
             <View style={styles.row}>
-                <Text style={styles.snapMSGText}>SnapMSG Text</Text>
+                <Text style={{flex: 1, fontSize:(15*scale)}}>SnapMSG Text</Text>
             </View>
 
             <View style={[styles.row, styles.centeredRow]}>
-                <Icon size={20} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
-                <Text style={{marginHorizontal:3}}>0</Text>
+                <Icon size={(20*scale)} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>0</Text>
                 
                 
                 <View style={{width:"50%", flexDirection: 'row', justifyContent:"center"}}>
-                    <Icon size={20} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
-                    <Text style={{marginHorizontal:3}}>0</Text>
+                    <Icon size={(20*scale)} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
+                    <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>0</Text>
                 </View>
 
-                <Icon size={20} name={"message-outline"} onPress={replyToPost}/>
-                <Text style={{marginHorizontal:3}}>0</Text>
+                <Icon size={(20*scale)} name={"message-outline"} onPress={replyToPost}/>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>0</Text>
             </View>
         </TouchableOpacity>
         <View style={styles.separatorBar}></View>
@@ -86,13 +86,6 @@ const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation }> = 
 
 
 const FeedTemplate = ({ navigation }: Props) => {
-  const navigation2 = useNavigation();
-
-  React.useEffect(() =>
-    navigation2.addListener("beforeRemove", (e) => {
-      e.preventDefault();
-    })
-  );
 
   const snapMSGInfo = {
     displayName: "string",
@@ -103,16 +96,16 @@ const FeedTemplate = ({ navigation }: Props) => {
 
   return (
     <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true}>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
+        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1}></SnapMSG>
     </ScrollView>
   );
 };
@@ -130,11 +123,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: 2,
   },
-  profileImage: {
-    width: 45,
-    height: 45,
-    borderRadius: 75,
-  },
   container: {
     width: "100%",
   },
@@ -147,13 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     marginBottom: 10,
-  },
-  snapMSGText: {
-    flex: 1, 
-  },
-  date: {
-    flex: 1, 
-    textAlign: 'right', 
   },
   centeredRow: {
     justifyContent: 'center', 
