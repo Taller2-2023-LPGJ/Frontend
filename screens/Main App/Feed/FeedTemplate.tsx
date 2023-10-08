@@ -1,4 +1,4 @@
-import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity } from "react-native";
+import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -26,8 +26,21 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     }
 
     const sharePost = () => {
-      console.log("Pressed share");
-      isShared ? setisShared(false) : setisShared(true);
+      let alertTitle = ""
+      isShared ? alertTitle = "Undo Snapshare" : alertTitle = "Snapshare"
+      Alert.alert(
+        alertTitle,
+        'Do you want to proceed?',
+        [
+          {text: 'Cancel'},
+          {text: 'OK',
+            onPress: () => {
+              isShared ? setisShared(false) : setisShared(true);
+              console.log('OK pressed');
+            },
+          },
+        ]
+      );
     }
 
     const replyToPost = () => {
