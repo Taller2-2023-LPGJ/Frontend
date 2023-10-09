@@ -1,9 +1,9 @@
-import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert } from "react-native";
+import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Navigation } from "../../../types/types";
-import { Button } from "react-native-paper";
+import { ActivityIndicator, Button } from "react-native-paper";
 
 interface SnapMSGInfo {
   displayName: string;
@@ -19,6 +19,9 @@ type Props = {
   navigation: Navigation;
   feedType: string;
 };
+
+
+const { height } = Dimensions.get("window");
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
 
@@ -150,7 +153,7 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
 
   const handleScroll = (event: { nativeEvent: { layoutMeasurement: any; contentOffset: any; contentSize: any; }; }) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isAtEnd = (layoutMeasurement.height + contentOffset.y)*1.1 >= contentSize.height;
+    const isAtEnd = (layoutMeasurement.height + contentOffset.y)*1.05 >= contentSize.height;
     if (isAtEnd) {
       addPost();
     }
@@ -166,6 +169,10 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
         {posts.map((post, index) => (
         <SnapMSG key={index} snapMSGInfo={post} navigation={navigation} scale={1} disabled={false}/>
         ))}
+        <View
+          style={{ justifyContent: "center", marginVertical: height / 12 }}>
+          <ActivityIndicator size="large" animating={true} />
+        </View>
     </ScrollView>
     
   );

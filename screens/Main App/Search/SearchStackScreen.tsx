@@ -2,7 +2,6 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Search from './Search';
 import OtherProfile from './OtherProfile';
-import SearchUser from './SearchUser';
 import SearchHashtag from './SearchHashtag';
 import SearchSnapMSG from './SearchSnapMSG';
 
