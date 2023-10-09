@@ -27,7 +27,7 @@ const Feed = ({ navigation }: Props) => {
         <Button 
           style={styles.writeSnapMSGButton}
           mode="outlined"
-          //onPress={() => {navigation.navigate("EditProfile");}}
+          onPress={() => {navigation.navigate("WriteSnapMSG");}}
         >
           Write SnapMSG
         </Button>

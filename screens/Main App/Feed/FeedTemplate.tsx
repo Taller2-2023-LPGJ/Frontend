@@ -33,7 +33,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
         'Do you want to proceed?',
         [
           {text: 'Cancel'},
-          {text: 'OK',
+          {text: 'Yes',
             onPress: () => {
               isShared ? setisShared(false) : setisShared(true);
               console.log('OK pressed');
