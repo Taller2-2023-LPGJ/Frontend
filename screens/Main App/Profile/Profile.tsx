@@ -93,7 +93,7 @@ const Profile = ({ navigation }: ProfileProps) => {
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} nestedScrollEnabled={true}>
           <Image
             source={{
               uri: user.profilepic,

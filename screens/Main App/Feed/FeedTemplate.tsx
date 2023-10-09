@@ -1,18 +1,23 @@
 import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Navigation } from "../../../types/types";
+import { Button } from "react-native-paper";
 
 interface SnapMSGInfo {
   displayName: string;
   username: string;
   timePosted: string;
   content: string;
+  likeCount: number,
+  shareCount: number,
+  replyCount: number
 }
 
 type Props = {
   navigation: Navigation;
+  feedType: string;
 };
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
@@ -36,7 +41,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           {text: 'Yes',
             onPress: () => {
               isShared ? setisShared(false) : setisShared(true);
-              console.log('OK pressed');
+              console.log('Clicked snapshare button');
             },
           },
         ]
@@ -80,16 +85,16 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
             <View style={[styles.row, styles.centeredRow]}>
                 <Icon size={(20*scale)} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>0</Text>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.likeCount}</Text>
                 
                 
                 <View style={{width:"50%", flexDirection: 'row', justifyContent:"center"}}>
                     <Icon size={(20*scale)} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
-                    <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>0</Text>
+                    <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.shareCount}</Text>
                 </View>
 
                 <Icon size={(20*scale)} name={"message-outline"} onPress={replyToPost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>0</Text>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.replyCount}</Text>
             </View>
         </TouchableOpacity>
         <View style={styles.separatorBar}></View>
@@ -98,25 +103,57 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 }
 
 
-const FeedTemplate = ({ navigation }: Props) => {
+const FeedTemplate = ({ navigation, feedType }: Props) => {
 
-  const snapMSGInfo = {
-    displayName: "string",
-    username: "string",
-    timePosted: "string",
-    content: "string",
+  switch (feedType) {
+    case "LikeFeed":
+      break;
+    case "ProfileFeed":
+      break;
+    case "GeneralFeed":
+      break;
+    case "ReplyFeed":
+      break
+    default:
+      break;
   }
 
+  const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
+
+  const addPost = () => { // Acá pegarle a la API
+    const randnum = Math.floor(Math.random() * (50 + 1));
+    const aux = {
+      displayName: "string",
+      username: "string",
+      timePosted: "string",
+      content: "string",
+      likeCount: randnum,
+      shareCount: randnum,
+      replyCount: randnum
+    }
+    setPosts([...posts,aux,aux,aux,aux,aux, aux, aux,aux,aux]);
+  }
+
+  const handleScroll = (event: { nativeEvent: { layoutMeasurement: any; contentOffset: any; contentSize: any; }; }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isAtEnd = (layoutMeasurement.height + contentOffset.y)*1.1 >= contentSize.height;
+    if (isAtEnd) {
+      addPost();
+    }
+  };
+
+  useEffect(() => {
+    addPost(); 
+  }, []);
+
+
   return (
-    <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true}>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
-        <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1} disabled={false}></SnapMSG>
+    <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
+        {posts.map((post, index) => (
+        <SnapMSG key={index} snapMSGInfo={post} navigation={navigation} scale={1} disabled={false}/>
+        ))}
     </ScrollView>
+    
   );
 };
 

@@ -9,9 +9,9 @@ type Props = {
 
 function ProfileSnapMSGs({ navigation }: Props) {
   return (
-    <ScrollView nestedScrollEnabled={true}>
-      <FeedTemplate navigation={navigation}></FeedTemplate>
-    </ScrollView>
+    <View>
+      <FeedTemplate navigation={navigation} feedType="ProfileFeed"></FeedTemplate>
+    </View>
   );
 }
 
