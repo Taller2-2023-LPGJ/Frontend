@@ -24,6 +24,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
     const [isLiked, setisLiked] = useState(false);
     const [isShared, setisShared] = useState(false);
+    const [isFavourite, setisFavourite] = useState(false);
 
     const likePost = () => {
         console.log("Pressed like");
@@ -51,6 +52,10 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     const replyToPost = () => {
       console.log("Pressed reply");
     }
+    
+    const favouritePost = () => {
+      setisFavourite(!isFavourite)
+    }
 
     const openSnapMSG = () => {
       navigation.navigate("SnapMSGDetails")
@@ -59,6 +64,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     const openProfile = () => {
       console.log("Opened profile")
     }
+
 
     return (
         <>
@@ -84,17 +90,25 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
             </View>
 
             <View style={[styles.row, styles.centeredRow]}>
+
+              <View style={styles.statIcons}>
                 <Icon size={(20*scale)} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
                 <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.likeCount}</Text>
-                
-                
-                <View style={{width:"50%", flexDirection: 'row', justifyContent:"center"}}>
-                    <Icon size={(20*scale)} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
-                    <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.shareCount}</Text>
-                </View>
-
+              </View>    
+                        
+              <View style={styles.statIcons}>
+                  <Icon size={(20*scale)} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
+                  <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.shareCount}</Text>
+              </View>
+                        
+              <View style={styles.statIcons}>
                 <Icon size={(20*scale)} name={"message-outline"} onPress={replyToPost}/>
                 <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.replyCount}</Text>
+              </View>
+
+              <View style={styles.statIcons}>
+                <Icon size={(20*scale)} color={isFavourite? "yellow" : "black"} name={isFavourite? "star":"star-outline"} onPress={favouritePost}/> 
+              </View>
             </View>
         </TouchableOpacity>
         <View style={styles.separatorBar}></View>
@@ -106,7 +120,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 const FeedTemplate = ({ navigation, feedType }: Props) => {
 
   switch (feedType) {
-    case "LikeFeed":
+    case "FavouriteFeed":
       break;
     case "ProfileFeed":
       break;
@@ -189,4 +203,9 @@ const styles = StyleSheet.create({
   centeredText: {
     textAlign: 'center', 
   },
+  statIcons: {
+    flexDirection: 'row', 
+    justifyContent:"center",
+    marginHorizontal:20
+  }
 });

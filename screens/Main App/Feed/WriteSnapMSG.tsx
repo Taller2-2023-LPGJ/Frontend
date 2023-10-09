@@ -3,6 +3,7 @@ import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import { Button } from 'react-native-paper';
 import { Navigation } from '../../../types/types';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type Props = {
     navigation: Navigation;
@@ -12,6 +13,12 @@ function WriteSnapMSG({ navigation }: Props) {
     const navigation2 = useNavigation();
 
     const [text, setText] = useState('');
+
+    const [postPrivacy, setPostPrivacy] = useState(true);
+
+    const handleChangePrivacy = () => {
+      setPostPrivacy(!postPrivacy)
+    }
 
     const handleTextChange = (newText: any) => {
         setText(newText);
@@ -32,6 +39,7 @@ function WriteSnapMSG({ navigation }: Props) {
                       {text: 'Yes',
                         onPress: () => {
                           console.log('Sent SnapMSG');
+                          navigation2.goBack();
                         },
                       },
                     ]
@@ -44,9 +52,7 @@ function WriteSnapMSG({ navigation }: Props) {
     return (
         <View style={styles.container}>
           <View style={styles.feedContainer}>
-            <Text style={styles.topText}> Write your SnapMSG...
-            </Text>
-            
+            <Text style={styles.topText}> Write your SnapMSG...</Text>
             <TextInput
                 placeholder="Type something here"
                 onChangeText={handleTextChange}
@@ -64,7 +70,7 @@ function WriteSnapMSG({ navigation }: Props) {
             <Text style={{fontSize:16}}>
                 Characters remaining: {remainingCharacters} / 250
             </Text>
-            
+            <Icon size={(40)} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{margin:30}}/>
           </View>
           <View style={styles.buttonContainer}>
             <Button 

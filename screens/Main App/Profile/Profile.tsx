@@ -4,12 +4,12 @@ import { Button, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProfileSnapMSGs from "./ProfileSnapMSGs";
-import ProfileLikes from "./ProfileLikes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
+import ProfileFavourites from "./ProfileFavourites";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -143,7 +143,7 @@ const Profile = ({ navigation }: ProfileProps) => {
               }}
             >
               <Tab.Screen name="SnapMSGs" component={ProfileSnapMSGs} />
-              <Tab.Screen name="Likes" component={ProfileLikes} />
+              <Tab.Screen name="Favourites" component={ProfileFavourites} />
             </Tab.Navigator>
           </View>
 

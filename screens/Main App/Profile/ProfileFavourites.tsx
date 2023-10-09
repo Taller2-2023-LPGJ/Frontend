@@ -1,15 +1,15 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-function ProfileLikes() {
+function ProfileFavourites() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text>Profile Likes</Text>
+      <Text>Profile Favourites</Text>
     </ScrollView>
   );
 }
 
-export default ProfileLikes;
+export default ProfileFavourites;
 
 const styles = StyleSheet.create({
     container: {
