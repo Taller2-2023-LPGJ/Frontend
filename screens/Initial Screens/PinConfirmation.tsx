@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Modal,
+  Portal,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { API_URL } from "@env";
 import axios from "axios";
 
@@ -36,6 +42,14 @@ const PinConfirmation = ({ navigation }: Props) => {
   const username = data.username;
   const mode = data.mode;
   const codeLenght = 6;
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+
+  const hideLoadingIndicator = () => {
+    setLoadingVisible(false);
+  };
+  const showLoadingIndicator = () => {
+    setLoadingVisible(true);
+  };
 
   let screenTitle = "Reset your password";
   let passReset = true;
@@ -68,6 +82,7 @@ const PinConfirmation = ({ navigation }: Props) => {
       return;
     }
 
+    showLoadingIndicator();
     let fullUrl = `${apiUrl}/users/verifyCodeRecoverPassword`;
     if (!passReset) {
       fullUrl = `${apiUrl}/users/signupconfirm`;
@@ -83,10 +98,12 @@ const PinConfirmation = ({ navigation }: Props) => {
         axios.defaults.headers.common["token"] = `${result.data.token}`;
 
         // estoy en modo offline ya.
+        hideLoadingIndicator();
         navigation.navigate("Interests", {
           username: username,
         });
       } catch (e) {
+        hideLoadingIndicator();
         alert((e as any).response.data.message);
         return;
       }
@@ -98,11 +115,13 @@ const PinConfirmation = ({ navigation }: Props) => {
           code,
         });
 
+        hideLoadingIndicator();
         navigation.navigate("ChangePassword", {
           code: code,
           username: username,
         });
       } catch (e) {
+        hideLoadingIndicator();
         alert((e as any).response.data.message);
         return;
       }
@@ -110,18 +129,44 @@ const PinConfirmation = ({ navigation }: Props) => {
   };
 
   const handleResend = async () => {
+
+    showLoadingIndicator();
     try {
       await axios.post(`${apiUrl}/users/recoverPassword`, {
         username,
       });
+      hideLoadingIndicator();
       alert("Email sent. Check your inbox");
     } catch (e) {
+      hideLoadingIndicator();
       alert((e as any).response.data.message);
     }
   };
 
   return (
     <View style={styles.root}>
+      <Portal>
+        <Modal
+          visible={loadingVisible}
+          dismissable={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <ActivityIndicator
+              animating={loadingVisible}
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
         {screenTitle}

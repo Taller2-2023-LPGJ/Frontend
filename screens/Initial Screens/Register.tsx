@@ -1,6 +1,6 @@
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
-import { Button, TextInput, Text } from "react-native-paper";
+import { Button, TextInput, Text, ActivityIndicator, Modal, Portal } from "react-native-paper";
 import Logo from "../../components/Logo";
 import { Navigation } from "../../types/types";
 import { useAuth } from "../../context/AuthContext";
@@ -13,9 +13,6 @@ import axios from "axios";
 type Props = {
   navigation: Navigation;
 };
-
-const USERS_SEARCH_URL =
-  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
 
 const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
 
@@ -30,8 +27,15 @@ const Register = ({ navigation }: Props) => {
   const [username, setUsername] = React.useState("");
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
-
   const { onRegister, setLogout, onRegisterGoogle } = useAuth();
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+
+  const hideLoadingIndicator = () => {
+    setLoadingVisible(false);
+  };
+  const showLoadingIndicator = () => {
+    setLoadingVisible(true);
+  };
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -41,7 +45,6 @@ const Register = ({ navigation }: Props) => {
   });
 
   const getUserInfo = async (token: string) => {
-
     if (!token) return;
     try {
       const response = await axios.get(
@@ -55,7 +58,6 @@ const Register = ({ navigation }: Props) => {
 
       const userInfo = await response.data;
       return userInfo;
-
     } catch (error) {
       alert(GOOGLE_ERR_MSG);
       return null;
@@ -85,6 +87,7 @@ const Register = ({ navigation }: Props) => {
     }
     let result = null;
     if (email && name) {
+      showLoadingIndicator();
       result = await onRegisterGoogle!(name, email);
     } else {
       alert(GOOGLE_ERR_MSG);
@@ -92,8 +95,10 @@ const Register = ({ navigation }: Props) => {
     }
 
     if (result && result.error) {
-      alert(GOOGLE_ERR_MSG);
+      hideLoadingIndicator();
+      alert(result.message);
     } else {
+      hideLoadingIndicator();
       navigation.navigate("Interests", {
         username: email,
       });
@@ -150,17 +155,21 @@ const Register = ({ navigation }: Props) => {
       return;
     }
 
+    showLoadingIndicator();
     const result = await onRegister!(username, mail, pass);
 
     if (result && result.error) {
+      hideLoadingIndicator();
       alert(result.message);
     } else {
       await AsyncStorage.setItem("username", username);
+      hideLoadingIndicator();
       navigation.navigate("PinConfirmation", {
         username: username,
         mode: "confirmReg",
       });
     }
+    hideLoadingIndicator();
   };
 
   const handleGoogleRegister = async () => {
@@ -169,6 +178,28 @@ const Register = ({ navigation }: Props) => {
 
   return (
     <View style={styles.container}>
+      <Portal>
+        <Modal
+          visible={loadingVisible}
+          dismissable={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <ActivityIndicator
+              animating={loadingVisible}
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
         Create Account

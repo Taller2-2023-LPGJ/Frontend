@@ -15,7 +15,7 @@ const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
 const edgeRounding = 25;
 const USERS_SEARCH_URL =
-  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
 interface ProfileProps {
   navigation: Navigation;
