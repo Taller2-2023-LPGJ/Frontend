@@ -1,12 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import FeedTemplate from '../Feed/FeedTemplate';
+import { Navigation } from '../../../types/types';
 
-function ProfileSnapMSGs() {
+type Props = {
+  navigation: Navigation;
+};
+
+function ProfileSnapMSGs({ navigation }: Props) {
   return (
-    <View
-    style={styles.container}
-    >
-      <Text>Profile SnapMSGs</Text>
+    <View>
+      <FeedTemplate navigation={navigation} feedType="ProfileFeed"></FeedTemplate>
     </View>
   );
 }

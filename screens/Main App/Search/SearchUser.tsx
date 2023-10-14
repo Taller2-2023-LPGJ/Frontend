@@ -79,22 +79,9 @@ const SearchUser = ({ navigation }: Props) => {
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
   const onSubmitEditing = (_: any) => getUsers()
 
-  const [isPressEnabled, setIsPressEnabled] = useState(true);
-  const handleScrollBegin = () => {
-    // Disable pressing when scrolling begins
-    setIsPressEnabled(false);
-  };
-  const handleScrollEnd = () => {
-    // Enable pressing when scrolling ends
-    setIsPressEnabled(true);
-  };
-
 
   return (
-    <ScrollView contentContainerStyle={styles.container}
-      onScrollBeginDrag={handleScrollBegin}
-      onScrollEndDrag={handleScrollEnd}
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <Searchbar
       style={styles.searchBar}
       placeholder="Search"

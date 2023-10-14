@@ -4,12 +4,12 @@ import { Button, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProfileSnapMSGs from "./ProfileSnapMSGs";
-import ProfileLikes from "./ProfileLikes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
+import ProfileFavourites from "./ProfileFavourites";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -74,13 +74,13 @@ const Profile = ({ navigation }: ProfileProps) => {
   const initialUser = {
     profilepic:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    displayname: "John Doe",
+    displayname: "",
     username: "",
-    location: "Buenos Aires",
-    bio: "Software Developer",
-    birthdate: "January 1, 2000",
-    followers: 10,
-    following: 6,
+    location: "",
+    bio: "",
+    birthdate: "",
+    followers: 0,
+    following: 0,
   };
 
   const [user, setUser] = useState(initialUser);
@@ -93,7 +93,7 @@ const Profile = ({ navigation }: ProfileProps) => {
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} nestedScrollEnabled={true}>
           <Image
             source={{
               uri: user.profilepic,
@@ -143,7 +143,7 @@ const Profile = ({ navigation }: ProfileProps) => {
               }}
             >
               <Tab.Screen name="SnapMSGs" component={ProfileSnapMSGs} />
-              <Tab.Screen name="Likes" component={ProfileLikes} />
+              <Tab.Screen name="Favourites" component={ProfileFavourites} />
             </Tab.Navigator>
           </View>
 

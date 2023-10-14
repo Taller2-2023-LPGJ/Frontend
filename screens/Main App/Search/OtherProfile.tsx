@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Image } from "react-native";
-import { Button } from "react-native-paper";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import { ActivityIndicator, Button } from "react-native-paper";
 import { Navigation } from '../../../types/types';
 import { useRoute } from '@react-navigation/native';
 import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '@env';
 
+
+const { height } = Dimensions.get("window");
 
 type Props = {
     navigation: Navigation;
@@ -26,6 +28,8 @@ function OtherProfile({ navigation }: Props) {
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
 
+  const [isLoading, setisLoading] = useState(true);
+
   const getData = async () => { 
     if (data.username != null) {
       let api_result: AxiosResponse<any, any>
@@ -34,6 +38,7 @@ function OtherProfile({ navigation }: Props) {
         setDisplayName(api_result.data.displayName)
         setLocation(api_result.data.location)
         setBio(api_result.data.biography)
+        setisLoading(false)
       } catch (e) {
         alert((e as any).response.data.message)
       }
@@ -45,27 +50,32 @@ function OtherProfile({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-        <Image source={{
-          uri:"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        }}
-        style={styles.profileImage}
-        />
-        <Button
-        style={styles.followButton}
-        mode="outlined"
-        onPress={() => {
-          console.log("Followed user")
-        }}
-        >
-            Follow
-        </Button>
-        <View style={styles.userInfoContainer}>
-            <Text style={styles.displayname}>{displayName}</Text>
-            <Text style={styles.bio}>{"@"}{data.username}</Text>
-            <Text style={styles.bio}>{location}</Text>
-            <Text style={styles.bio}>{bio}</Text>
+      {isLoading ? (
+        <View
+          style={{ justifyContent: "center", marginVertical: height / 2.5 }}>
+          <ActivityIndicator size="large" animating={true} />
         </View>
+      ) : (
+        <><Image source={{
+            uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+          }}
+            style={styles.profileImage} /><Button
+              style={styles.followButton}
+              mode="outlined"
+              onPress={() => {
+                console.log("Followed user");
+              } }
+            >
+              Follow
+            </Button><View style={styles.userInfoContainer}>
+              <Text style={styles.displayname}>{displayName}</Text>
+              <Text style={styles.bio}>{"@"}{data.username}</Text>
+              <Text style={styles.bio}>{location}</Text>
+              <Text style={styles.bio}>{bio}</Text>
+            </View></>
+        )}
     </View>
+      
   );
 }
 
