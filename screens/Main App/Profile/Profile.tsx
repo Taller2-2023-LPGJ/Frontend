@@ -10,6 +10,8 @@ import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import ProfileFavourites from "./ProfileFavourites";
+import { List } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -117,26 +119,27 @@ const Profile = ({ navigation }: ProfileProps) => {
               {"@"}
               {user.username}
             </Text>
+
             <Text style={styles.bio}>{user.bio}</Text>
-            <Text>
-              <Text style={styles.bio}>{user.location}</Text>
-            </Text>
+            <Text style={styles.location}>{user.location}</Text>
 
             <Text style={styles.followCount}>
-              <Text style={styles.boldText}>{user.following}</Text> following{" "}
-              <Text style={styles.boldText}>{user.followers}</Text> followers
+              <Text style={styles.boldText}>{user.following}</Text> Following
+              {"    "}
+              <Text style={styles.boldText}>{user.followers}</Text> Followers
             </Text>
           </View>
 
           <View style={styles.tweetsContainer}>
             <Tab.Navigator
               screenOptions={{
-                tabBarIndicatorStyle: { backgroundColor: "#739998", height: 5 },
+                tabBarIndicatorStyle: {
+                  backgroundColor: primaryColor,
+                  height: 5,
+                },
                 tabBarLabelStyle: { fontSize: 15, textTransform: "none" },
                 tabBarStyle: {
-                  backgroundColor: "#cfcfcf",
-                  borderTopLeftRadius: edgeRounding,
-                  borderTopRightRadius: edgeRounding,
+                  backgroundColor: primaryColor,
                 },
               }}
             >
@@ -149,6 +152,8 @@ const Profile = ({ navigation }: ProfileProps) => {
     </View>
   );
 };
+
+import { primaryColor } from "../../../components/colors";
 
 const styles = StyleSheet.create({
   container: {
@@ -164,15 +169,16 @@ const styles = StyleSheet.create({
   editProfileButton: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#222222"
+    color: primaryColor,
+    paddingHorizontal: 10,
   },
   userInfoContainer: {
     borderRadius: 5,
     width: "90%",
     padding: 10,
     marginBottom: 10,
-    borderWidth: 2,
-    borderColor: "#222222",
+    borderWidth: 1,
+    borderColor: primaryColor,
   },
   displayname: {
     fontSize: 20,
@@ -190,11 +196,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tweetsContainer: {
-    borderTopLeftRadius: edgeRounding,
-    borderTopRightRadius: edgeRounding,
+    borderRadius: 5,
     height: height - 165,
     width: "90%",
-    backgroundColor: "#ccc",
+    backgroundColor: primaryColor,
   },
   displaynameRow: {
     flexDirection: "row",
@@ -202,6 +207,11 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
   },
+  location: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 5,
+  }
 });
 
 export default Profile;
