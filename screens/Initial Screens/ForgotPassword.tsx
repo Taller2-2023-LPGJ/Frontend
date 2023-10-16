@@ -92,7 +92,7 @@ const ForgotPassword = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 10 }}
+        style={{ width: width * 0.65, marginVertical: 10,borderRadius: 0 }}
         mode="contained"
         onPress={() => handleForgotPassword()}
       >
