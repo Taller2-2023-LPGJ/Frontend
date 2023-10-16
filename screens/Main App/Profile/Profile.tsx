@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, ScrollView, View, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Image, Dimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -73,12 +73,11 @@ const Profile = ({ navigation }: ProfileProps) => {
 
   const initialUser = {
     profilepic:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+      "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
     displayname: "",
     username: "",
     location: "",
     bio: "",
-    birthdate: "",
     followers: 0,
     following: 0,
   };
@@ -89,30 +88,31 @@ const Profile = ({ navigation }: ProfileProps) => {
     <View>
       {isLoading ? (
         <View
-          style={{ justifyContent: "center", marginVertical: height / 2.5 }}>
+          style={{ justifyContent: "center", marginVertical: height / 2.5 }}
+        >
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.container} nestedScrollEnabled={true}>
+        <View style={styles.container}>
           <Image
             source={{
-              uri: user.profilepic,
+              uri: "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
             }}
             style={styles.profileImage}
           />
 
-          <Button
-            style={styles.editProfileButton}
-            mode="outlined"
-            onPress={() => {
-              navigation.navigate("EditProfile");
-            }}
-          >
-            Edit profile
-          </Button>
-
           <View style={styles.userInfoContainer}>
-            <Text style={styles.displayname}>{user.displayname}</Text>
+            <View style={styles.displaynameRow}>
+              <Text style={styles.displayname}>{user.displayname}</Text>
+              <Text
+                style={styles.editProfileButton}
+                onPress={() => {
+                  navigation.navigate("EditProfile");
+                }}
+              >
+                Edit profile
+              </Text>
+            </View>
             <Text style={styles.bio}>
               {"@"}
               {user.username}
@@ -120,8 +120,6 @@ const Profile = ({ navigation }: ProfileProps) => {
             <Text style={styles.bio}>{user.bio}</Text>
             <Text>
               <Text style={styles.bio}>{user.location}</Text>
-              {", "}
-              <Text style={styles.bio}>{user.birthdate}</Text>
             </Text>
 
             <Text style={styles.followCount}>
@@ -146,8 +144,7 @@ const Profile = ({ navigation }: ProfileProps) => {
               <Tab.Screen name="Favourites" component={ProfileFavourites} />
             </Tab.Navigator>
           </View>
-
-        </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -158,23 +155,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 110,
-    height: 110,
-    borderRadius: 75,
-    marginTop: 55,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    marginTop: 25,
     marginBottom: 15,
   },
   editProfileButton: {
-    marginBottom: 15,
-    width: 120,
-    height: 45,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#222222"
   },
   userInfoContainer: {
-    borderRadius: 10,
-    backgroundColor: "#ccc",
+    borderRadius: 5,
     width: "90%",
     padding: 10,
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "#222222",
   },
   displayname: {
     fontSize: 20,
@@ -197,6 +195,12 @@ const styles = StyleSheet.create({
     height: height - 165,
     width: "90%",
     backgroundColor: "#ccc",
+  },
+  displaynameRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
   },
 });
 
