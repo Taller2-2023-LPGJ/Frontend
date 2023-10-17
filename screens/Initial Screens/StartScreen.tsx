@@ -1,8 +1,9 @@
-import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { Appbar, Button, Text, TextInput } from "react-native-paper";
 import { Navigation } from "../../types/types";
 import Logo from "../../components/Logo";
+import { StatusBar } from 'expo-status-bar';
 
 
 
@@ -15,6 +16,7 @@ const { width } = Dimensions.get("window");
 const StartScreen = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
+      <StatusBar style="light"/>
       <View style={styles.topContainer}>
         
         <Logo />
