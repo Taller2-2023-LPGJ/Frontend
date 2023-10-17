@@ -10,12 +10,9 @@ import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import ProfileFavourites from "./ProfileFavourites";
-import { List } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
-const edgeRounding = 25;
 const USERS_SEARCH_URL =
   "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
@@ -152,6 +149,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     </View>
   );
 };
+
 
 import { primaryColor } from "../../../components/colors";
 

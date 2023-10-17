@@ -15,6 +15,7 @@ import ChooseLocation from "../screens/Initial Screens/ChooseLocation";
 import { DarkTheme } from "@react-navigation/native";
 import { MD3DarkTheme } from "react-native-paper";
 import merge from "deepmerge";
+import NavigatorContainer from "../screens/Main App/NavigatorContainer";
 
 // merge react-native-paper and react-navigation themes
 export const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
@@ -32,8 +33,8 @@ export default function AppNavigator() {
         {authState?.authenticated ? (
           <Stack.Screen
             options={{ headerShown: false, gestureEnabled: false }}
-            name="TabNavigator"
-            component={TabNavigator}
+            name="NavigatorContainer"
+            component={NavigatorContainer}
           />
         ) : (
           <>

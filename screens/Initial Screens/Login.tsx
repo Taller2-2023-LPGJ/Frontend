@@ -56,7 +56,7 @@ const Login = ({ navigation }: Props) => {
     } else {
       await AsyncStorage.setItem("username", identifier);
       hideLoadingIndicator()
-      navigation.navigate("TabNavigator");
+      navigation.navigate("NavigatorContainer");
     }
   };
 

@@ -46,23 +46,6 @@ export function TabNavigator() {
             return (
               <Icon
                 size={25}
-                name={
-                  props.focused ? "account-circle" : "account-circle-outline"
-                }
-                {...props}
-              />
-            );
-          },
-        }}
-        name="Profile"
-        component={ProfileStackScreen}
-      />
-      <Tab.Screen
-        options={{
-          tabBarIcon(props) {
-            return (
-              <Icon
-                size={25}
                 name={props.focused ? "cog" : "cog-outline"}
                 {...props}
               />
