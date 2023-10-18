@@ -160,10 +160,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    marginTop: 25,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginTop: 10,
     marginBottom: 15,
   },
   editProfileButton: {
