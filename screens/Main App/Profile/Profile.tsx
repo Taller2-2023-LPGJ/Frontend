@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: primaryColor,
+    borderColor: "#FFFFFF",
   },
   displayname: {
     fontSize: 20,
@@ -200,6 +200,9 @@ const styles = StyleSheet.create({
     height: height - 165,
     width: "90%",
     backgroundColor: primaryColor,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: "#FFFFFF",
   },
   displaynameRow: {
     flexDirection: "row",
