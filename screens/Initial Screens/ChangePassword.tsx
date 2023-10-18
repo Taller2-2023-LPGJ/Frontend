@@ -151,7 +151,7 @@ const ChangePassword = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20 }}
+        style={{ width: width * 0.65, marginVertical: 20,borderRadius: 0 }}
         mode="contained"
         onPress={() => handleSend()}
       >
@@ -159,7 +159,7 @@ const ChangePassword = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 5 }}
+        style={{ width: width * 0.65, marginVertical: 5,borderRadius: 0 }}
         mode="contained"
         onPress={() => handleCancel()}
       >

@@ -12,6 +12,13 @@ import PinConfirmation from "../screens/Initial Screens/PinConfirmation";
 import ChangePassword from "../screens/Initial Screens/ChangePassword";
 import ChooseLocation from "../screens/Initial Screens/ChooseLocation";
 
+import { DarkTheme } from "@react-navigation/native";
+import { MD3DarkTheme } from "react-native-paper";
+import merge from "deepmerge";
+
+// merge react-native-paper and react-navigation themes
+export const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
+
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -20,7 +27,7 @@ export default function AppNavigator() {
   const { authState } = useAuth();
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={CombinedDarkTheme}>
       <Stack.Navigator>
         {authState?.authenticated ? (
           <Stack.Screen
@@ -40,7 +47,7 @@ export default function AppNavigator() {
               name="Login"
               component={Login}
             />
-            
+
             <Stack.Screen
               options={{ headerTitleAlign: "center", title: "" }}
               name="Register"
@@ -51,7 +58,7 @@ export default function AppNavigator() {
               name="PinConfirmation"
               component={PinConfirmation}
             />
-            
+
             <Stack.Screen
               options={{ headerTitleAlign: "center", title: "" }}
               name="ChangePassword"

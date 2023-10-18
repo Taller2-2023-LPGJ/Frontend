@@ -182,5 +182,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: width * 0.4,
+    borderRadius: 0
   },
 });

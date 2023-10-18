@@ -197,7 +197,7 @@ const PinConfirmation = ({ navigation }: Props) => {
 
       {passReset ? (
         <Button
-          style={{ width: width * 0.65, marginBottom: 30 }}
+          style={{ width: width * 0.65, marginBottom: 30,borderRadius: 0 }}
           onPress={() => handleResend()}
         >
           Resend Code
@@ -212,7 +212,7 @@ const PinConfirmation = ({ navigation }: Props) => {
       </Button> */}
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 10 }}
+        style={{ width: width * 0.65, marginVertical: 10,borderRadius: 0 }}
         mode="contained"
         onPress={() => handleVerify()}
       >

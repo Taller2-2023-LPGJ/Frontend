@@ -239,7 +239,7 @@ const Register = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20 }}
+        style={{ width: width * 0.65, marginVertical: 20,borderRadius: 0 }}
         mode="contained"
         onPress={() => register()}
       >
@@ -247,7 +247,7 @@ const Register = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0 }}
+        style={{ width: width * 0.65, marginVertical: 0,borderRadius: 0 }}
         mode="contained"
         onPress={() => {
           handleGoogleRegister();

@@ -175,7 +175,7 @@ const Login = ({ navigation }: Props) => {
       </Text>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20 }}
+        style={{ width: width * 0.65, marginVertical: 20,borderRadius: 0 }}
         mode="contained"
         onPress={() => login()}
       >
@@ -183,7 +183,7 @@ const Login = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0 }}
+        style={{ width: width * 0.65, marginVertical: 0,borderRadius: 0 }}
         mode="contained"
         onPress={() => {
           handleGoogleSignIn();

@@ -163,7 +163,7 @@ const ChooseLocation = ({ navigation }: Props) => {
 
           <View style={{ alignItems: "flex-end", marginVertical: 10 }}>
             <Button
-              style={{ width: width * 0.2, marginVertical: 20 }}
+              style={{ width: width * 0.2, marginVertical: 20,borderRadius: 0 }}
               mode="contained"
               onPress={() => handleGo()}
             >
