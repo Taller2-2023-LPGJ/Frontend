@@ -65,7 +65,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     }
 
     const openSnapMSG = () => {
-      navigation.navigate("SnapMSGDetails")
+      navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
     }
 
     const openProfile = () => {
@@ -80,13 +80,13 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
       const days = Math.floor(hours / 24);
     
       if (days > 0) {
-        return `${days} day${days > 1 ? 's' : ''} ago`;
+        return `${days}d`;
       } else if (hours > 0) {
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        return `${hours}h`;
       } else if (minutes > 0) {
-        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        return `${minutes}m`;
       } else {
-        return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+        return `${seconds}s`;
       }
     }
     
@@ -144,17 +144,17 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
 const FeedTemplate = ({ navigation, feedType }: Props) => {
 
+
   switch (feedType) {
     case "FavouriteFeed":
-      break;
+      
     case "ProfileFeed":
-      break;
+      
     case "GeneralFeed":
-      break;
+      
     case "ReplyFeed":
-      break
     default:
-      break;
+      
   }
 
   const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
