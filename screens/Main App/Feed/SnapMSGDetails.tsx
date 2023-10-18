@@ -12,14 +12,15 @@ type Props = {
 function SnapMSGDetails({ navigation}: Props) {
 
   const snapMSGInfo = {
+    author: "string",
     displayName: "string",
-    username: "string",
-    timePosted: "string",
-    content: "string",
-    likeCount: 0,
-    shareCount: 0,
-    replyCount: 0
+    creationDate: "string",
+    body: "string",
+    editingDate: "string",
+    id: 0,
+    tags: ["asd"]
   }
+
 
   return (
      

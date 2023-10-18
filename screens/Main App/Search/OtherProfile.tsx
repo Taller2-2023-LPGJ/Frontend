@@ -6,6 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '@env';
 
+const apiUrl = API_URL
 
 const { height } = Dimensions.get("window");
 
@@ -27,6 +28,8 @@ function OtherProfile({ navigation }: Props) {
   const [displayName, setDisplayName] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
+  const [followers, setFollowers] = React.useState("0");
+  const [followed, setFollowed] = React.useState("0");
 
   const [isLoading, setisLoading] = useState(true);
 
@@ -34,10 +37,12 @@ function OtherProfile({ navigation }: Props) {
     if (data.username != null) {
       let api_result: AxiosResponse<any, any>
       try {
-        api_result = await axios.get(`${API_URL}/profile/${data.username}`);
+        api_result = await axios.get(`${API_URL}/profile/${data.username}`); // TODO ver si se esta siguiendo
         setDisplayName(api_result.data.displayName)
         setLocation(api_result.data.location)
         setBio(api_result.data.biography)
+        setFollowed(api_result.data.followed)
+        setFollowers(api_result.data.followers)
         setisLoading(false)
       } catch (e) {
         alert((e as any).response.data.message)
@@ -62,8 +67,12 @@ function OtherProfile({ navigation }: Props) {
             style={styles.profileImage} /><Button
               style={styles.followButton}
               mode="outlined"
-              onPress={() => {
-                console.log("Followed user");
+              onPress={async () => {
+                try {
+                  const response = await axios.post(`${apiUrl}/content/follow/${data.username}`);
+                } catch (e) {
+                  alert((e as any).response.data.message);
+                }
               } }
             >
               Follow
@@ -72,6 +81,10 @@ function OtherProfile({ navigation }: Props) {
               <Text style={styles.bio}>{"@"}{data.username}</Text>
               <Text style={styles.bio}>{location}</Text>
               <Text style={styles.bio}>{bio}</Text>
+              <Text style={styles.bio}>
+                <Text style={{fontWeight: "bold"}}>{followed}</Text> following{" "}
+                <Text style={{fontWeight: "bold"}}>{followers}</Text> followers
+              </Text>
             </View></>
         )}
     </View>

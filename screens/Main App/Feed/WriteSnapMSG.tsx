@@ -4,7 +4,10 @@ import { Button } from 'react-native-paper';
 import { Navigation } from '../../../types/types';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from "axios";
+import { API_URL } from '@env';
 
+const apiUrl = API_URL;
 type Props = {
     navigation: Navigation;
   };
@@ -28,6 +31,9 @@ function WriteSnapMSG({ navigation }: Props) {
         if (remainingCharacters == 250){
             alert("You can't send an empty SnapMSG")
         } else {
+          let body = text
+          let privacy = postPrivacy
+          let tags = ["Business"]
             remainingCharacters < 0 
             ? alert("You have exceeded the character limit.")
             : 
@@ -37,9 +43,19 @@ function WriteSnapMSG({ navigation }: Props) {
                     [
                       {text: 'Cancel'},
                       {text: 'Yes',
-                        onPress: () => {
-                          console.log('Sent SnapMSG');
-                          navigation2.goBack();
+                        onPress: async () => {
+                          try {
+                            const response = await axios.post(`${apiUrl}/content/post`, {body, privacy, tags});
+                            navigation2.goBack();
+
+                            //const response = await axios.put(`${apiUrl}/content/post/2`,{body,privacy,tags});
+                            //console.log(response.data)
+
+                            //const response = await axios.delete(`${apiUrl}/content/post/2`);
+                            //console.log(response.data)
+                          } catch (e) {
+                            alert((e as any).response.data.message);
+                          }
                         },
                       },
                     ]
