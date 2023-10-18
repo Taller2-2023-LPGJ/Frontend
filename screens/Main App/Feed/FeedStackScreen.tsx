@@ -43,17 +43,24 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ navigation }) => {
       </TouchableOpacity>
       <Image
         source={{
-          uri: "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
+          uri: "https://png.pngtree.com/png-vector/20221018/ourmid/pngtree-twitter-social-media-round-icon-png-image_6315985.png",
         }}
         style={{ width: 50, height: 50 }}
       />
-
-      <Image
-        source={{
-          uri: "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
-        }}
-        style={{ width: 40, height: 40, borderRadius: 20, marginRight: 15 }}
-      />
+      <TouchableOpacity onPress={() => navigation.navigate("Settings9")}>
+        <Image
+          source={{
+            uri: "https://cdn.iconscout.com/icon/free/png-256/free-gear-363-866275.png?f=webp",
+          }}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            marginRight: 15,
+            backgroundColor: "#FFFFFF",
+          }}
+        />
+      </TouchableOpacity>
     </View>
   );
 };

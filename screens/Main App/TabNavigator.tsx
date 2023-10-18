@@ -40,21 +40,6 @@ export function TabNavigator() {
         name="Search"
         component={SearchStackScreen}
       />
-      <Tab.Screen
-        options={{
-          tabBarIcon(props) {
-            return (
-              <Icon
-                size={25}
-                name={props.focused ? "cog" : "cog-outline"}
-                {...props}
-              />
-            );
-          },
-        }}
-        name="Settings"
-        component={SettingsStackScreen}
-      />
     </Tab.Navigator>
   );
 }
