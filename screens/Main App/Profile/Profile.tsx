@@ -10,8 +10,6 @@ import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import ProfileFavourites from "./ProfileFavourites";
-import { List } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -31,6 +29,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 
   const [isLoading, setisLoading] = useState(true);
+  const { onLogout } = useAuth();
 
   const getData = async () => {
     let result = await AsyncStorage.getItem("username");
@@ -65,7 +64,12 @@ const Profile = ({ navigation }: ProfileProps) => {
         }));
         setisLoading(false);
       } catch (e) {
-        alert((e as any).response.data.message);
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
     }
   };
@@ -154,6 +158,7 @@ const Profile = ({ navigation }: ProfileProps) => {
 };
 
 import { primaryColor } from "../../../components/colors";
+import { useAuth } from "../../../context/AuthContext";
 
 const styles = StyleSheet.create({
   container: {
@@ -214,7 +219,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     marginTop: 5,
-  }
+  },
 });
 
 export default Profile;
