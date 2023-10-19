@@ -1,6 +1,13 @@
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
-import { Button, TextInput, Text, ActivityIndicator, Modal, Portal } from "react-native-paper";
+import {
+  Button,
+  TextInput,
+  Text,
+  ActivityIndicator,
+  Modal,
+  Portal,
+} from "react-native-paper";
 import Logo from "../../components/Logo";
 import { Navigation } from "../../types/types";
 import { useAuth } from "../../context/AuthContext";
@@ -15,6 +22,8 @@ type Props = {
 };
 
 const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -98,6 +107,7 @@ const Register = ({ navigation }: Props) => {
       hideLoadingIndicator();
       alert(result.message);
     } else {
+      storeUsername(email);
       hideLoadingIndicator();
       navigation.navigate("Interests", {
         username: email,
@@ -176,6 +186,17 @@ const Register = ({ navigation }: Props) => {
     await promptAsync();
   };
 
+  const storeUsername = async (email: string) => {
+    try {
+      const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
+      const respUsername = response.data.name;
+      console.log(`stored: ${respUsername}`);
+      await AsyncStorage.setItem("username", respUsername);
+    } catch (e) {
+      //
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Portal>
@@ -239,7 +260,7 @@ const Register = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20,borderRadius: 0 }}
+        style={{ width: width * 0.65, marginVertical: 20, borderRadius: 0 }}
         mode="contained"
         onPress={() => register()}
       >
@@ -247,7 +268,7 @@ const Register = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0,borderRadius: 0 }}
+        style={{ width: width * 0.65, marginVertical: 0, borderRadius: 0 }}
         mode="contained"
         onPress={() => {
           handleGoogleRegister();

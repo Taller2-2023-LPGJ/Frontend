@@ -2,8 +2,7 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import { registerIndieID,unregisterIndieDevice } from "native-notify";
+import { registerIndieID } from "native-notify"
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };

@@ -2,9 +2,10 @@ import { Dimensions, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { Button } from "react-native-paper";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import axios from "axios";
+import { unregisterIndieDevice } from "native-notify";
 
 const { width } = Dimensions.get("window");
 
@@ -12,19 +13,26 @@ const Settings = () => {
   const { onLogout } = useAuth();
 
   const handleVerifyRequest = async () => {
-    // TODO gateway (usar API_URL)
+    // TODO gateway (usar API_URL) que no requiere username en body
+    const username = await AsyncStorage.getItem("username");
     const fullUrl = `https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/askforverification`;
     try {
       const response = await axios.post(fullUrl, {
-        username: "lucas123", ///// Para testing. Borrar
+        username: username,
         action: "Yes",
       });
       alert("Your profile is now pending verification.");
     } catch (e) {
-      // Si la peticion no es valida, devolver error
       alert((e as any).response.data.message);
     }
   };
+
+  // // Logs out & stops receiving notifications for this user
+  // const handleRemoveAccountFromDevice = async () => {
+  //   const username = await AsyncStorage.getItem("username");
+  //   unregisterIndieDevice(username, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
+  //   onLogout!()
+  // }
 
   return (
     <View style={styles.container}>
@@ -40,6 +48,10 @@ const Settings = () => {
       <Button style={styles.buttonLogout} onPress={onLogout} mode="contained">
         Logout
       </Button>
+
+      {/*<Button style={styles.buttonLogout} onPress={handleRemoveAccountFromDevice} mode="contained">
+        Logout & Remove Account
+  </Button>*/}
     </View>
   );
 };
