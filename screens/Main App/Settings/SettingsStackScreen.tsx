@@ -7,7 +7,7 @@ const SettingsStack = createNativeStackNavigator();
 const SettingsStackScreen = () => {
     return (
         <SettingsStack.Navigator>
-          <SettingsStack.Screen options={{title:"",headerShown:false}} name="Settings2" component={Settings} />
+          <SettingsStack.Screen options={{title:"Settings"}} name="Settings2" component={Settings} />
         </SettingsStack.Navigator>
       );
 }

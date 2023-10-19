@@ -36,7 +36,6 @@ const Settings = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Settings</Text>
       <Button
         style={styles.buttonVerify}
         onPress={handleVerifyRequest}

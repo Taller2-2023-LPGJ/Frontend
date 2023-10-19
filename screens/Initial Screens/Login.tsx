@@ -44,13 +44,13 @@ const Login = ({ navigation }: Props) => {
           {}
         );
         const respUsername = response.data.name;
-        console.log(`stored: ${respUsername}`);
+        
         await AsyncStorage.setItem("username", respUsername);
       } catch (e) {
         //
       }
     } else {
-      console.log(`stored: ${identifier}`);
+      
       await AsyncStorage.setItem("username", identifier);
     }
   };
