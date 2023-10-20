@@ -13,7 +13,6 @@ import ProfileFavourites from "./ProfileFavourites";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
-const edgeRounding = 25;
 const USERS_SEARCH_URL =
   "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
@@ -61,6 +60,7 @@ const Profile = ({ navigation }: ProfileProps) => {
           location: api_result.data.location,
           displayname: api_result.data.displayName,
           bio: api_result.data.biography,
+          profilepic: api_result.data.profilePicture,
         }));
         setisLoading(false);
       } catch (e) {
@@ -102,7 +102,7 @@ const Profile = ({ navigation }: ProfileProps) => {
         <View style={styles.container}>
           <Image
             source={{
-              uri: "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
+              uri: user.profilepic,
             }}
             style={styles.profileImage}
           />
