@@ -16,6 +16,8 @@ type Props = {
 };
 
 const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -32,6 +34,25 @@ const Login = ({ navigation }: Props) => {
   };
   const showLoadingIndicator = () => {
     setLoadingVisible(true);
+  };
+
+  const storeUsername = async (identifier: string) => {
+    if (identifier.includes("@")) {
+      try {
+        const response = await axios.get(
+          `${USERS_SEARCH_URL}${identifier}`,
+          {}
+        );
+        const respUsername = response.data.name;
+        
+        await AsyncStorage.setItem("username", respUsername);
+      } catch (e) {
+        //
+      }
+    } else {
+      
+      await AsyncStorage.setItem("username", identifier);
+    }
   };
 
   const [request, response, promptAsync] = Google.useAuthRequest({
@@ -51,11 +72,11 @@ const Login = ({ navigation }: Props) => {
     const result = await onLogin!(identifier, pass);
 
     if (result && result.error) {
-      hideLoadingIndicator()
+      hideLoadingIndicator();
       alert(result.message);
     } else {
-      await AsyncStorage.setItem("username", identifier);
-      hideLoadingIndicator()
+      await storeUsername(identifier);
+      hideLoadingIndicator();
       navigation.navigate("TabNavigator");
     }
   };
@@ -88,11 +109,11 @@ const Login = ({ navigation }: Props) => {
     }
 
     if (result && result.error) {
-      hideLoadingIndicator()
+      hideLoadingIndicator();
       alert(result.message);
     } else {
-      await AsyncStorage.setItem("username", email);
-      hideLoadingIndicator()
+      await storeUsername(identifier);
+      hideLoadingIndicator();
       navigation.navigate("TabNavigator");
     }
   }
@@ -175,7 +196,7 @@ const Login = ({ navigation }: Props) => {
       </Text>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20,borderRadius: 0 }}
+        style={{ width: width * 0.65, marginVertical: 20, borderRadius: 0 }}
         mode="contained"
         onPress={() => login()}
       >
@@ -183,7 +204,7 @@ const Login = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0,borderRadius: 0 }}
+        style={{ width: width * 0.65, marginVertical: 0, borderRadius: 0 }}
         mode="contained"
         onPress={() => {
           handleGoogleSignIn();

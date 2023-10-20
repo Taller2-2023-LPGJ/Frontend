@@ -6,6 +6,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
 import axios, { AxiosResponse } from "axios";
@@ -42,9 +43,9 @@ const EditProfile = () => {
     });
 
     if (!result.canceled) {
-      return result.assets[0].uri
+      return result.assets[0].uri;
     } else {
-      return ""
+      return "";
     }
   };
 
@@ -140,6 +141,7 @@ const EditProfile = () => {
             biography: bio,
           };
           api_result = await axios.put(`${API_URL}/profile`, body);
+          
           navigation.goBack();
         } catch (e) {
           alert((e as any).response.data.message);
@@ -149,100 +151,102 @@ const EditProfile = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {isLoadingProfileData ? (
-        <View
-          style={{ justifyContent: "center", marginVertical: height / 2.5 }}
-        >
-          <ActivityIndicator size="large" animating={true} />
-        </View>
-      ) : (
-        <View>
-          <View style={styles.topContainer}>
-            {isUploadingImage ? (
-              <View
-                style={{
-                  width: 200,
-                  height: 200,
-                  alignContent: "center",
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <ActivityIndicator color="#0000ff" />
+    <ScrollView>
+      <View style={styles.container}>
+        {isLoadingProfileData ? (
+          <View
+            style={{ justifyContent: "center", marginVertical: height / 2.5 }}
+          >
+            <ActivityIndicator size="large" animating={true} />
+          </View>
+        ) : (
+          <View>
+            <View style={styles.topContainer}>
+              {isUploadingImage ? (
+                <View
+                  style={{
+                    width: 200,
+                    height: 200,
+                    alignContent: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <ActivityIndicator color="#0000ff" />
+                </View>
+              ) : (
+                <Image
+                  source={{
+                    uri: profilePicture,
+                  }}
+                  style={styles.profileImage}
+                />
+              )}
+
+              <View style={styles.buttonsContainer}>
+                <Button
+                  style={styles.uploadButton}
+                  mode="contained"
+                  onPress={handleUploadButton}
+                >
+                  Upload
+                </Button>
+
+                <Button
+                  style={styles.removeButton}
+                  mode="contained"
+                  onPress={handleRemoveButton}
+                >
+                  Remove
+                </Button>
               </View>
-            ) : (
-              <Image
-                source={{
-                  uri: profilePicture,
+            </View>
+
+            <View style={styles.bottomContainer}>
+              <View style={styles.fieldContainer}>
+                <Text style={styles.label}>Display Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={displayName}
+                  onChangeText={(text) => setDisplayName(text)}
+                />
+              </View>
+
+              <View style={styles.fieldContainer}>
+                <Text style={styles.label}>Location</Text>
+                <TextInput
+                  style={styles.input}
+                  value={location}
+                  onChangeText={(text) => setLocation(text)}
+                />
+              </View>
+
+              <View style={styles.fieldContainer}>
+                <Text style={styles.label}>Bio</Text>
+                <TextInput
+                  style={styles.inputBio}
+                  value={bio}
+                  multiline={true}
+                  numberOfLines={5}
+                  textAlignVertical="top"
+                  onChangeText={(text) => setBio(text)}
+                />
+              </View>
+
+              <Button
+                style={styles.saveButton}
+                mode="contained"
+                onPress={() => {
+                  tryEditProfile();
                 }}
-                style={styles.profileImage}
-              />
-            )}
-
-            <View style={styles.buttonsContainer}>
-              <Button
-                style={styles.uploadButton}
-                mode="contained"
-                onPress={handleUploadButton}
               >
-                Upload
-              </Button>
-
-              <Button
-                style={styles.removeButton}
-                mode="contained"
-                onPress={handleRemoveButton}
-              >
-                Remove
+                Save
               </Button>
             </View>
           </View>
-
-          <View style={styles.bottomContainer}>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Display Name</Text>
-              <TextInput
-                style={styles.input}
-                value={displayName}
-                onChangeText={(text) => setDisplayName(text)}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Location</Text>
-              <TextInput
-                style={styles.input}
-                value={location}
-                onChangeText={(text) => setLocation(text)}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Bio</Text>
-              <TextInput
-                style={styles.inputBio}
-                value={bio}
-                multiline={true}
-                numberOfLines={5}
-                textAlignVertical="top"
-                onChangeText={(text) => setBio(text)}
-              />
-            </View>
-
-            <Button
-              style={styles.saveButton}
-              mode="contained"
-              onPress={() => {
-                tryEditProfile();
-              }}
-            >
-              Save
-            </Button>
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 

@@ -239,13 +239,13 @@ const styles = StyleSheet.create({
     lineHeight: 38,
     fontSize: 24,
     borderWidth: 2,
-    borderColor: "#00000030",
+    borderColor: "#FFFFFF",
     textAlign: "center",
     justifyContent: "center",
     margin: 5,
   },
   focusCell: {
-    borderColor: "#000",
+    borderColor: "#FFFFFF",
   },
   text: {
     marginBottom: 10,

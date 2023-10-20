@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { registerIndieID } from "native-notify"
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -68,6 +69,9 @@ export const AuthProvider = ({ children }: any) => {
 
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
+      registerIndieID(userIdentifier, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
+      
+      //unregisterIndieDevice(userIdentifier, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
 
       return result;
     } catch (e) {
@@ -76,12 +80,13 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
+    console.log("Logging out")
     // reset axios header
     axios.defaults.headers.common["token"] = "";
 
     // remove stored username
     await AsyncStorage.removeItem('username');
-
+    
     // reset auth state
     setAuthState({
       token: null,
