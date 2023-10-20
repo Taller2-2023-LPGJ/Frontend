@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Dimensions,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
 import axios, { AxiosResponse } from "axios";
@@ -19,6 +20,8 @@ import { firebase } from "../../../components/config";
 import * as FileSystem from "expo-file-system";
 
 const { height } = Dimensions.get("window");
+const default_avatar =
+  "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
 
 const EditProfile = () => {
   const navigation = useNavigation();
@@ -27,14 +30,15 @@ const EditProfile = () => {
   const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
 
+  const [currentProfilePicture, setCurrentProfilePicture] = useState("");
+
   const [isLoadingProfileData, setIsLoadingProfileData] = useState(true);
   const [isUploadingImage, setisUploadingImage] = useState(false);
-  const [profilePicture, setprofilePicture] = useState(
-    "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245"
-  );
+  const [profilePicture, setprofilePicture] = useState("");
 
   const pickImage = async () => {
     // no permissions request is necessary for launching the img library
+    setisUploadingImage(true)
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -43,8 +47,10 @@ const EditProfile = () => {
     });
 
     if (!result.canceled) {
+      setisUploadingImage(false)
       return result.assets[0].uri;
     } else {
+      setisUploadingImage(false)
       return "";
     }
   };
@@ -67,16 +73,13 @@ const EditProfile = () => {
 
       const ref = firebase.storage().ref().child(`${username}/avatar`);
       const snapshot = await ref.put(blob as Blob | Uint8Array | ArrayBuffer);
-
-      // Get the download URL of the uploaded image to store in the DB
       const downloadURL = await snapshot.ref.getDownloadURL();
-
       await ref.put(blob as Blob | Uint8Array | ArrayBuffer);
-
-      // TODO actualizar el URL en la base de datos de profile el nuevo url
       setprofilePicture(downloadURL);
+      return downloadURL;
     } catch (error) {
       console.error(error);
+      return "";
     }
   };
 
@@ -96,6 +99,8 @@ const EditProfile = () => {
         setDisplayName(api_result.data.displayName);
         setLocation(api_result.data.location);
         setBio(api_result.data.biography);
+        setprofilePicture(api_result.data.profilePicture);
+        setCurrentProfilePicture(api_result.data.profilePicture);
         setIsLoadingProfileData(false);
       } catch (e) {
         alert((e as any).response.data.message);
@@ -109,29 +114,46 @@ const EditProfile = () => {
 
   const handleUploadButton = async () => {
     const selectedImage = await pickImage();
-
     if (selectedImage !== "") {
-      setisUploadingImage(true);
-      await uploadMedia(selectedImage);
-      setisUploadingImage(false);
-      return;
+      setprofilePicture(selectedImage);
     }
+
+    // if (selectedImage !== "") {
+    //   setisUploadingImage(true);
+    //   await uploadMedia(selectedImage);
+    //   setisUploadingImage(false);
+    //   return;
+    // }
   };
 
   const handleRemoveButton = async () => {
-    // TODO actualizar el campo en la db
-    // set Uploading image(true)
-    setprofilePicture(
-      "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245"
-    );
-    // set Uploading image(false)
+    setprofilePicture(default_avatar);
   };
 
   const tryEditProfile = async () => {
+    setIsLoadingProfileData(true)
     if (displayName == "") {
       alert("Can't leave your display name empty");
     } else {
+
       const result = await AsyncStorage.getItem("username");
+      let pp_url = "";
+      if (profilePicture !== currentProfilePicture) {
+        if(profilePicture !== default_avatar) {
+          pp_url = await uploadMedia(profilePicture);
+        } else {
+          pp_url = default_avatar
+        }
+      } else {
+        pp_url = profilePicture
+      }
+
+      if (pp_url === "") {
+        setIsLoadingProfileData(false)
+        alert("Error uploading Profile Picture");
+        return;
+      }
+
       if (result != null) {
         let api_result: AxiosResponse<any, any>;
         try {
@@ -139,11 +161,13 @@ const EditProfile = () => {
             displayName: displayName,
             location: location,
             biography: bio,
+            profilePicture: pp_url,
           };
           api_result = await axios.put(`${API_URL}/profile`, body);
-          
+          setIsLoadingProfileData(false)
           navigation.goBack();
         } catch (e) {
+          setIsLoadingProfileData(false)
           alert((e as any).response.data.message);
         }
       }
@@ -251,6 +275,7 @@ const EditProfile = () => {
 };
 
 import { secondaryColor } from "../../../components/colors";
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -310,6 +335,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     borderRadius: 5,
+    width: width * 0.9,
   },
   inputBio: {
     fontSize: 16,
