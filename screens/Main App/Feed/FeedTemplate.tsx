@@ -16,6 +16,12 @@ interface SnapMSGInfo {
   editingDate: string;
   id: number;
   tags: string[];
+  fav: boolean;
+  liked: boolean;
+  likes: number;
+  parentId: number;
+  sharedAt: string[];
+  sharedBy: string[];
 }
 
 type Props = {
@@ -28,19 +34,18 @@ type Props = {
 const { height } = Dimensions.get("window");
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
-
-    const [isLiked, setisLiked] = useState(false);
+    const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
     const [isShared, setisShared] = useState(false);
-    const [isFavourite, setisFavourite] = useState(false);
+    const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
 
     const likePost = async () => {
       let id = snapMSGInfo.id
       try {
         if (isLiked) {
-          const response = await axios.delete(`${apiUrl}/content/like/${id}}`);
+          await axios.delete(`${apiUrl}/content/like/${id}`);
           setisLiked(false)
         } else {
-          const response = await axios.post(`${apiUrl}/content/like/${id}}`);
+          await axios.post(`${apiUrl}/content/like/${id}`);
           setisLiked(true)
         }
       } catch (e) {
@@ -57,9 +62,19 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
         [
           {text: 'Cancel'},
           {text: 'Yes',
-            onPress: () => {
-              isShared ? setisShared(false) : setisShared(true);
-              console.log('Clicked snapshare button');
+            onPress: async () => {
+              let id = snapMSGInfo.id
+              try {
+                if (isShared) {
+                  await axios.delete(`${apiUrl}/content/share/${id}`);
+                  setisShared(false)
+                } else {
+                  await axios.post(`${apiUrl}/content/share/${id}`);
+                  setisShared(true)
+                }
+              } catch (e) {
+                alert((e as any).response.data.message);
+              }
             },
           },
         ]
@@ -74,10 +89,10 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
       let id = snapMSGInfo.id
       try {
         if (isFavourite) {
-          const response = await axios.delete(`${apiUrl}/content/fav/${id}}`);
+          await axios.delete(`${apiUrl}/content/fav/${id}`);
           setisFavourite(false)
         } else {
-          const response = await axios.post(`${apiUrl}/content/fav/${id}}`);
+          await axios.post(`${apiUrl}/content/fav/${id}`);
           setisFavourite(true)
         }
       } catch (e) {
@@ -139,7 +154,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
               <View style={styles.statIcons}>
                 <Icon size={(20*scale)} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{1}</Text>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.likes}</Text>
               </View>    
                         
               <View style={styles.statIcons}>
@@ -188,7 +203,7 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
       if (response.data.message != null) {
         setEndOfFeed(true)
       } else {
-        const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; id: any; tags: any; }) => ({
+        const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; fav: any; id: any;liked:any;likes:any;parentId:any;sharedAt:any;sharedBy:any; tags: any; }) => ({
           author: item.author,
           body: item.body,
           creationDate: item.creationDate,
@@ -196,8 +211,18 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
           editingDate: item.editingDate,
           id: item.id,
           tags: item.tags,
+          fav: item.fav,
+          liked: item.liked,
+          likes: item.likes,
+          parentId: item.parentId,
+          sharedAt: item.sharedAt,
+          sharedBy: item.sharedBy
         }));
-        setPosts([...posts.concat(dataArray)]);
+        if (currentPage == 0) {
+          setPosts(dataArray)
+        } else {
+          setPosts([...posts.concat(dataArray)]);
+        }
       }
       
     } catch (e) {
@@ -215,9 +240,9 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
     }
   };
 
-  useEffect(() => {
-    addPost(); 
-  }, []);
+  //useEffect(() => {
+  //  //addPost(); 
+  //}, []);
 
   useEffect(() => {
     addPost(); 
@@ -225,8 +250,15 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
 
   const handleReloadFeed = () => {
     setPosts([])
-    setEndOfFeed(false)
-    setCurrentPage(0)
+    if (endOfFeed) {
+      setEndOfFeed(false)
+    }
+    if (currentPage != 0) {
+      setCurrentPage(0)
+    } else {
+      addPost()
+    }
+    
   }
 
   return (
