@@ -22,20 +22,20 @@ type NotificationData = {
   message: string;
   title: string;
   notification_id: string;
-  // snapmsg_id y usar para navegar a pantalla con snapmsg
 };
 
 export default function Notifications() {
   const [data, setData] = useState<NotificationData[]>([]);
   const NotificationCard = ({ notification }: Notification) => {
+
     return (
       <Card
         style={styles.card}
-        onPress={() => console.log("navigate to snapmsg")}
+        onPress={() => console.log(`navigate to snapmsg id: ${notification.title.split(' ')[1]}`)}
       >
         <Card.Content>
           <View style={styles.cardTitle}>
-            <Title>{notification.title}</Title>
+          <Title>{notification.title.split(' ')[0]}</Title>
             <Paragraph
               onPress={async () =>
                 await handleDeleteNotification(notification.notification_id)
@@ -46,6 +46,7 @@ export default function Notifications() {
           </View>
           <Paragraph>{notification.message}</Paragraph>
           <Paragraph>At: {notification.date}</Paragraph>
+          <Paragraph>Id: {notification.title.split(' ')[1]}</Paragraph>
         </Card.Content>
       </Card>
     );
@@ -85,7 +86,7 @@ export default function Notifications() {
 
   useEffect(() => {
     handleEffect();
-  });
+  },);
 
   return (
     <ScrollView>
