@@ -70,6 +70,7 @@ function OtherProfile({ navigation }: Props) {
               onPress={async () => {
                 try {
                   const response = await axios.post(`${apiUrl}/content/follow/${data.username}`);
+                  console.log(response)
                 } catch (e) {
                   alert((e as any).response.data.message);
                 }

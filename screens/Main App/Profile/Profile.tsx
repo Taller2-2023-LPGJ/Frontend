@@ -60,6 +60,8 @@ const Profile = ({ navigation }: ProfileProps) => {
           location: api_result.data.location,
           displayname: api_result.data.displayName,
           bio: api_result.data.biography,
+          followers: api_result.data.followers,
+          followed: api_result.data.followed,
         }));
         setisLoading(false);
       } catch (e) {
@@ -80,7 +82,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     bio: "",
     birthdate: "",
     followers: 0,
-    following: 0,
+    followed: 0,
   };
 
   const [user, setUser] = useState(initialUser);
@@ -125,7 +127,7 @@ const Profile = ({ navigation }: ProfileProps) => {
             </Text>
 
             <Text style={styles.followCount}>
-              <Text style={styles.boldText}>{user.following}</Text> following{" "}
+              <Text style={styles.boldText}>{user.followed}</Text> following{" "}
               <Text style={styles.boldText}>{user.followers}</Text> followers
             </Text>
           </View>

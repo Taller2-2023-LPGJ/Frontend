@@ -33,9 +33,19 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     const [isShared, setisShared] = useState(false);
     const [isFavourite, setisFavourite] = useState(false);
 
-    const likePost = () => {
-        console.log("Pressed like");
-        isLiked ? setisLiked(false) : setisLiked(true); //prob esperar a tener confirmacion antes de actualizar el icono
+    const likePost = async () => {
+      let id = snapMSGInfo.id
+      try {
+        if (isLiked) {
+          const response = await axios.delete(`${apiUrl}/content/like/${id}}`);
+          setisLiked(false)
+        } else {
+          const response = await axios.post(`${apiUrl}/content/like/${id}}`);
+          setisLiked(true)
+        }
+      } catch (e) {
+        alert((e as any).response.data.message);
+      }
     }
 
     const sharePost = () => {
@@ -60,8 +70,19 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
       console.log("Pressed reply");
     }
     
-    const favouritePost = () => {
-      setisFavourite(!isFavourite)
+    const favouritePost = async () => {
+      let id = snapMSGInfo.id
+      try {
+        if (isFavourite) {
+          const response = await axios.delete(`${apiUrl}/content/fav/${id}}`);
+          setisFavourite(false)
+        } else {
+          const response = await axios.post(`${apiUrl}/content/fav/${id}}`);
+          setisFavourite(true)
+        }
+      } catch (e) {
+        alert((e as any).response.data.message);
+      }
     }
 
     const openSnapMSG = () => {
@@ -158,7 +179,7 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
   }
 
   const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
-  let [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const [endOfFeed, setEndOfFeed] = useState(false);
 
   const addPost = async () => {
@@ -167,7 +188,6 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
       if (response.data.message != null) {
         setEndOfFeed(true)
       } else {
-        setCurrentPage(currentPage + 1)
         const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; id: any; tags: any; }) => ({
           author: item.author,
           body: item.body,
@@ -186,21 +206,32 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
   }
 
   const handleScroll = (event: { nativeEvent: { layoutMeasurement: any; contentOffset: any; contentSize: any; }; }) => {
-    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isAtEnd = (layoutMeasurement.height + contentOffset.y)*1.05 >= contentSize.height;
-    if (isAtEnd) {
-      addPost();
+    if (!endOfFeed){
+      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+      const isAtEnd = (layoutMeasurement.height + contentOffset.y)*1.05 >= contentSize.height;
+      if (isAtEnd) {
+        setCurrentPage(currentPage + 1)
+      }
     }
   };
 
   useEffect(() => {
-    currentPage = 0
     addPost(); 
   }, []);
 
+  useEffect(() => {
+    addPost(); 
+  }, [currentPage]);
+
+  const handleReloadFeed = () => {
+    setPosts([])
+    setEndOfFeed(false)
+    setCurrentPage(0)
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
+        <Icon size={35} name={"reload"} style={{margin:15}} onPress={handleReloadFeed}/>
         {posts.map((post, index) => (
         <SnapMSG key={index} snapMSGInfo={post} navigation={navigation} scale={1} disabled={false}/>
         ))}
@@ -208,7 +239,7 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
           style={{ justifyContent: "center", marginVertical: height / 12 }}>
             {endOfFeed ? (
               <Text style={{marginHorizontal:40}}>
-                It may seem as if you have no more SnapMsgs to see. Go catch some fresh air and come back later!
+                No more SnapMSGs to show
               </Text>
             ) : (
               <ActivityIndicator size="large" animating={true} />
