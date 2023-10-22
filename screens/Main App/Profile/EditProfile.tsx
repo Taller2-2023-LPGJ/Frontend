@@ -212,6 +212,7 @@ const EditProfile = () => {
                   style={styles.uploadButton}
                   mode="contained"
                   onPress={handleUploadButton}
+                  labelStyle={{color:textLight}}
                 >
                   Upload
                 </Button>
@@ -220,6 +221,7 @@ const EditProfile = () => {
                   style={styles.removeButton}
                   mode="contained"
                   onPress={handleRemoveButton}
+                  labelStyle={{color:textLight}}
                 >
                   Remove
                 </Button>
@@ -259,6 +261,7 @@ const EditProfile = () => {
 
               <Button
                 style={styles.saveButton}
+                labelStyle={{color:textLight}}
                 mode="contained"
                 onPress={() => {
                   tryEditProfile();
@@ -274,13 +277,14 @@ const EditProfile = () => {
   );
 };
 
-import { secondaryColor } from "../../../components/colors";
+import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    backgroundColor:background
   },
   topContainer: {
     borderRadius: 10,
@@ -304,19 +308,19 @@ const styles = StyleSheet.create({
   uploadButton: {
     width: 120,
     marginBottom: 10,
-    borderRadius: 0,
+    backgroundColor:primaryColor
   },
   removeButton: {
     width: 120,
     marginBottom: 10,
-    borderRadius: 0,
-    backgroundColor: secondaryColor,
+    backgroundColor: "#743939",
   },
   saveButton: {
     width: 120,
     marginBottom: 10,
-    borderRadius: 0,
     marginTop: 20,
+    alignSelf:"flex-end",
+    backgroundColor:primaryColor
   },
   bottomContainer: {
     flex: 1,

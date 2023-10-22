@@ -139,7 +139,7 @@ const Profile = ({ navigation }: ProfileProps) => {
             <Tab.Navigator
               screenOptions={{
                 tabBarIndicatorStyle: {
-                  backgroundColor: primaryColor,
+                  backgroundColor: accent,
                   height: 5,
                 },
                 tabBarLabelStyle: { fontSize: 15, textTransform: "none" },
@@ -158,7 +158,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 };
 
-import { background, primaryColor, secondaryColor } from "../../../components/colors";
+import { accent, background, primaryColor, secondaryColor } from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
 
 const styles = StyleSheet.create({
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 2,
     borderColor: primaryColor,
+    backgroundColor:secondaryColor
   },
   displayname: {
     fontSize: 20,

@@ -24,7 +24,7 @@ const ProfileSnapMSGs = ({ navigation }: Props) => {
 
   return (
     <View style={{flexGrow:1, backgroundColor:secondaryColor}}>
-      {username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:username}}></FeedTemplate>:null}
+      {username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:username, id:-1}}></FeedTemplate>:null}
     </View>
   );
 }

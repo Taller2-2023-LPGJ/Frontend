@@ -11,7 +11,7 @@ type Props = {
 function ProfileFavourites({ navigation }: Props) {
   return (
     <View style={{flexGrow:1, backgroundColor:secondaryColor}}>
-      <FeedTemplate navigation={navigation} feedType="FavFeed" feedParams={{username:""}}></FeedTemplate>
+      <FeedTemplate navigation={navigation} feedType="FavFeed" feedParams={{username:"", id:-1}}></FeedTemplate>
     </View>
   );
 }

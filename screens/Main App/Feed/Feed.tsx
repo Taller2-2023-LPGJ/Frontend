@@ -21,7 +21,7 @@ const Feed = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.feedContainer}>
-        <FeedTemplate navigation={navigation} feedType="GeneralFeed" feedParams={{username:""}}></FeedTemplate>
+        <FeedTemplate navigation={navigation} feedType="GeneralFeed" feedParams={{username:"", id:-1}}></FeedTemplate>
       </View>
       <View style={styles.buttonContainer}>
         <Button 
