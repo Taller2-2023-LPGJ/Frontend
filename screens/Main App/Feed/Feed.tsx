@@ -26,6 +26,7 @@ const Feed = ({ navigation }: Props) => {
       <View style={styles.buttonContainer}>
         <Button 
           style={styles.writeSnapMSGButton}
+          labelStyle={styles.buttonLabelStyle}
           mode="outlined"
           onPress={() => {navigation.navigate("WriteSnapMSG");}}
         >
@@ -37,6 +38,7 @@ const Feed = ({ navigation }: Props) => {
 };
 
 export default Feed;
+import { background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
 
 const styles = StyleSheet.create({
   container: {
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 10,
-    backgroundColor: "#ccc",
+    backgroundColor: secondaryColor,
     width: "100%",
   },
   feedContainer: {
@@ -57,11 +59,16 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 10,
     alignItems: "center",
-    backgroundColor: "#ccc",
+    backgroundColor: secondaryColor,
   },
   writeSnapMSGButton: {
     marginBottom: 15,
     width: 170,
     height: 45,
+    borderColor: primaryColor,
+    backgroundColor:primaryColor,
   },
+  buttonLabelStyle: {
+    color:textLight
+  }
 });
