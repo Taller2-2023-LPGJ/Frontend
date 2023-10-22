@@ -142,6 +142,12 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
             <Text style={{fontWeight: "bold", fontSize:(15*scale), color:textLight}}>{snapMSGInfo.sharedBy}</Text>
           </View>
         ) : null}
+        {(snapMSGInfo.parentId != 0) && (snapMSGInfo.parentId != null) ? (
+          <View style={{flexDirection: 'row', marginBottom:10}}>
+            <Icon size={(20*scale)} name={"message-reply-outline"} color={textLight}/>
+            <Text style={{fontSize:(15*scale),marginHorizontal:5, color:textLight}} >Reply</Text>
+          </View>
+        ) : null}
             <View style={styles.row}>
                 <View style={{flexDirection: 'row', width: 200}}>
                   <TouchableOpacity onPress={openProfile}>
@@ -194,7 +200,8 @@ type Props = {
   navigation: Navigation;
   feedType: string;
   feedParams: {
-    username: string
+    username: string,
+    id: number
   };
 };
 
@@ -203,21 +210,6 @@ async function sleep(ms: number) {
 }
 const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
 
-
-
-  switch (feedType) {
-    case "FavFeed":
-      break
-    case "ProfileFeed":
-      break
-    case "GeneralFeed":
-      break
-    case "ReplyFeed":
-      break
-    default:
-      break
-      
-  }
 
   const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -228,6 +220,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     try {
       let request = ""
       let username = feedParams.username
+      let id = feedParams.id
       switch (feedType){
         case "GeneralFeed":
           request = `${apiUrl}/content/post?page=`
@@ -237,6 +230,9 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
           break
         case "FavFeed":
           request = `${apiUrl}/content/fav?page=`
+          break
+        case "ReplyFeed":
+          request = `${apiUrl}/content/post/${id}?page=`
           break
         default:
           return
@@ -286,10 +282,6 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
       }
     }
   };
-
-  //useEffect(() => {
-  //  //addPost(); 
-  //}, []);
 
   useEffect(() => {
     addPost(); 

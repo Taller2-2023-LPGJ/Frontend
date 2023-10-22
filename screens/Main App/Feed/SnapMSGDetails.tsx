@@ -43,7 +43,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
   if (route.params.SnapMSGInfo){
     const snapMSGInfo = route.params.SnapMSGInfo
 
-    console.log(snapMSGInfo.parentId)
+    
     const deleteSnapMSG = async () => {
       try {
         let id = snapMSGInfo.id
@@ -96,8 +96,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
           </View>
           <View style={{flex:1}}>
             {
-
-            //<FeedTemplate navigation={navigation} feedType="ReplyFeed"></FeedTemplate>
+            <FeedTemplate navigation={navigation} feedType="ReplyFeed" feedParams={{username:"",id:snapMSGInfo.id}}></FeedTemplate>
             }
           </View>
       </View>

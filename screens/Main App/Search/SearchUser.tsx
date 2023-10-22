@@ -112,11 +112,11 @@ const styles = StyleSheet.create({
       flexGrow:1
     },
     userProfileContainer: {
-      width: "95%",
+      width: "90%",
       backgroundColor: primaryColor,
       padding: 15,
       borderRadius: 20,
-      marginVertical: 5,
+      marginVertical: 8,
       flexDirection: "row",
     },
     profileImage: {

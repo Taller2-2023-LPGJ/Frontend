@@ -125,7 +125,7 @@ function OtherProfile({ navigation }: Props) {
           </View>
             
           <View style={styles.postsContainer}>
-            {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username}}></FeedTemplate>:null}
+            {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username, id:-1}}></FeedTemplate>:null}
           </View>
         </View>
         )}
