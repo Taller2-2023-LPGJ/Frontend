@@ -13,7 +13,7 @@ const FeedStack = createNativeStackNavigator();
 const FeedStackScreen = () => {
     return (
         <FeedStack.Navigator>
-          <FeedStack.Screen options={{title:""}} name="Feed2" component={Feed} />
+          <FeedStack.Screen options={{title:"", headerShown:false}} name="Feed2" component={Feed} />
           <FeedStack.Screen options={{title:""}} name="SnapMSGDetails" component={SnapMSGDetails} />
           <FeedStack.Screen options={{title:""}} name="WriteSnapMSG" component={WriteSnapMSG} />
           <FeedStack.Screen options={{title:""}} name="EditSnapMSG" component={EditSnapMSG} />

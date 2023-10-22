@@ -10,7 +10,7 @@ const ProfileStackScreen = () => {
     return (
         <ProfileStack.Navigator>
           <ProfileStack.Screen options={{title:"",headerShown:false}} name="Profile2" component={Profile} />
-          <ProfileStack.Screen options={{title:""}} name="EditProfile" component={EditProfile} />
+          <ProfileStack.Screen options={{title:"Edit profile"}} name="EditProfile" component={EditProfile} />
           <ProfileStack.Screen options={{title:""}} name="SnapMSGDetails" component={SnapMSGDetails} />
         </ProfileStack.Navigator>
       );

@@ -11,7 +11,7 @@ const SearchStack = createNativeStackNavigator();
 const SearchStackScreen = () => {
     return (
         <SearchStack.Navigator>
-          <SearchStack.Screen options={{title:""}} name="Search2" component={Search} />
+          <SearchStack.Screen options={{title:"", headerShown:false}} name="Search2" component={Search} />
           <SearchStack.Screen options={{title:""}} name="OtherProfile" component={OtherProfile} />
           <SearchStack.Screen options={{title:""}} name="SearchHashtag" component={SearchHashtag} />
           <SearchStack.Screen options={{title:""}} name="SearchSnapMSG" component={SearchSnapMSG} />

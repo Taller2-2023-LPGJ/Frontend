@@ -213,6 +213,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: primaryColor,
     borderColor:primaryColor,
-    width: "30%",
+    width: "40%",
   },
 });
