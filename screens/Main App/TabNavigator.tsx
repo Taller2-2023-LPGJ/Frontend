@@ -4,6 +4,7 @@ import ProfileStackScreen from "./Profile/ProfileStackScreen";
 import FeedStackScreen from "./Feed/FeedStackScreen";
 import SearchStackScreen from "./Search/SearchStackScreen";
 import SettingsStackScreen from "./Settings/SettingsStackScreen";
+import NotificationsStackScreen from "./Notifications/NotificationsStackScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -71,6 +72,21 @@ export function TabNavigator() {
         }}
         name="Settings"
         component={SettingsStackScreen}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon(props) {
+            return (
+              <Icon
+                size={25}
+                name={props.focused ? "bell-circle" : "bell-circle-outline"}
+                {...props}
+              />
+            );
+          },
+        }}
+        name="Notifications"
+        component={NotificationsStackScreen}
       />
     </Tab.Navigator>
   );

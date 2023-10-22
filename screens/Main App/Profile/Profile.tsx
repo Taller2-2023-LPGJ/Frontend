@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, ScrollView, View, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Image, Dimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -13,9 +13,8 @@ import ProfileFavourites from "./ProfileFavourites";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
-const edgeRounding = 25;
 const USERS_SEARCH_URL =
-  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/searchuser?user=";
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
 interface ProfileProps {
   navigation: Navigation;
@@ -29,6 +28,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 
   const [isLoading, setisLoading] = useState(true);
+  const { onLogout } = useAuth();
 
   const getData = async () => {
     let result = await AsyncStorage.getItem("username");
@@ -62,10 +62,16 @@ const Profile = ({ navigation }: ProfileProps) => {
           bio: api_result.data.biography,
           followers: api_result.data.followers,
           followed: api_result.data.followed,
+          profilepic: api_result.data.profilePicture,
         }));
         setisLoading(false);
       } catch (e) {
-        alert((e as any).response.data.message);
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
     }
   };
@@ -75,12 +81,11 @@ const Profile = ({ navigation }: ProfileProps) => {
 
   const initialUser = {
     profilepic:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+      "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
     displayname: "",
     username: "",
     location: "",
     bio: "",
-    birthdate: "",
     followers: 0,
     followed: 0,
   };
@@ -91,11 +96,12 @@ const Profile = ({ navigation }: ProfileProps) => {
     <View>
       {isLoading ? (
         <View
-          style={{ justifyContent: "center", marginVertical: height / 2.5 }}>
+          style={{ justifyContent: "center", marginVertical: height / 2.5 }}
+        >
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.container} nestedScrollEnabled={true}>
+        <View style={styles.container}>
           <Image
             source={{
               uri: user.profilepic,
@@ -103,28 +109,25 @@ const Profile = ({ navigation }: ProfileProps) => {
             style={styles.profileImage}
           />
 
-          <Button
-            style={styles.editProfileButton}
-            mode="outlined"
-            onPress={() => {
-              navigation.navigate("EditProfile");
-            }}
-          >
-            Edit profile
-          </Button>
-
           <View style={styles.userInfoContainer}>
-            <Text style={styles.displayname}>{user.displayname}</Text>
+            <View style={styles.displaynameRow}>
+              <Text style={styles.displayname}>{user.displayname}</Text>
+              <Text
+                style={styles.editProfileButton}
+                onPress={() => {
+                  navigation.navigate("EditProfile");
+                }}
+              >
+                Edit profile
+              </Text>
+            </View>
             <Text style={styles.bio}>
               {"@"}
               {user.username}
             </Text>
+
             <Text style={styles.bio}>{user.bio}</Text>
-            <Text>
-              <Text style={styles.bio}>{user.location}</Text>
-              {", "}
-              <Text style={styles.bio}>{user.birthdate}</Text>
-            </Text>
+            <Text style={styles.location}>{user.location}</Text>
 
             <Text style={styles.followCount}>
               <Text style={styles.boldText}>{user.followed}</Text> following{" "}
@@ -135,12 +138,13 @@ const Profile = ({ navigation }: ProfileProps) => {
           <View style={styles.tweetsContainer}>
             <Tab.Navigator
               screenOptions={{
-                tabBarIndicatorStyle: { backgroundColor: "#739998", height: 5 },
+                tabBarIndicatorStyle: {
+                  backgroundColor: primaryColor,
+                  height: 5,
+                },
                 tabBarLabelStyle: { fontSize: 15, textTransform: "none" },
                 tabBarStyle: {
-                  backgroundColor: "#cfcfcf",
-                  borderTopLeftRadius: edgeRounding,
-                  borderTopRightRadius: edgeRounding,
+                  backgroundColor: primaryColor,
                 },
               }}
             >
@@ -148,35 +152,39 @@ const Profile = ({ navigation }: ProfileProps) => {
               <Tab.Screen name="Favourites" component={ProfileFavourites} />
             </Tab.Navigator>
           </View>
-
-        </ScrollView>
+        </View>
       )}
     </View>
   );
 };
+
+import { primaryColor } from "../../../components/colors";
+import { useAuth } from "../../../context/AuthContext";
 
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
   },
   profileImage: {
-    width: 110,
-    height: 110,
+    width: 150,
+    height: 150,
     borderRadius: 75,
-    marginTop: 55,
+    marginTop: 10,
     marginBottom: 15,
   },
   editProfileButton: {
-    marginBottom: 15,
-    width: 120,
-    height: 45,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: primaryColor,
+    paddingHorizontal: 10,
   },
   userInfoContainer: {
-    borderRadius: 10,
-    backgroundColor: "#ccc",
+    borderRadius: 5,
     width: "90%",
     padding: 10,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
   },
   displayname: {
     fontSize: 20,
@@ -194,11 +202,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tweetsContainer: {
-    borderTopLeftRadius: edgeRounding,
-    borderTopRightRadius: edgeRounding,
+    borderRadius: 5,
     height: height - 165,
     width: "90%",
-    backgroundColor: "#ccc",
+    backgroundColor: primaryColor,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: "#FFFFFF",
+  },
+  displaynameRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  location: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 5,
   },
 });
 

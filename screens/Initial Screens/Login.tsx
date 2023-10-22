@@ -4,7 +4,7 @@ import { Button, TextInput, Text } from "react-native-paper";
 import { Navigation } from "../../types/types";
 import Logo from "../../components/Logo";
 import { useAuth } from "../../context/AuthContext";
-
+import { Modal, Portal, ActivityIndicator } from "react-native-paper";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,6 +16,8 @@ type Props = {
 };
 
 const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -25,6 +27,33 @@ const Login = ({ navigation }: Props) => {
   const [identifier, setIdentifier] = React.useState("");
   const [pass, setPass] = React.useState("");
   const { onLogin, onLoginGoogle } = useAuth();
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+
+  const hideLoadingIndicator = () => {
+    setLoadingVisible(false);
+  };
+  const showLoadingIndicator = () => {
+    setLoadingVisible(true);
+  };
+
+  const storeUsername = async (identifier: string) => {
+    if (identifier.includes("@")) {
+      try {
+        const response = await axios.get(
+          `${USERS_SEARCH_URL}${identifier}`,
+          {}
+        );
+        const respUsername = response.data.name;
+        
+        await AsyncStorage.setItem("username", respUsername);
+      } catch (e) {
+        //
+      }
+    } else {
+      
+      await AsyncStorage.setItem("username", identifier);
+    }
+  };
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -39,12 +68,15 @@ const Login = ({ navigation }: Props) => {
       return false;
     }
 
+    showLoadingIndicator();
     const result = await onLogin!(identifier, pass);
 
     if (result && result.error) {
+      hideLoadingIndicator();
       alert(result.message);
     } else {
-      await AsyncStorage.setItem("username", identifier);
+      await storeUsername(identifier);
+      hideLoadingIndicator();
       navigation.navigate("TabNavigator");
     }
   };
@@ -54,7 +86,6 @@ const Login = ({ navigation }: Props) => {
   }, [response]);
 
   async function handleEffect() {
-
     let userInfo = null;
     if (response?.type === "success" && response.authentication) {
       userInfo = await getUserInfo(response.authentication.accessToken);
@@ -70,6 +101,7 @@ const Login = ({ navigation }: Props) => {
     }
     let result = null;
     if (email) {
+      showLoadingIndicator();
       result = await onLoginGoogle!((userInfo as any).email);
     } else {
       alert(GOOGLE_ERR_MSG);
@@ -77,15 +109,16 @@ const Login = ({ navigation }: Props) => {
     }
 
     if (result && result.error) {
-      alert(GOOGLE_ERR_MSG);
+      hideLoadingIndicator();
+      alert(result.message);
     } else {
-      await AsyncStorage.setItem("username", email);
+      await storeUsername(identifier);
+      hideLoadingIndicator();
       navigation.navigate("TabNavigator");
     }
   }
 
   const getUserInfo = async (token: string) => {
-
     if (!token) return;
     try {
       const response = await axios.get(
@@ -99,7 +132,6 @@ const Login = ({ navigation }: Props) => {
 
       const userInfo = await response.data;
       return userInfo;
-
     } catch (error) {
       alert(GOOGLE_ERR_MSG);
       return null;
@@ -112,6 +144,28 @@ const Login = ({ navigation }: Props) => {
 
   return (
     <View style={styles.container}>
+      <Portal>
+        <Modal
+          visible={loadingVisible}
+          dismissable={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <ActivityIndicator
+              animating={loadingVisible}
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
         Welcome!
@@ -142,7 +196,7 @@ const Login = ({ navigation }: Props) => {
       </Text>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20 }}
+        style={{ width: width * 0.65, marginVertical: 20, borderRadius: 0 }}
         mode="contained"
         onPress={() => login()}
       >
@@ -150,7 +204,7 @@ const Login = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0 }}
+        style={{ width: width * 0.65, marginVertical: 0, borderRadius: 0 }}
         mode="contained"
         onPress={() => {
           handleGoogleSignIn();

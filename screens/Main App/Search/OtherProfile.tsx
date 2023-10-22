@@ -12,14 +12,14 @@ const apiUrl = API_URL
 const { height } = Dimensions.get("window");
 
 type Props = {
-    navigation: Navigation;
-  };
-  
+  navigation: Navigation;
+};
+
 type RouteParams = {
-    params: any;
-    key: string;
-    name: string;
-    path?: string | undefined;
+  params: any;
+  key: string;
+  name: string;
+  path?: string | undefined;
 };
 
 function OtherProfile({ navigation }: Props) {
@@ -35,23 +35,23 @@ function OtherProfile({ navigation }: Props) {
 
   const [isLoading, setisLoading] = useState(true);
 
-  const getData = async () => { 
+  const getData = async () => {
     if (data.username != null) {
-      let api_result: AxiosResponse<any, any>
+      let api_result: AxiosResponse<any, any>;
       try {
         api_result = await axios.get(`${API_URL}/profile/${data.username}`); // TODO ver si se esta siguiendo
-        setDisplayName(api_result.data.displayName)
-        setLocation(api_result.data.location)
-        setBio(api_result.data.biography)
+        setDisplayName(api_result.data.displayName);
+        setLocation(api_result.data.location);
+        setBio(api_result.data.biography);
         setFollowed(api_result.data.followed)
         setFollowers(api_result.data.followers)
         setFollowing(api_result.data.following)
-        setisLoading(false)
+        setisLoading(false);
       } catch (e) {
-        alert((e as any).response.data.message)
+        alert((e as any).response.data.message);
       }
     }
-  }
+  };
   useEffect(() => {
     setisLoading(true)
     getData();
@@ -61,17 +61,22 @@ function OtherProfile({ navigation }: Props) {
     <ScrollView contentContainerStyle={{alignItems:"center"}} nestedScrollEnabled={true}>
       {isLoading ? (
         <View
-          style={{ justifyContent: "center", marginVertical: height / 2.5 }}>
+          style={{ justifyContent: "center", marginVertical: height / 2.5 }}
+        >
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <>
-        <Image source={{
-            uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+        <View>
+          <Image 
+          source={{
+            uri: "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
           }}
-            style={styles.profileImage} />
-            {following? 
-              <Button
+          style={styles.profileImage}
+          />
+
+          {following ? 
+          (<View style={styles.buttonContainer}>
+            <Button
               style={styles.followButton}
               mode="outlined"
               onPress={async () => {
@@ -86,8 +91,9 @@ function OtherProfile({ navigation }: Props) {
               >
                 Unfollow
               </Button>
+            </View>)
             :
-              <Button
+              (<Button
                 style={styles.followButton}
                 mode="outlined"
                 onPress={async () => {
@@ -102,68 +108,70 @@ function OtherProfile({ navigation }: Props) {
               >
                 Follow
               </Button>
+              )
             }
+
+          <View style={styles.userInfoContainer}>
+            <Text style={styles.displayname}>{displayName}</Text>
+            <Text style={styles.bio}>{"@"}{data.username}</Text>
+            <Text style={styles.bio}>{location}</Text>
+            <Text style={styles.bio}>{bio}</Text>
+            <Text style={styles.bio}>
+              <Text style={{fontWeight: "bold"}}>{followed}</Text> following{" "}
+              <Text style={{fontWeight: "bold"}}>{followers}</Text> followers
+            </Text>
+          </View>
             
-            <View style={styles.userInfoContainer}>
-              <Text style={styles.displayname}>{displayName}</Text>
-              <Text style={styles.bio}>{"@"}{data.username}</Text>
-              <Text style={styles.bio}>{location}</Text>
-              <Text style={styles.bio}>{bio}</Text>
-              <Text style={styles.bio}>
-                <Text style={{fontWeight: "bold"}}>{followed}</Text> following{" "}
-                <Text style={{fontWeight: "bold"}}>{followers}</Text> followers
-              </Text>
-            </View>
-            
-            <View style={styles.postsContainer}>
-              {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username}}></FeedTemplate>:null}
-            </View>
-            
-            </>
+          <View style={styles.postsContainer}>
+            {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username}}></FeedTemplate>:null}
+          </View>
+        </View>
         )}
-    </ScrollView>
-      
+    </ScrollView>  
   );
 }
 
 export default OtherProfile;
+import { primaryColor} from "../../../components/colors";
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-    },
-    userInfoContainer: {
-        borderRadius: 10,
-        backgroundColor: "#ccc",
-        width: "90%",
-        padding: 10,
-        marginBottom: 10,
-    },
-    displayname: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-    bio: {
-        fontSize: 16,
-        marginTop: 5,
-    },
-        profileImage: {
-        width: 110,
-        height: 110,
-        borderRadius: 75,
-        marginTop: 55,
-        marginBottom: 15,
-    },
-    followButton: {
-        marginBottom: 15,
-        width: 120,
-        height: 45,
-    },
-    postsContainer: {
-      height:height-165, 
-      width:"90%", 
-      backgroundColor:"#ccc",
-      borderRadius:10,
-    }
+  container: {
+    flex: 1,
+    alignItems: "center",
+  },
+  userInfoContainer: {
+    borderRadius: 5,
+    width: "90%",
+    padding: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: primaryColor,
+  },
+  displayname: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  bio: {
+    fontSize: 16,
+    marginTop: 5,
+  },
+  profileImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  followButton: {
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  postsContainer:{
+
+  }
 });

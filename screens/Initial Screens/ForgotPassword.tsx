@@ -1,7 +1,14 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { Navigation } from "../../types/types";
-import { TextInput, Text, Button } from "react-native-paper";
+import {
+  TextInput,
+  Text,
+  Button,
+  Portal,
+  Modal,
+  ActivityIndicator,
+} from "react-native-paper";
 import Logo from "../../components/Logo";
 import { API_URL } from "@env";
 import axios from "axios";
@@ -15,20 +22,31 @@ const { width } = Dimensions.get("window");
 
 const ForgotPassword = ({ navigation }: Props) => {
   const [username, setUsername] = React.useState("");
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+
+  const hideLoadingIndicator = () => {
+    setLoadingVisible(false);
+  };
+  const showLoadingIndicator = () => {
+    setLoadingVisible(true);
+  };
 
   const handleForgotPassword = async () => {
     if (username === "") {
       alert("Empty input fields");
     } else {
+      showLoadingIndicator();
       try {
         await axios.post(`${apiUrl}/users/recoverPassword`, {
           username,
         });
+        hideLoadingIndicator()
         navigation.navigate("PinConfirmation", {
           username: username,
           mode: "resetPass",
         });
       } catch (e) {
+        hideLoadingIndicator()
         alert((e as any).response.data.message);
       }
     }
@@ -36,6 +54,28 @@ const ForgotPassword = ({ navigation }: Props) => {
 
   return (
     <View style={styles.container}>
+      <Portal>
+        <Modal
+          visible={loadingVisible}
+          dismissable={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <ActivityIndicator
+              animating={loadingVisible}
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
         Restore Password
@@ -52,7 +92,7 @@ const ForgotPassword = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 10 }}
+        style={{ width: width * 0.65, marginVertical: 10,borderRadius: 0 }}
         mode="contained"
         onPress={() => handleForgotPassword()}
       >

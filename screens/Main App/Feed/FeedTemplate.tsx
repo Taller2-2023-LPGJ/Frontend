@@ -198,8 +198,13 @@ type Props = {
   };
 };
 
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
-  
+
+
+
   switch (feedType) {
     case "FavFeed":
       break
@@ -219,6 +224,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
   const [endOfFeed, setEndOfFeed] = useState(false);
 
   const addPost = async () => {
+    await sleep(100);
     try {
       let request = ""
       let username = feedParams.username
