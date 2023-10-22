@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   feedContainer: {
-    height: "85%",
+    height: "87%",
     width: "100%",
     marginBottom: 3,
     alignItems: "center",

@@ -20,6 +20,7 @@ import Logo from "../../components/Logo";
 import { Button } from "react-native-paper";
 import { Navigation } from "../../types/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { background, primaryColor, textLight } from "../../components/colors";
 
 const CELL_COUNT = 6;
 const { width } = Dimensions.get("window");
@@ -212,7 +213,8 @@ const PinConfirmation = ({ navigation }: Props) => {
       </Button> */}
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 10,borderRadius: 0 }}
+        style={styles.button}
+        labelStyle={{color:textLight}}
         mode="contained"
         onPress={() => handleVerify()}
       >
@@ -230,6 +232,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   title: { textAlign: "center", fontSize: 30 },
   codeFieldRoot: { marginTop: 20, marginBottom: 10 },
@@ -255,4 +258,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: width * 0.7,
   },
+  button: {
+    width: width*0.7,
+    marginVertical: 10,
+    backgroundColor:primaryColor
+  }
 });
