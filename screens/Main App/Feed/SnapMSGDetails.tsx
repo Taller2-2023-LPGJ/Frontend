@@ -7,6 +7,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { secondaryColor, textLight } from '../../../components/colors';
 const apiUrl = API_URL;
 
 type Props = {
@@ -72,25 +73,25 @@ const SnapMSGDetails = ({ navigation}: Props) => {
     }, []);
 
     return (
-      <View style={{backgroundColor: "#ccc", flex:1}}>
+      <View style={{backgroundColor: secondaryColor, flex:1}}>
           <View>
             <SnapMSG snapMSGInfo={snapMSGInfo} navigation={navigation} scale={1.3} disabled={true}></SnapMSG>
             
             {(username == snapMSGInfo.author)? (
               <View style={styles.snapMSGToolsContainer}>
-                <Icon size={35} name={"poll"} style={styles.snapMSGTool}/>
-                <Icon size={35} name={"lock-outline"} style={styles.snapMSGTool}/>
-                <Icon size={35} name={"pencil-outline"} style={styles.snapMSGTool} onPress={editSnapMSG}/>
-                <Icon size={35} name={"trash-can-outline"} style={styles.snapMSGTool} onPress={deleteSnapMSG}/>
+                <Icon size={35} color={textLight} name={"poll"} style={styles.snapMSGTool}/>
+                <Icon size={35} color={textLight} name={"lock-outline"} style={styles.snapMSGTool}/>
+                <Icon size={35} color={textLight} name={"pencil-outline"} style={styles.snapMSGTool} onPress={editSnapMSG}/>
+                <Icon size={35} color={textLight} name={"trash-can-outline"} style={styles.snapMSGTool} onPress={deleteSnapMSG}/>
               </View>
             ):(
               <View style={styles.snapMSGToolsContainer}>
-                <Icon size={35} name={"poll"} style={styles.snapMSGTool}/>
+                <Icon size={35} color={textLight} name={"poll"} style={styles.snapMSGTool}/>
               </View>
             )}
             
             <View style={styles.separatorBar}></View>
-            <Text style={{fontSize:22, margin:5}}> Replies </Text>
+            <Text style={{fontSize:22, margin:5, color:textLight}}> Replies </Text>
           </View>
           <View style={{flex:1}}>
             {
@@ -110,14 +111,14 @@ const styles = StyleSheet.create({
     snapMSGToolsContainer: {
       flexDirection: 'row', 
       justifyContent:"flex-end",
-      marginVertical: 10
+      marginVertical: 10,
     },
     snapMSGTool: {
       marginHorizontal: 10
     },
     separatorBar: {
       width: "100%",
-      backgroundColor: "white",
+      backgroundColor: textLight,
       height: 2,
     },
     

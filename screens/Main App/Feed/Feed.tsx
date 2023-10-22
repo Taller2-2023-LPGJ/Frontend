@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: primaryColor
   },
   buttonContainer: {
     flex: 1,
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   feedContainer: {
     height: "85%",
     width: "100%",
-    marginBottom: 10,
+    marginBottom: 3,
     alignItems: "center",
     backgroundColor: secondaryColor,
   },
