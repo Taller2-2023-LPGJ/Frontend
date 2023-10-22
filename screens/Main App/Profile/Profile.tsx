@@ -60,6 +60,8 @@ const Profile = ({ navigation }: ProfileProps) => {
           location: api_result.data.location,
           displayname: api_result.data.displayName,
           bio: api_result.data.biography,
+          followers: api_result.data.followers,
+          followed: api_result.data.followed,
           profilepic: api_result.data.profilePicture,
         }));
         setisLoading(false);
@@ -85,7 +87,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     location: "",
     bio: "",
     followers: 0,
-    following: 0,
+    followed: 0,
   };
 
   const [user, setUser] = useState(initialUser);
@@ -128,9 +130,8 @@ const Profile = ({ navigation }: ProfileProps) => {
             <Text style={styles.location}>{user.location}</Text>
 
             <Text style={styles.followCount}>
-              <Text style={styles.boldText}>{user.following}</Text> Following
-              {"    "}
-              <Text style={styles.boldText}>{user.followers}</Text> Followers
+              <Text style={styles.boldText}>{user.followed}</Text> following{" "}
+              <Text style={styles.boldText}>{user.followers}</Text> followers
             </Text>
           </View>
 

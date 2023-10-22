@@ -67,7 +67,7 @@ const SearchUser = ({ navigation }: Props) => {
     let api_result: AxiosResponse<any, any>
 
       try {
-        api_result = await axios.get(`${API_URL}/profile?username=${searchQuery}`);
+        api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`);
         setUsers(api_result.data)
       } catch (e) {
         alert((e as any).response.data.message)

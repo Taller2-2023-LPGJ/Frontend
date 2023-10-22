@@ -1,11 +1,17 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import FeedTemplate from '../Feed/FeedTemplate';
+import { Navigation } from '../../../types/types';
 
-function ProfileFavourites() {
+type Props = {
+  navigation: Navigation;
+};
+
+function ProfileFavourites({ navigation }: Props) {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text>Profile Favourites</Text>
-    </ScrollView>
+    <View>
+      <FeedTemplate navigation={navigation} feedType="FavFeed" feedParams={{username:""}}></FeedTemplate>
+    </View>
   );
 }
 
