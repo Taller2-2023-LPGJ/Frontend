@@ -171,7 +171,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
               </View>    
                         
               <View style={styles.statIcons}>
-                  <Icon size={(20*scale)} color={isShared? "blue" : textLight} name={"repeat-variant"} onPress={sharePost}/>
+                  <Icon size={(20*scale)} color={isShared? "#41628a" : textLight} name={"repeat-variant"} onPress={sharePost}/>
                   <Text style={{marginHorizontal:3, fontSize:(15*scale),color:textLight}}>{snapMSGInfo.shares}</Text>
               </View>
                         
@@ -181,7 +181,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
               </View>
 
               <View style={styles.statIcons}>
-                <Icon size={(20*scale)} color={isFavourite? "yellow" : textLight} name={isFavourite? "star":"star-outline"} onPress={favouritePost}/> 
+                <Icon size={(20*scale)} color={isFavourite? "#6f7236" : textLight} name={isFavourite? "star":"star-outline"} onPress={favouritePost}/> 
               </View>
             </View>
         </TouchableOpacity>
@@ -309,7 +309,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
+      <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
         <Icon size={35} name={"reload"} color={textLight} style={{margin:15}} onPress={handleReloadFeed}/>
         {posts.map((post, index) => (
         <SnapMSG key={index} snapMSGInfo={post} navigation={navigation} scale={1} disabled={false}/>
@@ -324,7 +324,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
               <ActivityIndicator size="large" animating={true} />
             )}
         </View>
-    </ScrollView>
+      </ScrollView>
     
   );
 };
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    backgroundColor:secondaryColor
+    backgroundColor:secondaryColor,
   },
   separatorBar: {
     width: "100%",

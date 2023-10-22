@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import FeedTemplate from '../Feed/FeedTemplate';
 import { Navigation } from '../../../types/types';
+import { secondaryColor } from '../../../components/colors';
 
 type Props = {
   navigation: Navigation;
@@ -9,7 +10,7 @@ type Props = {
 
 function ProfileFavourites({ navigation }: Props) {
   return (
-    <View>
+    <View style={{flexGrow:1, backgroundColor:secondaryColor}}>
       <FeedTemplate navigation={navigation} feedType="FavFeed" feedParams={{username:""}}></FeedTemplate>
     </View>
   );

@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 10,
-    backgroundColor: secondaryColor,
+    backgroundColor: background,
     width: "100%",
   },
   feedContainer: {

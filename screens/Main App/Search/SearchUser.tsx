@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
     container: {
       alignItems: "center",
       paddingVertical: 5,
-      backgroundColor:secondaryColor,
+      backgroundColor:background,
+      flexGrow:1
     },
     userProfileContainer: {
       width: "95%",

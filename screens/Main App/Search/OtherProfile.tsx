@@ -58,7 +58,7 @@ function OtherProfile({ navigation }: Props) {
   }, [data]);
 
   return (
-    <ScrollView contentContainerStyle={{alignItems:"center"}} nestedScrollEnabled={true}>
+    <ScrollView contentContainerStyle={{alignItems:"center", backgroundColor:background}} nestedScrollEnabled={true}>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -134,7 +134,7 @@ function OtherProfile({ navigation }: Props) {
 }
 
 export default OtherProfile;
-import { accent, primaryColor, secondaryColor, textLight} from "../../../components/colors";
+import { accent, background, primaryColor, secondaryColor, textLight} from "../../../components/colors";
 
 
 

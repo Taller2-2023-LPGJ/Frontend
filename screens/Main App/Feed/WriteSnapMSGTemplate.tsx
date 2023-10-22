@@ -79,8 +79,10 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     navigation2.goBack()
                                     break
                                 case 'Reply':
-                                    //let id = editParams.id
-                                    //await axios.post(`${apiUrl}/content/post/`+id, {body, private: privacy, tags});
+                                    console.log("Voy a hacer un reply")
+                                    let id = replyParams.id
+                                    console.log(`${apiUrl}/content/post/`+id)
+                                    await axios.post(`${apiUrl}/content/post/`+id, {body, private: privacy, tags});
                                     navigation2.goBack()
                                     break
                             }
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         paddingTop: 10,
-        backgroundColor: secondaryColor,
+        backgroundColor: background,
         width: "100%",
     },
     textEntry: {

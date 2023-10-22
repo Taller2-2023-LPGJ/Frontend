@@ -43,6 +43,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
   if (route.params.SnapMSGInfo){
     const snapMSGInfo = route.params.SnapMSGInfo
 
+    console.log(snapMSGInfo.parentId)
     const deleteSnapMSG = async () => {
       try {
         let id = snapMSGInfo.id

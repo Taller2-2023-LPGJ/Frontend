@@ -93,7 +93,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const [user, setUser] = useState(initialUser);
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{backgroundColor:background}}>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -158,7 +158,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 };
 
-import { primaryColor } from "../../../components/colors";
+import { background, primaryColor, secondaryColor } from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
 
 const styles = StyleSheet.create({
