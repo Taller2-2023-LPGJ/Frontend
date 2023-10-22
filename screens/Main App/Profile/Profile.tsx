@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Image, Dimensions, ScrollView } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -93,7 +93,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const [user, setUser] = useState(initialUser);
 
   return (
-    <View>
+    <ScrollView>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -154,7 +154,7 @@ const Profile = ({ navigation }: ProfileProps) => {
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    marginTop: 10,
+    marginTop: 15,
     marginBottom: 15,
   },
   editProfileButton: {
@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     width: "90%",
     padding: 10,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
+    borderWidth: 2,
+    borderColor: primaryColor,
   },
   displayname: {
     fontSize: 20,
@@ -205,10 +205,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: height - 165,
     width: "90%",
-    backgroundColor: primaryColor,
-    borderWidth: 1,
-    borderTopWidth: 0,
-    borderColor: "#FFFFFF",
+    borderWidth: 2,
+    borderColor: primaryColor,
   },
   displaynameRow: {
     flexDirection: "row",

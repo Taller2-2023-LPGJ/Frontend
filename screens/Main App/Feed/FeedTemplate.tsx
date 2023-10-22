@@ -317,7 +317,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
         <View
           style={{ justifyContent: "center", marginVertical: height / 12 }}>
             {endOfFeed ? (
-              <Text style={{marginHorizontal:40}}>
+              <Text style={{marginHorizontal:40, color:textLight}}>
                 No more SnapMSGs to show
               </Text>
             ) : (
@@ -338,6 +338,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    backgroundColor:secondaryColor
   },
   separatorBar: {
     width: "100%",
