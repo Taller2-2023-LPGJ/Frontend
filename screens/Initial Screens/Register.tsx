@@ -16,6 +16,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { background, primaryColor, textLight } from "../../components/colors";
 
 type Props = {
   navigation: Navigation;
@@ -260,16 +261,18 @@ const Register = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20, borderRadius: 0 }}
+        style={styles.button}
         mode="contained"
+        labelStyle={{color:textLight}}
         onPress={() => register()}
       >
         Sign Up
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0, borderRadius: 0 }}
+        style={styles.button}
         mode="contained"
+        labelStyle={{color:textLight}}
         onPress={() => {
           handleGoogleRegister();
         }}
@@ -299,6 +302,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   text: {
     marginBottom: 10,
@@ -308,4 +312,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: width * 0.7,
   },
+  button: {
+    width: width*0.7,
+    marginVertical: 10,
+    backgroundColor:primaryColor
+  }
 });

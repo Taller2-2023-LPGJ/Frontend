@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from "axios";
 import { API_URL } from '@env';
+import { background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
 const apiUrl = API_URL;
 
 
@@ -67,7 +68,6 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                       {text: 'Yes',
                         onPress: async () => {
                           try {
-                            console.log("Hola")
                             switch (actionType) {
                                 case 'Edit':
                                     await axios.put(`${apiUrl}/content/post/`+editParams.id,{body,privacy,tags});
@@ -79,8 +79,9 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     navigation2.goBack()
                                     break
                                 case 'Reply':
-                                    //let id = editParams.id
-                                    //await axios.post(`${apiUrl}/content/post/`+id, {body, private: privacy, tags});
+                                    let id = replyParams.id
+                                    console.log(`${apiUrl}/content/post/`+id)
+                                    await axios.post(`${apiUrl}/content/post/`+id, {body, private: privacy, tags});
                                     navigation2.goBack()
                                     break
                             }
@@ -102,26 +103,28 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
             <Text style={styles.topText}> {title}</Text>
             <TextInput
                 placeholder="Type something here..."
+                placeholderTextColor={textLight}
                 onChangeText={handleTextChange}
                 value={text}
                 style={[
                     styles.textEntry,
                     remainingCharacters < 0
-                        ? { backgroundColor: '#ffabab' }
-                        : { backgroundColor: '#ededed' }
+                        ? { backgroundColor: '#613337' }
+                        : { backgroundColor: primaryColor }
                 ]}
                 textAlignVertical="top" 
                 multiline={true}
                 numberOfLines={4}
             />
-            <Text style={{fontSize:16}}>
+            <Text style={{fontSize:16, color:textLight}}>
                 Characters remaining: {remainingCharacters} / 250
             </Text>
-            <Icon size={(40)} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{margin:30}}/>
+            <Icon size={(40)} color={textLight} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{margin:30}}/>
           </View>
           <View style={styles.buttonContainer}>
             <Button 
               style={styles.writeSnapMSGButton}
+              labelStyle={{color:textLight}}
               mode="outlined"
               onPress={handleSendSnapMSG}
             >
@@ -139,25 +142,28 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor:primaryColor
     },
     feedContainer: {
         height: "85%",
         width: "100%",
-        marginBottom: 10,
+        marginBottom: 3,
         alignItems: "center",
-        backgroundColor: "#ccc",
+        backgroundColor: secondaryColor,
     },
     writeSnapMSGButton: {
         marginBottom: 15,
         width: 170,
         height: 45,
+        backgroundColor:primaryColor,
+        borderWidth:0,
     },
     buttonContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         paddingTop: 10,
-        backgroundColor: "#ccc",
+        backgroundColor: background,
         width: "100%",
     },
     textEntry: {
@@ -166,12 +172,14 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         height:"55%",
         width: "85%",
-        fontSize: 18
+        fontSize: 18,
+        color:textLight
     },
     topText: {
         alignSelf:"flex-start", 
         marginLeft: 30, 
         marginTop:30, 
-        fontSize:20
+        fontSize:20,
+        color:textLight
     }
   });

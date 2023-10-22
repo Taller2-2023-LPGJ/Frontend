@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import FeedTemplate from '../Feed/FeedTemplate';
 import { Navigation } from '../../../types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { secondaryColor } from '../../../components/colors';
 
 type Props = {
   navigation: Navigation;
@@ -22,8 +23,8 @@ const ProfileSnapMSGs = ({ navigation }: Props) => {
   }, []);
 
   return (
-    <View>
-      {username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:username}}></FeedTemplate>:null}
+    <View style={{flexGrow:1, backgroundColor:secondaryColor}}>
+      {username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:username, id:-1}}></FeedTemplate>:null}
     </View>
   );
 }

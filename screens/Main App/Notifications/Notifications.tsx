@@ -8,6 +8,7 @@ import {
   getIndieNotificationInbox,
 } from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { background } from "../../../components/colors";
 
 type Notification = {
   notification: NotificationData;
@@ -89,14 +90,14 @@ export default function Notifications() {
   },);
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{backgroundColor:background}}>
       <View style={styles.container}>
         {data ? (
           <View style={styles.itemsContainer}>
             <NotificationsList data={data} />
           </View>
         ) : (
-          <View>
+          <View style={{backgroundColor:background}}>
             <Text>0 Notifications</Text>
           </View>
         )}
@@ -107,6 +108,7 @@ export default function Notifications() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:background
   },
   itemsContainer: {
     margin: 1,

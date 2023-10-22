@@ -137,9 +137,15 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
         <TouchableOpacity style={styles.snapMSGContainer} onPress={openSnapMSG} disabled={disabled}>
         {snapMSGInfo.sharedBy != null ? (
           <View style={{flexDirection: 'row', marginBottom:10}}>
-            <Icon size={(20*scale)} name={"repeat-variant"}/>
-            <Text style={{fontSize:(15*scale)}}>SnapShared by </Text>
-            <Text style={{fontWeight: "bold", fontSize:(15*scale)}}>{snapMSGInfo.sharedBy}</Text>
+            <Icon size={(20*scale)} name={"repeat-variant"} color={textLight}/>
+            <Text style={{fontSize:(15*scale), color:textLight}} >SnapShared by </Text>
+            <Text style={{fontWeight: "bold", fontSize:(15*scale), color:textLight}}>{snapMSGInfo.sharedBy}</Text>
+          </View>
+        ) : null}
+        {(snapMSGInfo.parentId != 0) && (snapMSGInfo.parentId != null) ? (
+          <View style={{flexDirection: 'row', marginBottom:10}}>
+            <Icon size={(20*scale)} name={"message-reply-outline"} color={textLight}/>
+            <Text style={{fontSize:(15*scale),marginHorizontal:5, color:textLight}} >Reply</Text>
           </View>
         ) : null}
             <View style={styles.row}>
@@ -152,36 +158,36 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                           style={{width: (45*scale),height: (45*scale),borderRadius:75}}
                       />
                     </TouchableOpacity>
-                    <Text style={{marginLeft:10, fontSize:(15*scale), fontWeight: "bold"}}>{snapMSGInfo.displayName}</Text>
-                    <Text style={{marginLeft:5, fontSize:(15*scale)}}>@{snapMSGInfo.author}</Text>
-                    {snapMSGInfo.editingDate ? <Icon size={(15*scale)} style={{marginTop:3}} name="pencil-outline" /> : null}
+                    <Text style={{marginLeft:10, fontSize:(15*scale),color:textLight, fontWeight: "bold"}}>{snapMSGInfo.displayName}</Text>
+                    <Text style={{marginLeft:5, fontSize:(15*scale),color:textLight}}>@{snapMSGInfo.author}</Text>
+                    {snapMSGInfo.editingDate ? <Icon size={(15*scale)} color={textLight} style={{marginTop:3}} name="pencil-outline" /> : null}
                 </View>
-                <Text style={{flex: 1, textAlign: 'right', fontSize:(15*scale)}}>{timeAgo(snapMSGInfo.creationDate)}</Text>
+                <Text style={{flex: 1,color:textLight, textAlign: 'right', fontSize:(15*scale)}}>{timeAgo(snapMSGInfo.creationDate)}</Text>
             </View>
 
             <View style={styles.row}>
-                <Text style={{flex: 1, fontSize:(15*scale)}}>{snapMSGInfo.body}</Text>
+                <Text style={{flex: 1, fontSize:(15*scale),color:textLight}}>{snapMSGInfo.body}</Text>
             </View>
 
             <View style={[styles.row, styles.centeredRow]}>
 
               <View style={styles.statIcons}>
-                <Icon size={(20*scale)} color={isLiked? "red" : "black"} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.likes}</Text>
+                <Icon size={(20*scale)} color={isLiked? accent : textLight} name={isLiked? "heart":"heart-outline"} onPress={likePost}/>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale),color:textLight}}>{snapMSGInfo.likes}</Text>
               </View>    
                         
               <View style={styles.statIcons}>
-                  <Icon size={(20*scale)} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
-                  <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.shares}</Text>
+                  <Icon size={(20*scale)} color={isShared? "#41628a" : textLight} name={"repeat-variant"} onPress={sharePost}/>
+                  <Text style={{marginHorizontal:3, fontSize:(15*scale),color:textLight}}>{snapMSGInfo.shares}</Text>
               </View>
                         
               <View style={styles.statIcons}>
-                <Icon size={(20*scale)} name={"message-outline"} onPress={replyToPost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{0}</Text>
+                <Icon size={(20*scale)} name={"message-outline"} color={textLight} onPress={replyToPost}/>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale),color:textLight}}>{0}</Text>
               </View>
 
               <View style={styles.statIcons}>
-                <Icon size={(20*scale)} color={isFavourite? "yellow" : "black"} name={isFavourite? "star":"star-outline"} onPress={favouritePost}/> 
+                <Icon size={(20*scale)} color={isFavourite? "#6f7236" : textLight} name={isFavourite? "star":"star-outline"} onPress={favouritePost}/> 
               </View>
             </View>
         </TouchableOpacity>
@@ -194,7 +200,8 @@ type Props = {
   navigation: Navigation;
   feedType: string;
   feedParams: {
-    username: string
+    username: string,
+    id: number
   };
 };
 
@@ -203,21 +210,6 @@ async function sleep(ms: number) {
 }
 const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
 
-
-
-  switch (feedType) {
-    case "FavFeed":
-      break
-    case "ProfileFeed":
-      break
-    case "GeneralFeed":
-      break
-    case "ReplyFeed":
-      break
-    default:
-      break
-      
-  }
 
   const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -228,6 +220,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     try {
       let request = ""
       let username = feedParams.username
+      let id = feedParams.id
       switch (feedType){
         case "GeneralFeed":
           request = `${apiUrl}/content/post?page=`
@@ -237,6 +230,9 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
           break
         case "FavFeed":
           request = `${apiUrl}/content/fav?page=`
+          break
+        case "ReplyFeed":
+          request = `${apiUrl}/content/post/${id}?page=`
           break
         default:
           return
@@ -287,10 +283,6 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     }
   };
 
-  //useEffect(() => {
-  //  //addPost(); 
-  //}, []);
-
   useEffect(() => {
     addPost(); 
   }, [currentPage]);
@@ -309,38 +301,41 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
-        <Icon size={35} name={"reload"} style={{margin:15}} onPress={handleReloadFeed}/>
+      <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
+        <Icon size={35} name={"reload"} color={textLight} style={{margin:15}} onPress={handleReloadFeed}/>
         {posts.map((post, index) => (
         <SnapMSG key={index} snapMSGInfo={post} navigation={navigation} scale={1} disabled={false}/>
         ))}
         <View
           style={{ justifyContent: "center", marginVertical: height / 12 }}>
             {endOfFeed ? (
-              <Text style={{marginHorizontal:40}}>
+              <Text style={{marginHorizontal:40, color:textLight}}>
                 No more SnapMSGs to show
               </Text>
             ) : (
               <ActivityIndicator size="large" animating={true} />
             )}
         </View>
-    </ScrollView>
+      </ScrollView>
     
   );
 };
 
 export default FeedTemplate;
 
+import { accent, primaryColor, secondaryColor, textLight } from "../../../components/colors";
+
 const styles = StyleSheet.create({
   containerContent: {
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    backgroundColor:secondaryColor,
   },
   separatorBar: {
     width: "100%",
-    backgroundColor: "white",
-    height: 2,
+    backgroundColor: primaryColor,
+    height: 1.5,
   },
   container: {
     width: "100%",
@@ -348,7 +343,8 @@ const styles = StyleSheet.create({
   snapMSGContainer: {
     width: "100%",
     paddingHorizontal: 16, 
-    paddingTop: 10
+    paddingTop: 10,
+    backgroundColor:secondaryColor
   },
   row: {
     flexDirection: 'row', 

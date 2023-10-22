@@ -21,11 +21,12 @@ const Feed = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.feedContainer}>
-        <FeedTemplate navigation={navigation} feedType="GeneralFeed" feedParams={{username:""}}></FeedTemplate>
+        <FeedTemplate navigation={navigation} feedType="GeneralFeed" feedParams={{username:"", id:-1}}></FeedTemplate>
       </View>
       <View style={styles.buttonContainer}>
         <Button 
           style={styles.writeSnapMSGButton}
+          labelStyle={styles.buttonLabelStyle}
           mode="outlined"
           onPress={() => {navigation.navigate("WriteSnapMSG");}}
         >
@@ -37,31 +38,38 @@ const Feed = ({ navigation }: Props) => {
 };
 
 export default Feed;
+import { background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: primaryColor
   },
   buttonContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 10,
-    backgroundColor: "#ccc",
+    backgroundColor: background,
     width: "100%",
   },
   feedContainer: {
-    height: "85%",
+    height: "87%",
     width: "100%",
-    marginBottom: 10,
+    marginBottom: 3,
     alignItems: "center",
-    backgroundColor: "#ccc",
+    backgroundColor: secondaryColor,
   },
   writeSnapMSGButton: {
     marginBottom: 15,
     width: 170,
     height: 45,
+    borderColor: primaryColor,
+    backgroundColor:primaryColor,
   },
+  buttonLabelStyle: {
+    color:textLight
+  }
 });

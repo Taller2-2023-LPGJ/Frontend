@@ -4,6 +4,7 @@ import { Appbar, Button, Text, TextInput } from "react-native-paper";
 import { Navigation } from "../../types/types";
 import Logo from "../../components/Logo";
 import { StatusBar } from 'expo-status-bar';
+import { background, primaryColor, textLight } from "../../components/colors";
 
 
 
@@ -30,6 +31,7 @@ const StartScreen = ({ navigation }: Props) => {
       <View style={styles.buttonContainer}>
         <Button
           style={styles.button}
+          labelStyle={{color:textLight}}
           mode="contained"
           onPress={() => navigation.navigate("Login")}
         >
@@ -38,6 +40,7 @@ const StartScreen = ({ navigation }: Props) => {
 
         <Button
           style={styles.button}
+          labelStyle={{color:textLight}}
           mode="contained"
           onPress={() => navigation.navigate("Register")}
         >
@@ -53,14 +56,15 @@ export default StartScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 20,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   button: {
-    margin: 10,
-    width: width * 0.8,
-    borderRadius: 0,
+    width: width*0.7,
+    marginVertical: 10,
+    backgroundColor:primaryColor
   },
   text: {
     fontSize: width * 0.065,

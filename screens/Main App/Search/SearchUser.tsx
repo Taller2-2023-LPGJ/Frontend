@@ -6,6 +6,7 @@ import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableW
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../../../types/types';
+import { background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
 
 interface User {
   displayName: string;
@@ -87,6 +88,8 @@ const SearchUser = ({ navigation }: Props) => {
       placeholder="Search"
       onChangeText={onChangeSearch}
       onSubmitEditing={onSubmitEditing}
+      placeholderTextColor={textLight}
+      inputStyle={{ color: textLight }}
       onClearIconPress={() => {
         setUsers([])
       }}
@@ -104,14 +107,16 @@ export default SearchUser;
 const styles = StyleSheet.create({
     container: {
       alignItems: "center",
-      paddingVertical: 5
+      paddingVertical: 5,
+      backgroundColor:background,
+      flexGrow:1
     },
     userProfileContainer: {
-      width: "95%",
-      backgroundColor: "#ccc",
+      width: "90%",
+      backgroundColor: primaryColor,
       padding: 15,
       borderRadius: 20,
-      marginVertical: 5,
+      marginVertical: 8,
       flexDirection: "row",
     },
     profileImage: {
@@ -123,9 +128,11 @@ const styles = StyleSheet.create({
     displayname: {
       fontSize: 18,
       fontWeight: "bold",
+      color:textLight,
     },
     username: {
       fontSize: 15,
+      color:textLight,
     },
     namesContainer:{
       flexDirection:"column",
@@ -139,6 +146,6 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       marginBottom: 10,
       marginTop: 10,
-      backgroundColor: "#cfcfcf",
+      backgroundColor: primaryColor,
     },
 });

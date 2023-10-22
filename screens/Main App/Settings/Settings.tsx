@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import axios from "axios";
 import { unregisterIndieDevice } from "native-notify";
+import { background } from "../../../components/colors";
 
 const { width } = Dimensions.get("window");
 
@@ -62,17 +63,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    backgroundColor:background
   },
   buttonLogout: {
-    width: width * 0.8,
-    borderRadius: 0,
+    width: width * 0.5,
     backgroundColor: "#FF6B6B",
   },
   buttonVerify: {
     marginTop: 20,
     marginBottom: 20,
-    width: width * 0.8,
-    borderRadius: 0,
+    width: width * 0.5,
   },
   text: {
     fontSize: width * 0.065,

@@ -12,6 +12,7 @@ import {
 import Logo from "../../components/Logo";
 import { API_URL } from "@env";
 import axios from "axios";
+import { background, primaryColor, textLight } from "../../components/colors";
 
 type Props = {
   navigation: Navigation;
@@ -92,7 +93,8 @@ const ForgotPassword = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 10,borderRadius: 0 }}
+        style={styles.button}
+        labelStyle={{color:textLight}}
         mode="contained"
         onPress={() => handleForgotPassword()}
       >
@@ -109,6 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   text: {
     marginBottom: 10,
@@ -118,4 +121,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: width * 0.7,
   },
+  button: {
+    width: width*0.4,
+    marginVertical: 10,
+    backgroundColor:primaryColor
+  }
 });

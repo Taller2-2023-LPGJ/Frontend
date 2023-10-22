@@ -9,7 +9,7 @@ import FeedTemplate from '../Feed/FeedTemplate';
 
 const apiUrl = API_URL
 
-const { height } = Dimensions.get("window");
+const { height, width } = Dimensions.get("window");
 
 type Props = {
   navigation: Navigation;
@@ -58,7 +58,7 @@ function OtherProfile({ navigation }: Props) {
   }, [data]);
 
   return (
-    <ScrollView contentContainerStyle={{alignItems:"center"}} nestedScrollEnabled={true}>
+    <ScrollView contentContainerStyle={{alignItems:"center", backgroundColor:background}} nestedScrollEnabled={true}>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -75,9 +75,10 @@ function OtherProfile({ navigation }: Props) {
           />
 
           {following ? 
-          (<View style={styles.buttonContainer}>
+          (<View>
             <Button
               style={styles.followButton}
+              labelStyle={{color:textLight}}
               mode="outlined"
               onPress={async () => {
                 try {
@@ -95,6 +96,7 @@ function OtherProfile({ navigation }: Props) {
             :
               (<Button
                 style={styles.followButton}
+                labelStyle={{color:textLight}}
                 mode="outlined"
                 onPress={async () => {
                   try {
@@ -123,7 +125,7 @@ function OtherProfile({ navigation }: Props) {
           </View>
             
           <View style={styles.postsContainer}>
-            {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username}}></FeedTemplate>:null}
+            {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username, id:-1}}></FeedTemplate>:null}
           </View>
         </View>
         )}
@@ -132,38 +134,73 @@ function OtherProfile({ navigation }: Props) {
 }
 
 export default OtherProfile;
-import { primaryColor} from "../../../components/colors";
+import { accent, background, primaryColor, secondaryColor, textLight} from "../../../components/colors";
+
+
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginTop: 15,
+    marginBottom: 15,
+    alignSelf:"center"
+  },
+  editProfileButton: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: primaryColor,
+    paddingHorizontal: 10,
   },
   userInfoContainer: {
     borderRadius: 5,
-    width: "90%",
+    width: width-50,
     padding: 10,
-    marginBottom: 10,
-    borderWidth: 1,
+    marginVertical: 10,
+    borderWidth: 2,
     borderColor: primaryColor,
+    alignSelf:"center"
   },
   displayname: {
     fontSize: 20,
     fontWeight: "bold",
+    color:textLight,
   },
   bio: {
     fontSize: 16,
     marginTop: 5,
+    color:textLight,
   },
-  profileImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    marginTop: 20,
-    marginBottom: 10,
+  followCount: {
+    fontSize: 16,
+    marginTop: 5,
   },
-  followButton: {
-    marginBottom: 10,
+  boldText: {
+    fontWeight: "bold",
+  },
+  postsContainer: {
+    borderRadius: 5,
+    height: height - 165,
+    width: width-50,
+    borderWidth: 2,
+    borderColor: primaryColor,
+    backgroundColor:secondaryColor,
+    alignSelf:'center'
+  },
+  displaynameRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  location: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 5,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -171,7 +208,11 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
   },
-  postsContainer:{
-
-  }
+  followButton: {
+    justifyContent: "center",
+    alignSelf: "center",
+    backgroundColor: primaryColor,
+    borderColor:primaryColor,
+    width: "30%",
+  },
 });

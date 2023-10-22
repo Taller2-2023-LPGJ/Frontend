@@ -14,6 +14,7 @@ import axios from "axios";
 import { API_URL } from "@env";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { background, primaryColor, textLight } from "../../components/colors";
 
 type Props = {
   navigation: Navigation;
@@ -163,7 +164,8 @@ const ChooseLocation = ({ navigation }: Props) => {
 
           <View style={{ alignItems: "flex-end", marginVertical: 10 }}>
             <Button
-              style={{ width: width * 0.2, marginVertical: 20,borderRadius: 0 }}
+              style={styles.button}
+              labelStyle={{color:textLight}}
               mode="contained"
               onPress={() => handleGo()}
             >
@@ -181,8 +183,9 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 25,
+    padding: 25,
     justifyContent: "center",
+    backgroundColor:background
   },
   text: {
     marginBottom: 5,
@@ -192,4 +195,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: width * 0.85,
   },
+  button: {
+    width: width*0.4,
+    marginVertical: 10,
+    backgroundColor:primaryColor
+  }
 });
