@@ -42,6 +42,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
   const [username, setUsername] = useState("")
   if (route.params.SnapMSGInfo){
     const snapMSGInfo = route.params.SnapMSGInfo
+
     const deleteSnapMSG = async () => {
       try {
         let id = snapMSGInfo.id
@@ -52,6 +53,11 @@ const SnapMSGDetails = ({ navigation}: Props) => {
         navigation2.goBack()
       }
     }
+
+    const editSnapMSG = () => {
+      navigation.navigate("EditSnapMSG", {editParams: {body:snapMSGInfo.body, id:snapMSGInfo.id}})
+    }
+
     const getData = async () => {
       let result = await AsyncStorage.getItem("username");
       if (!result) {
@@ -75,7 +81,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
               <View style={styles.snapMSGToolsContainer}>
                 <Icon size={35} name={"poll"} style={styles.snapMSGTool}/>
                 <Icon size={35} name={"lock-outline"} style={styles.snapMSGTool}/>
-                <Icon size={35} name={"pencil-outline"} style={styles.snapMSGTool}/>
+                <Icon size={35} name={"pencil-outline"} style={styles.snapMSGTool} onPress={editSnapMSG}/>
                 <Icon size={35} name={"trash-can-outline"} style={styles.snapMSGTool} onPress={deleteSnapMSG}/>
               </View>
             ):(

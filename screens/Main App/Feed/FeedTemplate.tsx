@@ -158,6 +158,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                     </TouchableOpacity>
                     <Text style={{marginLeft:10, fontSize:(15*scale), fontWeight: "bold"}}>{snapMSGInfo.displayName}</Text>
                     <Text style={{marginLeft:5, fontSize:(15*scale)}}>@{snapMSGInfo.author}</Text>
+                    {snapMSGInfo.editingDate ? <Icon size={(15*scale)} style={{marginTop:3}} name="pencil-outline" /> : null}
                 </View>
                 <Text style={{flex: 1, textAlign: 'right', fontSize:(15*scale)}}>{timeAgo(snapMSGInfo.creationDate)}</Text>
             </View>

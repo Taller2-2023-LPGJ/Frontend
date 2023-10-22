@@ -28,8 +28,8 @@ function OtherProfile({ navigation }: Props) {
   const [displayName, setDisplayName] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
-  const [followers, setFollowers] = React.useState("0");
-  const [followed, setFollowed] = React.useState("0");
+  const [followers, setFollowers] = React.useState(0);
+  const [followed, setFollowed] = React.useState(0);
   const [following, setFollowing] = React.useState(false);
 
   const [isLoading, setisLoading] = useState(true);
@@ -76,6 +76,7 @@ function OtherProfile({ navigation }: Props) {
                 try {
                   await axios.delete(`${apiUrl}/content/follow/${data.username}`);
                   setFollowing(!following)
+                  setFollowers(followers-1)
                 } catch (e) {
                   alert((e as any).response.data.message);
                 }
@@ -91,6 +92,7 @@ function OtherProfile({ navigation }: Props) {
                   try {
                     const response = await axios.post(`${apiUrl}/content/follow/${data.username}`);
                     setFollowing(!following)
+                    setFollowers(followers+1)
                   } catch (e) {
                     alert((e as any).response.data.message);
                   }

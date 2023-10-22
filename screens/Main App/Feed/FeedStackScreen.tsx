@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Feed from './Feed';
 import SnapMSGDetails from './SnapMSGDetails';
 import WriteSnapMSG from './WriteSnapMSG';
+import EditSnapMSG from './EditSnapMSG';
 
 const FeedStack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ const FeedStackScreen = () => {
           <FeedStack.Screen options={{title:""}} name="Feed2" component={Feed} />
           <FeedStack.Screen options={{title:""}} name="SnapMSGDetails" component={SnapMSGDetails} />
           <FeedStack.Screen options={{title:""}} name="WriteSnapMSG" component={WriteSnapMSG} />
+          <FeedStack.Screen options={{title:""}} name="EditSnapMSG" component={EditSnapMSG} />
         </FeedStack.Navigator>
       );
 }
