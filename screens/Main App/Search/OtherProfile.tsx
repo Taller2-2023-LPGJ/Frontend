@@ -39,7 +39,6 @@ function OtherProfile({ navigation }: Props) {
       let api_result: AxiosResponse<any, any>
       try {
         api_result = await axios.get(`${API_URL}/profile/${data.username}`); // TODO ver si se esta siguiendo
-        console.log(api_result.data)
         setDisplayName(api_result.data.displayName)
         setLocation(api_result.data.location)
         setBio(api_result.data.biography)

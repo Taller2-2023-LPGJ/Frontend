@@ -86,7 +86,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     }
 
     const replyToPost = () => {
-      console.log("Pressed reply");
+      navigation.navigate("ReplySnapMSG", {replyParams: {id:snapMSGInfo.id}})
     }
     
     const favouritePost = async () => {
@@ -196,17 +196,18 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
 
 const FeedTemplate = ({ navigation, feedType }: Props) => {
-
-
+  
   switch (feedType) {
-    case "FavouriteFeed":
-      
+    case "FavFeed":
+      break
     case "ProfileFeed":
-      
+      break
     case "GeneralFeed":
-      
+      break
     case "ReplyFeed":
+      break
     default:
+      break
       
   }
 
@@ -216,8 +217,23 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
 
   const addPost = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/content/post?page=`+currentPage.toString());
-      if (response.data.message != null) {
+      let request = ""
+      let username = await AsyncStorage.getItem("username");
+      switch (feedType){
+        case "GeneralFeed":
+          request = `${apiUrl}/content/post?page=`
+          break
+        case "ProfileFeed":
+          request = `${apiUrl}/content/post?author=${username}&page=`
+          break
+        case "FavFeed":
+          request = `${apiUrl}/content/fav?page=`
+          break
+        default:
+          return
+      }
+      const response = await axios.get(request+currentPage.toString());
+      if (response.data.message != null || response.data.length == 0) {
         setEndOfFeed(true)
       } else {
         const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; fav: any; id: any;liked:any;likes:any;parentId:any;sharedAt:any;sharedBy:any; tags: any; shares: any; shared: any }) => ({

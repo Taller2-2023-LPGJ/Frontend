@@ -10,8 +10,7 @@ type Props = {
 function ProfileSnapMSGs({ navigation }: Props) {
   return (
     <View>
-      {//<FeedTemplate navigation={navigation} feedType="ProfileFeed"></FeedTemplate
-      }
+      <FeedTemplate navigation={navigation} feedType="ProfileFeed"></FeedTemplate>
     </View>
   );
 }

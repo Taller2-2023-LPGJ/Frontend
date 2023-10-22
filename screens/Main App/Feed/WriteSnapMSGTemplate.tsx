@@ -15,10 +15,13 @@ type Props = {
     editParams: {
         id: number,
         body: string,
+    };
+    replyParams: {
+        id: number,
     }
   };
 
-const WriteSnapMSGTemplate = ({ navigation, actionType, editParams}: Props) => {
+const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}: Props) => {
     const navigation2 = useNavigation();
     const [text, setText] = useState(editParams.body);
     const [postPrivacy, setPostPrivacy] = useState(false);
@@ -64,6 +67,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams}: Props) => {
                       {text: 'Yes',
                         onPress: async () => {
                           try {
+                            console.log("Hola")
                             switch (actionType) {
                                 case 'Edit':
                                     await axios.put(`${apiUrl}/content/post/`+editParams.id,{body,privacy,tags});
@@ -72,6 +76,11 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams}: Props) => {
                                     break
                                 case 'Write':
                                     await axios.post(`${apiUrl}/content/post`, {body, private: privacy, tags});
+                                    navigation2.goBack()
+                                    break
+                                case 'Reply':
+                                    //let id = editParams.id
+                                    //await axios.post(`${apiUrl}/content/post/`+id, {body, private: privacy, tags});
                                     navigation2.goBack()
                                     break
                             }

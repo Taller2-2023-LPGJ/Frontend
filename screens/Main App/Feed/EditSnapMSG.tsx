@@ -7,7 +7,7 @@ type Props = {
     navigation: Navigation;
 };
 
-type SnapMSGDetailsRouteParams = {
+type EditSnapMSGRouteParams = {
     editParams: {
         id: number,
         body: string,
@@ -15,9 +15,9 @@ type SnapMSGDetailsRouteParams = {
 }
 
 const EditSnapMSG = ({ navigation}: Props) => {
-    const route = useRoute<RouteProp<Record<string, SnapMSGDetailsRouteParams>, string>>()
+    const route = useRoute<RouteProp<Record<string, EditSnapMSGRouteParams>, string>>()
     return (
-        <WriteSnapMSGTemplate navigation={navigation} actionType='Edit' editParams={{id:route.params.editParams.id, body:route.params.editParams.body}}></WriteSnapMSGTemplate>
+        <WriteSnapMSGTemplate navigation={navigation} actionType='Edit' editParams={{id:route.params.editParams.id, body:route.params.editParams.body}} replyParams={{id:0}}></WriteSnapMSGTemplate>
       );
 }
 

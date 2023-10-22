@@ -36,7 +36,6 @@ type SnapMSGDetailsRouteParams = {
 }
 
 const SnapMSGDetails = ({ navigation}: Props) => {
-
   const route = useRoute<RouteProp<Record<string, SnapMSGDetailsRouteParams>, string>>()
   const navigation2 = useNavigation()
   const [username, setUsername] = useState("")
@@ -71,7 +70,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
     useEffect(() => {
       getData();
     }, []);
-    
+
     return (
       <View style={{backgroundColor: "#ccc", flex:1}}>
           <View>
