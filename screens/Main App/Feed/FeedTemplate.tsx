@@ -9,6 +9,7 @@ import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const apiUrl = API_URL;
+const fetchAmount = 20;
 
 interface SnapMSGInfo {
   author: string;
@@ -27,11 +28,6 @@ interface SnapMSGInfo {
   shares: number;
   shared: boolean;
 }
-
-type Props = {
-  navigation: Navigation;
-  feedType: string;
-};
 
 
 
@@ -194,8 +190,15 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     )
 }
 
+type Props = {
+  navigation: Navigation;
+  feedType: string;
+  feedParams: {
+    username: string
+  };
+};
 
-const FeedTemplate = ({ navigation, feedType }: Props) => {
+const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
   
   switch (feedType) {
     case "FavFeed":
@@ -218,7 +221,7 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
   const addPost = async () => {
     try {
       let request = ""
-      let username = await AsyncStorage.getItem("username");
+      let username = feedParams.username
       switch (feedType){
         case "GeneralFeed":
           request = `${apiUrl}/content/post?page=`
@@ -257,6 +260,9 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
           setPosts(dataArray)
         } else {
           setPosts([...posts.concat(dataArray)]);
+        }
+        if (dataArray.length < fetchAmount) {
+          setEndOfFeed(true)
         }
       }
       

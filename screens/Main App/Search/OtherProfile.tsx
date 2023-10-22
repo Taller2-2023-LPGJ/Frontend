@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Image, Dimensions, ScrollView } from "react-native";
 import { ActivityIndicator, Button } from "react-native-paper";
 import { Navigation } from '../../../types/types';
 import { useRoute } from '@react-navigation/native';
 import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '@env';
+import FeedTemplate from '../Feed/FeedTemplate';
 
 const apiUrl = API_URL
 
@@ -52,18 +53,20 @@ function OtherProfile({ navigation }: Props) {
     }
   }
   useEffect(() => {
+    setisLoading(true)
     getData();
-  }, []);
+  }, [data]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={{alignItems:"center"}} nestedScrollEnabled={true}>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}>
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <><Image source={{
+        <>
+        <Image source={{
             uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
           }}
             style={styles.profileImage} />
@@ -110,9 +113,15 @@ function OtherProfile({ navigation }: Props) {
                 <Text style={{fontWeight: "bold"}}>{followed}</Text> following{" "}
                 <Text style={{fontWeight: "bold"}}>{followers}</Text> followers
               </Text>
-            </View></>
+            </View>
+            
+            <View style={styles.postsContainer}>
+              {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username}}></FeedTemplate>:null}
+            </View>
+            
+            </>
         )}
-    </View>
+    </ScrollView>
       
   );
 }
@@ -151,4 +160,10 @@ const styles = StyleSheet.create({
         width: 120,
         height: 45,
     },
+    postsContainer: {
+      height:height-165, 
+      width:"90%", 
+      backgroundColor:"#ccc",
+      borderRadius:10,
+    }
 });

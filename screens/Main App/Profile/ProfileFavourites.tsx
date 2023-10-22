@@ -10,7 +10,7 @@ type Props = {
 function ProfileFavourites({ navigation }: Props) {
   return (
     <View>
-      <FeedTemplate navigation={navigation} feedType="FavFeed"></FeedTemplate>
+      <FeedTemplate navigation={navigation} feedType="FavFeed" feedParams={{username:""}}></FeedTemplate>
     </View>
   );
 }
