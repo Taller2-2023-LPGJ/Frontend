@@ -7,7 +7,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { secondaryColor, textLight } from '../../../components/colors';
+import { primaryColor, secondaryColor, textLight } from '../../../components/colors';
 const apiUrl = API_URL;
 
 type Props = {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     },
     separatorBar: {
       width: "100%",
-      backgroundColor: textLight,
+      backgroundColor: primaryColor,
       height: 2,
     },
     

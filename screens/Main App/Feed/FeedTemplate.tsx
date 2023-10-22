@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   separatorBar: {
     width: "100%",
-    backgroundColor: textLight,
+    backgroundColor: primaryColor,
     height: 2,
   },
   container: {
