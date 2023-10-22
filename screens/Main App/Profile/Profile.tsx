@@ -158,7 +158,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 };
 
-import { accent, background, primaryColor, secondaryColor } from "../../../components/colors";
+import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
 
 const styles = StyleSheet.create({
@@ -173,10 +173,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   editProfileButton: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: primaryColor,
+    fontSize: 17,
+    color: textLight,
     paddingHorizontal: 10,
+    backgroundColor:primaryColor,
+    padding:5,
+    borderRadius:15,
   },
   userInfoContainer: {
     borderRadius: 5,

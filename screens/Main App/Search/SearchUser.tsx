@@ -6,7 +6,7 @@ import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableW
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../../../types/types';
-import { background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
+import { background, primaryColor, secondaryColor, tertiaryColor, textLight } from '../../../components/colors';
 
 interface User {
   displayName: string;
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     },
     userProfileContainer: {
       width: "90%",
-      backgroundColor: primaryColor,
+      backgroundColor: tertiaryColor,
       padding: 15,
       borderRadius: 20,
       marginVertical: 8,
