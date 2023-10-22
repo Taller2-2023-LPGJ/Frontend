@@ -17,7 +17,7 @@ function WriteSnapMSG({ navigation }: Props) {
 
     const [text, setText] = useState('');
 
-    const [postPrivacy, setPostPrivacy] = useState(true);
+    const [postPrivacy, setPostPrivacy] = useState(false);
 
     const handleChangePrivacy = () => {
       setPostPrivacy(!postPrivacy)
@@ -45,14 +45,13 @@ function WriteSnapMSG({ navigation }: Props) {
                       {text: 'Yes',
                         onPress: async () => {
                           try {
-                            const response = await axios.post(`${apiUrl}/content/post`, {body, privacy, tags});
+                            const response = await axios.post(`${apiUrl}/content/post`, {body, private: privacy, tags});
                             navigation2.goBack();
 
                             //const response = await axios.put(`${apiUrl}/content/post/2`,{body,privacy,tags});
                             //console.log(response.data)
 
-                            //const response = await axios.delete(`${apiUrl}/content/post/2`);
-                            //console.log(response.data)
+                            
                           } catch (e) {
                             alert((e as any).response.data.message);
                           }

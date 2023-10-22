@@ -6,6 +6,8 @@ import { Navigation } from "../../../types/types";
 import { ActivityIndicator, Button } from "react-native-paper";
 import axios from "axios";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const apiUrl = API_URL;
 
 interface SnapMSGInfo {
@@ -22,6 +24,8 @@ interface SnapMSGInfo {
   parentId: number;
   sharedAt: string[];
   sharedBy: string[];
+  shares: number;
+  shared: boolean;
 }
 
 type Props = {
@@ -35,7 +39,7 @@ const { height } = Dimensions.get("window");
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
     const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
-    const [isShared, setisShared] = useState(false);
+    const [isShared, setisShared] = useState(snapMSGInfo.shared);
     const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
 
     const likePost = async () => {
@@ -104,8 +108,13 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
       navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
     }
 
-    const openProfile = () => {
-      console.log("Opened profile")
+    const openProfile = async () => {
+      let result = await AsyncStorage.getItem("username");
+      if (snapMSGInfo.author == result) {
+        navigation.navigate("Profile")
+      } else {
+        navigation.navigate("Search", {screen: "OtherProfile", params: {username: snapMSGInfo.author}})
+      }
     }
 
     function timeAgo(dateString: string) {
@@ -130,6 +139,13 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     return (
         <>
         <TouchableOpacity style={styles.snapMSGContainer} onPress={openSnapMSG} disabled={disabled}>
+        {snapMSGInfo.sharedBy != null ? (
+          <View style={{flexDirection: 'row', marginBottom:10}}>
+            <Icon size={(20*scale)} name={"repeat-variant"}/>
+            <Text style={{fontSize:(15*scale)}}>SnapShared by </Text>
+            <Text style={{fontWeight: "bold", fontSize:(15*scale)}}>{snapMSGInfo.sharedBy}</Text>
+          </View>
+        ) : null}
             <View style={styles.row}>
                 <View style={{flexDirection: 'row', width: 200}}>
                   <TouchableOpacity onPress={openProfile}>
@@ -159,12 +175,12 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                         
               <View style={styles.statIcons}>
                   <Icon size={(20*scale)} color={isShared? "blue" : "black"} name={"repeat-variant"} onPress={sharePost}/>
-                  <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{1}</Text>
+                  <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{snapMSGInfo.shares}</Text>
               </View>
                         
               <View style={styles.statIcons}>
                 <Icon size={(20*scale)} name={"message-outline"} onPress={replyToPost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{1}</Text>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale)}}>{0}</Text>
               </View>
 
               <View style={styles.statIcons}>
@@ -203,7 +219,7 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
       if (response.data.message != null) {
         setEndOfFeed(true)
       } else {
-        const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; fav: any; id: any;liked:any;likes:any;parentId:any;sharedAt:any;sharedBy:any; tags: any; }) => ({
+        const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; fav: any; id: any;liked:any;likes:any;parentId:any;sharedAt:any;sharedBy:any; tags: any; shares: any; shared: any }) => ({
           author: item.author,
           body: item.body,
           creationDate: item.creationDate,
@@ -216,7 +232,9 @@ const FeedTemplate = ({ navigation, feedType }: Props) => {
           likes: item.likes,
           parentId: item.parentId,
           sharedAt: item.sharedAt,
-          sharedBy: item.sharedBy
+          sharedBy: item.sharedBy,
+          shares: item.shares,
+          shared: item.shared,
         }));
         if (currentPage == 0) {
           setPosts(dataArray)

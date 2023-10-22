@@ -21,6 +21,14 @@ interface SnapMSGInfo {
   editingDate: string;
   id: number;
   tags: string[];
+  fav: boolean;
+  liked: boolean;
+  likes: number;
+  parentId: number;
+  sharedAt: string[];
+  sharedBy: string[];
+  shares: number;
+  shared: boolean;
 }
 
 type SnapMSGDetailsRouteParams = {
@@ -37,10 +45,11 @@ const SnapMSGDetails = ({ navigation}: Props) => {
     const deleteSnapMSG = async () => {
       try {
         let id = snapMSGInfo.id
-        let response = await axios.delete(`${apiUrl}/content/post/${id}`);
+        await axios.delete(`${apiUrl}/content/post/${id}`);
         navigation2.goBack()
       } catch (e) {
         alert((e as any).response.data.message);
+        navigation2.goBack()
       }
     }
     const getData = async () => {

@@ -30,6 +30,7 @@ function OtherProfile({ navigation }: Props) {
   const [bio, setBio] = React.useState("");
   const [followers, setFollowers] = React.useState("0");
   const [followed, setFollowed] = React.useState("0");
+  const [following, setFollowing] = React.useState(false);
 
   const [isLoading, setisLoading] = useState(true);
 
@@ -38,11 +39,13 @@ function OtherProfile({ navigation }: Props) {
       let api_result: AxiosResponse<any, any>
       try {
         api_result = await axios.get(`${API_URL}/profile/${data.username}`); // TODO ver si se esta siguiendo
+        console.log(api_result.data)
         setDisplayName(api_result.data.displayName)
         setLocation(api_result.data.location)
         setBio(api_result.data.biography)
         setFollowed(api_result.data.followed)
         setFollowers(api_result.data.followers)
+        setFollowing(api_result.data.following)
         setisLoading(false)
       } catch (e) {
         alert((e as any).response.data.message)
@@ -64,20 +67,40 @@ function OtherProfile({ navigation }: Props) {
         <><Image source={{
             uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
           }}
-            style={styles.profileImage} /><Button
+            style={styles.profileImage} />
+            {following? 
+              <Button
               style={styles.followButton}
               mode="outlined"
               onPress={async () => {
                 try {
-                  const response = await axios.post(`${apiUrl}/content/follow/${data.username}`);
-                  console.log(response)
+                  await axios.delete(`${apiUrl}/content/follow/${data.username}`);
+                  setFollowing(!following)
                 } catch (e) {
                   alert((e as any).response.data.message);
                 }
               } }
-            >
-              Follow
-            </Button><View style={styles.userInfoContainer}>
+              >
+                Unfollow
+              </Button>
+            :
+              <Button
+                style={styles.followButton}
+                mode="outlined"
+                onPress={async () => {
+                  try {
+                    const response = await axios.post(`${apiUrl}/content/follow/${data.username}`);
+                    setFollowing(!following)
+                  } catch (e) {
+                    alert((e as any).response.data.message);
+                  }
+                } }
+              >
+                Follow
+              </Button>
+            }
+            
+            <View style={styles.userInfoContainer}>
               <Text style={styles.displayname}>{displayName}</Text>
               <Text style={styles.bio}>{"@"}{data.username}</Text>
               <Text style={styles.bio}>{location}</Text>
