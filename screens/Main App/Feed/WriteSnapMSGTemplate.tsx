@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from "axios";
 import { API_URL } from '@env';
 import { background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
+import { useAuth } from '../../../context/AuthContext';
 const apiUrl = API_URL;
 
 
@@ -16,6 +17,7 @@ type Props = {
     editParams: {
         id: number,
         body: string,
+        privacy: boolean,
     };
     replyParams: {
         id: number,
@@ -25,7 +27,7 @@ type Props = {
 const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}: Props) => {
     const navigation2 = useNavigation();
     const [text, setText] = useState(editParams.body);
-    const [postPrivacy, setPostPrivacy] = useState(false);
+    const [postPrivacy, setPostPrivacy] = useState(editParams.privacy);
     let title = ""
     switch (actionType) {
         case "Write":
@@ -70,7 +72,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                           try {
                             switch (actionType) {
                                 case 'Edit':
-                                    await axios.put(`${apiUrl}/content/post/`+editParams.id,{body,privacy,tags});
+                                    await axios.put(`${apiUrl}/content/post/`+editParams.id,{body,private:privacy,tags});
                                     navigation2.goBack()
                                     navigation2.goBack()
                                     break
@@ -80,13 +82,18 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     break
                                 case 'Reply':
                                     let id = replyParams.id
-                                    console.log(`${apiUrl}/content/post/`+id)
                                     await axios.post(`${apiUrl}/content/post/`+id, {body, private: privacy, tags});
                                     navigation2.goBack()
                                     break
                             }
                           } catch (e) {
-                            alert((e as any).response.data.message);
+                            const { onLogout } = useAuth();
+                            if ((e as any).response.status == "401") {
+                              onLogout!();
+                              alert((e as any).response.data.message);
+                            } else {
+                              alert((e as any).response.data.message);
+                            }
                           }
                         },
                       },

@@ -27,6 +27,10 @@ interface SnapMSGInfo {
   sharedBy: string[];
   shares: number;
   shared: boolean;
+  privacy: boolean;
+  picture: string;
+  replies: number;
+  verified: boolean;
 }
 
 
@@ -34,6 +38,7 @@ interface SnapMSGInfo {
 const { height } = Dimensions.get("window");
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
+    
     const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
     const [isShared, setisShared] = useState(snapMSGInfo.shared);
     const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
@@ -49,7 +54,13 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisLiked(true)
         }
       } catch (e) {
-        alert((e as any).response.data.message);
+        const { onLogout } = useAuth();
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
     }
 
@@ -73,7 +84,13 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                   setisShared(true)
                 }
               } catch (e) {
-                alert((e as any).response.data.message);
+                const { onLogout } = useAuth();
+                if ((e as any).response.status == "401") {
+                  onLogout!();
+                  alert((e as any).response.data.message);
+                } else {
+                  alert((e as any).response.data.message);
+                }
               }
             },
           },
@@ -96,11 +113,18 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisFavourite(true)
         }
       } catch (e) {
-        alert((e as any).response.data.message);
+        const { onLogout } = useAuth();
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
     }
 
-    const openSnapMSG = () => {
+    const openSnapMSG = async () => {
+      navigation.navigate("Feed2")
       navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
     }
 
@@ -109,6 +133,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
       if (snapMSGInfo.author == result) {
         navigation.navigate("Profile")
       } else {
+        navigation.navigate("Search")
         navigation.navigate("Search", {screen: "OtherProfile", params: {username: snapMSGInfo.author}})
       }
     }
@@ -153,14 +178,15 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                   <TouchableOpacity onPress={openProfile}>
                       <Image
                           source={{
-                          uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                          uri: snapMSGInfo.picture,
                           }}
                           style={{width: (45*scale),height: (45*scale),borderRadius:75}}
                       />
                     </TouchableOpacity>
-                    <Text style={{marginLeft:10, fontSize:(15*scale),color:textLight, fontWeight: "bold"}}>{snapMSGInfo.displayName}</Text>
+                    <Text style={{marginLeft:5, fontSize:(15*scale),color:textLight, fontWeight: "bold"}}>{snapMSGInfo.displayName}</Text>
+                    {snapMSGInfo.verified ? <Icon size={(15*scale)} color={textLight} style={{marginTop:5, marginLeft:5}} name="check-decagram" /> : null}
                     <Text style={{marginLeft:5, fontSize:(15*scale),color:textLight}}>@{snapMSGInfo.author}</Text>
-                    {snapMSGInfo.editingDate ? <Icon size={(15*scale)} color={textLight} style={{marginTop:3}} name="pencil-outline" /> : null}
+                    {snapMSGInfo.editingDate ? <Icon size={(15*scale)} color={textLight} style={{marginTop:3, marginLeft:5}} name="pencil-outline" /> : null}
                 </View>
                 <Text style={{flex: 1,color:textLight, textAlign: 'right', fontSize:(15*scale)}}>{timeAgo(snapMSGInfo.creationDate)}</Text>
             </View>
@@ -183,7 +209,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                         
               <View style={styles.statIcons}>
                 <Icon size={(20*scale)} name={"message-outline"} color={textLight} onPress={replyToPost}/>
-                <Text style={{marginHorizontal:3, fontSize:(15*scale),color:textLight}}>{0}</Text>
+                <Text style={{marginHorizontal:3, fontSize:(15*scale),color:textLight}}>{snapMSGInfo.replies}</Text>
               </View>
 
               <View style={styles.statIcons}>
@@ -210,7 +236,7 @@ async function sleep(ms: number) {
 }
 const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
 
-
+  const { onLogout } = useAuth();
   const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [endOfFeed, setEndOfFeed] = useState(false);
@@ -241,7 +267,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
       if (response.data.message != null || response.data.length == 0) {
         setEndOfFeed(true)
       } else {
-        const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; fav: any; id: any;liked:any;likes:any;parentId:any;sharedAt:any;sharedBy:any; tags: any; shares: any; shared: any }) => ({
+        const dataArray = response.data.map((item: { author: any; body: any; creationDate: any; displayName: any; editingDate: any; fav: any; id: any;liked:any;likes:any;parentId:any;sharedAt:any;sharedBy:any; tags: any; shares: any; shared: any, private: any, picture: any, replies: any, verified: any }) => ({
           author: item.author,
           body: item.body,
           creationDate: item.creationDate,
@@ -257,7 +283,12 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
           sharedBy: item.sharedBy,
           shares: item.shares,
           shared: item.shared,
+          privacy: item.private,
+          picture: item.picture,
+          replies: item.replies,
+          verified: item.verified,
         }));
+        
         if (currentPage == 0) {
           setPosts(dataArray)
         } else {
@@ -266,10 +297,16 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
         if (dataArray.length < fetchAmount) {
           setEndOfFeed(true)
         }
+        
       }
       
     } catch (e) {
-      alert((e as any).response.data.message);
+      if ((e as any).response.status == "401") {
+        onLogout!();
+        alert((e as any).response.data.message);
+      } else {
+        alert((e as any).response.data.message);
+      }
     }
   }
 
@@ -324,6 +361,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
 export default FeedTemplate;
 
 import { accent, primaryColor, secondaryColor, textLight } from "../../../components/colors";
+import { useAuth } from "../../../context/AuthContext";
 
 const styles = StyleSheet.create({
   containerContent: {

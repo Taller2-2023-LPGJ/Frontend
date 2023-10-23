@@ -103,7 +103,13 @@ const EditProfile = () => {
         setCurrentProfilePicture(api_result.data.profilePicture);
         setIsLoadingProfileData(false);
       } catch (e) {
-        alert((e as any).response.data.message);
+        const { onLogout } = useAuth();
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
     }
   };
@@ -168,7 +174,13 @@ const EditProfile = () => {
           navigation.goBack();
         } catch (e) {
           setIsLoadingProfileData(false)
-          alert((e as any).response.data.message);
+          const { onLogout } = useAuth();
+          if ((e as any).response.status == "401") {
+            onLogout!();
+            alert((e as any).response.data.message);
+          } else {
+            alert((e as any).response.data.message);
+          }
         }
       }
     }
@@ -278,6 +290,7 @@ const EditProfile = () => {
 };
 
 import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
+import { useAuth } from "../../../context/AuthContext";
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({

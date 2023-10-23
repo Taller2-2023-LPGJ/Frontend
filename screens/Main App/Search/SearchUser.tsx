@@ -7,10 +7,14 @@ import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../../../types/types';
 import { background, primaryColor, secondaryColor, tertiaryColor, textLight } from '../../../components/colors';
+import { useAuth } from '../../../context/AuthContext';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface User {
   displayName: string;
   username: string;
+  profilePicture: string;
+  verified: boolean;
 }
 
 type Props = {
@@ -19,9 +23,6 @@ type Props = {
 
 
 const UserProfile: React.FC<{ user: User, navigation: Navigation }> = ({ user,navigation }) => {
-  //const navigation = useNavigation()
-
-
   const handlePress = async () => {
     let username = await AsyncStorage.getItem('username');
     if (username == user.username){
@@ -36,13 +37,15 @@ const UserProfile: React.FC<{ user: User, navigation: Navigation }> = ({ user,na
       <Image
         source={{
           uri:
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+            user.profilePicture,
         }}
         style={styles.profileImage}
       />
       <View>
         <View style={styles.namesContainer}>
-          <Text style={styles.displayname}>{user.displayName} </Text>
+          <Text style={styles.displayname}>{user.displayName} 
+          {user.verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:15}} name="check-decagram" /> : null}
+          </Text>
           <Text style={styles.username}>{"@"}{user.username} </Text>
         </View>
       </View>
@@ -71,7 +74,13 @@ const SearchUser = ({ navigation }: Props) => {
         api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`);
         setUsers(api_result.data)
       } catch (e) {
-        alert((e as any).response.data.message)
+        const { onLogout } = useAuth();
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
   }
 

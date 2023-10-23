@@ -45,7 +45,12 @@ const Profile = ({ navigation }: ProfileProps) => {
         await AsyncStorage.setItem("username", username);
         result = username;
       } catch (e) {
-        alert((e as any).response.data.message);
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
         return;
       }
     }
@@ -63,6 +68,7 @@ const Profile = ({ navigation }: ProfileProps) => {
           followers: api_result.data.followers,
           followed: api_result.data.followed,
           profilepic: api_result.data.profilePicture,
+          verified: api_result.data.verified,
         }));
         setisLoading(false);
       } catch (e) {
@@ -88,6 +94,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     bio: "",
     followers: 0,
     followed: 0,
+    verified: false,
   };
 
   const [user, setUser] = useState(initialUser);
@@ -111,7 +118,9 @@ const Profile = ({ navigation }: ProfileProps) => {
 
           <View style={styles.userInfoContainer}>
             <View style={styles.displaynameRow}>
-              <Text style={styles.displayname}>{user.displayname}</Text>
+              <Text style={styles.displayname}>{user.displayname}
+              {user.verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:10}} name="check-decagram" /> : null}
+              </Text>
               <Text
                 style={styles.editProfileButton}
                 onPress={() => {
@@ -160,6 +169,7 @@ const Profile = ({ navigation }: ProfileProps) => {
 
 import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const styles = StyleSheet.create({
   container: {

@@ -32,23 +32,32 @@ function OtherProfile({ navigation }: Props) {
   const [followers, setFollowers] = React.useState(0);
   const [followed, setFollowed] = React.useState(0);
   const [following, setFollowing] = React.useState(false);
-
+  const [image, setImage] = React.useState("");
   const [isLoading, setisLoading] = useState(true);
+  const [verified, setVerified] = useState(false);
 
   const getData = async () => {
     if (data.username != null) {
       let api_result: AxiosResponse<any, any>;
       try {
-        api_result = await axios.get(`${API_URL}/profile/${data.username}`); // TODO ver si se esta siguiendo
+        api_result = await axios.get(`${API_URL}/profile/${data.username}`); 
         setDisplayName(api_result.data.displayName);
         setLocation(api_result.data.location);
         setBio(api_result.data.biography);
         setFollowed(api_result.data.followed)
         setFollowers(api_result.data.followers)
         setFollowing(api_result.data.following)
+        setImage(api_result.data.profilePicture)
+        setVerified(api_result.data.verified)
         setisLoading(false);
       } catch (e) {
-        alert((e as any).response.data.message);
+        if ((e as any).response.status == "401") {
+          const { onLogout } = useAuth();
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
     }
   };
@@ -69,7 +78,7 @@ function OtherProfile({ navigation }: Props) {
         <View>
           <Image 
           source={{
-            uri: "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245",
+            uri: image,
           }}
           style={styles.profileImage}
           />
@@ -86,7 +95,13 @@ function OtherProfile({ navigation }: Props) {
                   setFollowing(!following)
                   setFollowers(followers-1)
                 } catch (e) {
-                  alert((e as any).response.data.message);
+                  const { onLogout } = useAuth();
+                  if ((e as any).response.status == "401") {
+                    onLogout!();
+                    alert((e as any).response.data.message);
+                  } else {
+                    alert((e as any).response.data.message);
+                  }
                 }
               } }
               >
@@ -104,7 +119,13 @@ function OtherProfile({ navigation }: Props) {
                     setFollowing(!following)
                     setFollowers(followers+1)
                   } catch (e) {
-                    alert((e as any).response.data.message);
+                    const { onLogout } = useAuth();
+                    if ((e as any).response.status == "401") {
+                      onLogout!();
+                      alert((e as any).response.data.message);
+                    } else {
+                      alert((e as any).response.data.message);
+                    }
                   }
                 } }
               >
@@ -114,7 +135,9 @@ function OtherProfile({ navigation }: Props) {
             }
 
           <View style={styles.userInfoContainer}>
-            <Text style={styles.displayname}>{displayName}</Text>
+            <Text style={styles.displayname}>{displayName}
+            {verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:10}} name="check-decagram" /> : null}
+            </Text>
             <Text style={styles.bio}>{"@"}{data.username}</Text>
             <Text style={styles.bio}>{location}</Text>
             <Text style={styles.bio}>{bio}</Text>
@@ -135,6 +158,8 @@ function OtherProfile({ navigation }: Props) {
 
 export default OtherProfile;
 import { accent, background, primaryColor, secondaryColor, textLight} from "../../../components/colors";
+import { useAuth } from '../../../context/AuthContext';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 

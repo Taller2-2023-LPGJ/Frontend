@@ -12,7 +12,6 @@ const { width } = Dimensions.get("window");
 
 const Settings = () => {
   const { onLogout } = useAuth();
-
   const handleVerifyRequest = async () => {
     // TODO gateway (usar API_URL) que no requiere username en body
     const username = await AsyncStorage.getItem("username");
@@ -24,7 +23,12 @@ const Settings = () => {
       });
       alert("Your profile is now pending verification.");
     } catch (e) {
-      alert((e as any).response.data.message);
+      if ((e as any).response.status == "401") {
+        onLogout!();
+        alert((e as any).response.data.message);
+      } else {
+        alert((e as any).response.data.message);
+      }
     }
   };
 

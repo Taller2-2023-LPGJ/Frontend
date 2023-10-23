@@ -8,6 +8,7 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { primaryColor, secondaryColor, textLight } from '../../../components/colors';
+import { useAuth } from '../../../context/AuthContext';
 const apiUrl = API_URL;
 
 type Props = {
@@ -30,6 +31,10 @@ interface SnapMSGInfo {
   sharedBy: string[];
   shares: number;
   shared: boolean;
+  privacy: boolean;
+  picture: string;
+  replies: number;
+  verified: boolean;
 }
 
 type SnapMSGDetailsRouteParams = {
@@ -40,9 +45,10 @@ const SnapMSGDetails = ({ navigation}: Props) => {
   const route = useRoute<RouteProp<Record<string, SnapMSGDetailsRouteParams>, string>>()
   const navigation2 = useNavigation()
   const [username, setUsername] = useState("")
+  const [isReply, setIsReply] = useState(false)
+  const [reply, setReply] = useState()
   if (route.params.SnapMSGInfo){
     const snapMSGInfo = route.params.SnapMSGInfo
-
     
     const deleteSnapMSG = async () => {
       try {
@@ -50,13 +56,19 @@ const SnapMSGDetails = ({ navigation}: Props) => {
         await axios.delete(`${apiUrl}/content/post/${id}`);
         navigation2.goBack()
       } catch (e) {
-        alert((e as any).response.data.message);
+        const { onLogout } = useAuth();
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
         navigation2.goBack()
       }
     }
 
     const editSnapMSG = () => {
-      navigation.navigate("EditSnapMSG", {editParams: {body:snapMSGInfo.body, id:snapMSGInfo.id}})
+      navigation.navigate("EditSnapMSG", {editParams: {body:snapMSGInfo.body, id:snapMSGInfo.id, privacy:snapMSGInfo.privacy}})
     }
 
     const getData = async () => {
@@ -66,6 +78,11 @@ const SnapMSGDetails = ({ navigation}: Props) => {
         return;
       } else {
         setUsername(result)
+      }
+      if (snapMSGInfo.parentId != 0) {
+        setIsReply(true)
+        let result = await axios.get(`${apiUrl}/content/post?id=${snapMSGInfo.parentId}`)
+        setReply(result.data)
       }
     }
 
@@ -81,7 +98,7 @@ const SnapMSGDetails = ({ navigation}: Props) => {
             {(username == snapMSGInfo.author)? (
               <View style={styles.snapMSGToolsContainer}>
                 <Icon size={35} color={textLight} name={"poll"} style={styles.snapMSGTool}/>
-                <Icon size={35} color={textLight} name={"lock-outline"} style={styles.snapMSGTool}/>
+                <Icon size={35} color={textLight} name={snapMSGInfo.privacy? "lock-outline" : "lock-open-variant-outline"} style={styles.snapMSGTool}/>
                 <Icon size={35} color={textLight} name={"pencil-outline"} style={styles.snapMSGTool} onPress={editSnapMSG}/>
                 <Icon size={35} color={textLight} name={"trash-can-outline"} style={styles.snapMSGTool} onPress={deleteSnapMSG}/>
               </View>

@@ -11,13 +11,14 @@ type EditSnapMSGRouteParams = {
     editParams: {
         id: number,
         body: string,
+        privacy: boolean,
     }
 }
 
 const EditSnapMSG = ({ navigation}: Props) => {
     const route = useRoute<RouteProp<Record<string, EditSnapMSGRouteParams>, string>>()
     return (
-        <WriteSnapMSGTemplate navigation={navigation} actionType='Edit' editParams={{id:route.params.editParams.id, body:route.params.editParams.body}} replyParams={{id:0}}></WriteSnapMSGTemplate>
+        <WriteSnapMSGTemplate navigation={navigation} actionType='Edit' editParams={{id:route.params.editParams.id, body:route.params.editParams.body, privacy:route.params.editParams.privacy}} replyParams={{id:0}}></WriteSnapMSGTemplate>
       );
 }
 
