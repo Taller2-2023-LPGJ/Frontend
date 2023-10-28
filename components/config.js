@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/storage'
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
+import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -9,11 +10,13 @@ const firebaseConfig = {
   projectId: "snapmsg-399802",
   storageBucket: "snapmsg-399802.appspot.com",
   messagingSenderId: "463820808275",
-  appId: "1:463820808275:web:f04bbbcadcb31355ea26a6"
+  appId: "1:463820808275:web:f04bbbcadcb31355ea26a6",
 };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+//if (!firebase.apps.length) {
+const app = firebase.initializeApp(firebaseConfig);
+//}
 
-export {firebase}
+const db = getDatabase(app);
+
+export { firebase, db };

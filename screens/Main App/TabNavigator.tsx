@@ -5,6 +5,7 @@ import FeedStackScreen from "./Feed/FeedStackScreen";
 import SearchStackScreen from "./Search/SearchStackScreen";
 import SettingsStackScreen from "./Settings/SettingsStackScreen";
 import NotificationsStackScreen from "./Notifications/NotificationsStackScreen";
+import MessagesStackStackScreen from "./Messages/MessagesStackScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -85,8 +86,23 @@ export function TabNavigator() {
             );
           },
         }}
-        name="Notifications"
+        name="Alerts"
         component={NotificationsStackScreen}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon(props) {
+            return (
+              <Icon
+                size={25}
+                name={props.focused ? "message" : "message-outline"}
+                {...props}
+              />
+            );
+          },
+        }}
+        name="Messages"
+        component={MessagesStackStackScreen}
       />
     </Tab.Navigator>
   );

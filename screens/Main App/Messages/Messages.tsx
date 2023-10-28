@@ -1,0 +1,247 @@
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Image,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
+import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+
+import { firebase, db } from "../../../components/config";
+import { onValue, push, ref, set } from "firebase/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const default_pp_url =
+  "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
+
+const { width } = Dimensions.get("window");
+
+const getUsername = async () => {
+  return await AsyncStorage.getItem("username");
+};
+
+type ChatData = {
+  sender: string;
+  message: string;
+};
+
+type ChatCardInfo = {
+  username: string;
+  avatar: string;
+};
+
+type ChatListData = {
+  username: string;
+  chats: ChatData[];
+};
+
+type Props = {
+  navigation: Navigation;
+};
+
+const ChatList = ({ navigation }: Props) => {
+  const [activeChats, setActiveChats] = useState<ChatCardInfo[]>([]);
+
+  const checkUserProfilePicture = async (username: string) => {
+    const storageRef = firebase.storage().ref();
+    const profilePictureRef = storageRef.child(`${username}/avatar`);
+
+    try {
+      await profilePictureRef.getDownloadURL();
+      return profilePictureRef.getDownloadURL();
+    } catch (error) {
+      // If the file doesn't exist, return the default URL
+      return default_pp_url;
+    }
+  };
+
+  // Fetch active chats from the server
+  const fetchActiveChats = async () => {
+    setIsLoading(true);
+    const username = await getUsername();
+    const starCountRef = ref(db, "chats/" + username);
+
+    onValue(starCountRef, async (snapshot) => {
+      const data: ChatListData = snapshot.val();
+      const usernames = Object.keys(data);
+      const newActiveChats: ChatCardInfo[] = [];
+      for (const username of usernames) {
+        const avatar = await checkUserProfilePicture(username);
+        newActiveChats.push({ username, avatar });
+      }
+
+      setActiveChats(newActiveChats);
+      setIsLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    fetchActiveChats();
+  }, []);
+
+  const handleChatCardPress = (username: string) => {
+    navigation.navigate("ChatWindow", {
+      username: username,
+    });
+  };
+
+  const renderItem = ({ item }: { item: ChatCardInfo }) => (
+    <TouchableOpacity
+      onPress={() => handleChatCardPress(item.username)}
+      style={styles.card}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Image
+          source={{ uri: item.avatar }}
+          style={{
+            width: 70,
+            height: 70,
+            borderRadius: 35,
+            marginRight: 18,
+          }}
+        />
+        <Text style={{ fontSize: 24 }}>@{item.username}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchActiveChats();
+    setRefreshing(false);
+  };
+
+  return (
+    <View>
+      {isLoading ? (
+        <View style={{ justifyContent: "center", marginVertical: width / 2.5 }}>
+          <ActivityIndicator size="large" animating={true} />
+        </View>
+      ) : (
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          data={activeChats}
+          renderItem={renderItem}
+        />
+      )}
+    </View>
+  );
+};
+
+const FetchData = () => {
+  // get todos los chats para 'lucas'
+  const getData = async () => {
+    const username = await getUsername();
+    const starCountRef = ref(db, "chats/" + username);
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data);
+      // const newPosts = Object.keys(data).map((key) => ({
+      //   id: key,
+      //   ...data[key],
+      // }));
+
+      // console.log(newPosts);
+    });
+  };
+
+  // function to add data to firebase realtime db
+  const addDataOn = async () => {
+    let receptor = "pablo1232";
+    let username = "lucas123";
+    let body = "Hola que tal";
+
+    const newMessageRef = push(ref(db, "chats/" + receptor + "/" + username)); // Generate a unique key for the new message
+
+    // Set the message data under the unique key
+    set(newMessageRef, {
+      sender: username,
+      body: body,
+    });
+
+    const newMessageRef2 = push(ref(db, "chats/" + username + "/" + receptor)); // Generate a unique key for the new message
+
+    // Set the message data under the unique key
+    set(newMessageRef2, {
+      sender: username,
+      body: body,
+    });
+  };
+
+  return (
+    <View>
+      {/* <Button
+        style={styles.button}
+        labelStyle={{ color: textLight }}
+        mode="contained"
+        onPress={addDataOn}
+      >
+        Send Message
+      </Button> */}
+    </View>
+  );
+};
+
+const Messages = ({ navigation }: Props) => {
+  return (
+    <View style={styles.container}>
+      <ChatList navigation={navigation} />
+    </View>
+  );
+};
+
+export default Messages;
+
+import {
+  accent,
+  background,
+  primaryColor,
+  secondaryColor,
+  textLight,
+} from "../../../components/colors";
+import { Navigation } from "../../../types/types";
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 5,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: background,
+  },
+  card: {
+    width: width,
+    padding: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: textLight,
+  },
+});
+
+// const startRealtimeListener = async () => {
+// const username = await AsyncStorage.getItem("username");
+
+// const chatRef = ref(db, "chats/" + username);
+
+//   // This callback will be triggered when a new chat message is added.
+//   onChildAdded(chatRef, (snapshot) => {
+//     const newChatMessage = snapshot.val();
+
+//     // Revisar de quien es ese mensaje
+
+//     console.log("New message received:", newChatMessage);
+//     // You can update your UI or do any necessary processing with the new message.
+//   });
+// };
+
+// To start the real-time listener, call this function when your chat app loads.
+//startRealtimeListener();

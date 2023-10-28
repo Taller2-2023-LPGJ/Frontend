@@ -9,6 +9,7 @@ import {
 } from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { background } from "../../../components/colors";
+import { Navigation } from "../../../types/types";
 
 type Notification = {
   notification: NotificationData;
@@ -24,8 +25,11 @@ type NotificationData = {
   title: string;
   notification_id: string;
 };
+type Props = {
+  navigation: Navigation;
+};
 
-export default function Notifications() {
+export default function Notifications({ navigation }: Props) {
   const [data, setData] = useState<NotificationData[]>([]);
   const NotificationCard = ({ notification }: Notification) => {
 
@@ -99,6 +103,7 @@ export default function Notifications() {
         ) : (
           <View style={{backgroundColor:background}}>
             <Text>0 Notifications</Text>
+            
           </View>
         )}
       </View>
