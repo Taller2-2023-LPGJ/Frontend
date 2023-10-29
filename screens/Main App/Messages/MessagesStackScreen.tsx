@@ -8,7 +8,7 @@ const MessagesStack = createNativeStackNavigator();
 const MessagesStackStackScreen = () => {
     return (
         <MessagesStack.Navigator>
-          <MessagesStack.Screen options={{title:"Messages",headerShown:false}} name="Chats" component={Messages} />
+          <MessagesStack.Screen options={{title:"Messages"}} name="Chats" component={Messages} />
           <MessagesStack.Screen options={{title:""}} name="ChatWindow" component={ChatWindow} />
         </MessagesStack.Navigator>
       );
