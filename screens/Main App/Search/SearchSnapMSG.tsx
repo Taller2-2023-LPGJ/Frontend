@@ -35,8 +35,8 @@ const SearchSnapMSG = ({ navigation }: Props) => {
     let api_result: AxiosResponse<any, any>
 
       try {
-        api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`); //SEARCH TEXT
-        setUsers(api_result.data)
+        //api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`); //SEARCH TEXT
+        //setUsers(api_result.data)
       } catch (e) {
         const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
