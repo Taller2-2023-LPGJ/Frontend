@@ -5,17 +5,24 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Navigation } from '../../../types/types';
+import { background, primaryColor, secondaryColor, tertiaryColor, textLight } from '../../../components/colors';
+import { useAuth } from '../../../context/AuthContext';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface User {
   displayName: string;
   username: string;
+  profilePicture: string;
+  verified: boolean;
 }
 
+type Props = {
+  navigation: Navigation;
+};
 
-const UserProfile: React.FC<{ user: User }> = ({ user }) => {
-  const navigation = useNavigation()
 
-
+const UserProfile: React.FC<{ user: User, navigation: Navigation }> = ({ user,navigation }) => {
   const handlePress = async () => {
     let username = await AsyncStorage.getItem('username');
     if (username == user.username){
@@ -30,13 +37,15 @@ const UserProfile: React.FC<{ user: User }> = ({ user }) => {
       <Image
         source={{
           uri:
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+            user.profilePicture,
         }}
         style={styles.profileImage}
       />
       <View>
         <View style={styles.namesContainer}>
-          <Text style={styles.displayname}>{user.displayName} </Text>
+          <Text style={styles.displayname}>{user.displayName} 
+          {user.verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:15}} name="check-decagram" /> : null}
+          </Text>
           <Text style={styles.username}>{"@"}{user.username} </Text>
         </View>
       </View>
@@ -45,13 +54,13 @@ const UserProfile: React.FC<{ user: User }> = ({ user }) => {
   )
 }
 
+const SearchUser = ({ navigation }: Props) => {
 
-function SearchUser() {
-  const navigation = useNavigation();
+  const navigation2 = useNavigation();
 
 
   React.useEffect(() =>
-  navigation.addListener("beforeRemove", (e) => {
+  navigation2.addListener("beforeRemove", (e) => {
     e.preventDefault();
   })
   );
@@ -62,10 +71,16 @@ function SearchUser() {
     let api_result: AxiosResponse<any, any>
 
       try {
-        api_result = await axios.get(`${API_URL}/profile?username=${searchQuery}`);
+        api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`);
         setUsers(api_result.data)
       } catch (e) {
-        alert((e as any).response.data.message)
+        const { onLogout } = useAuth();
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
       }
   }
 
@@ -74,33 +89,22 @@ function SearchUser() {
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
   const onSubmitEditing = (_: any) => getUsers()
 
-  const [isPressEnabled, setIsPressEnabled] = useState(true);
-  const handleScrollBegin = () => {
-    // Disable pressing when scrolling begins
-    setIsPressEnabled(false);
-  };
-  const handleScrollEnd = () => {
-    // Enable pressing when scrolling ends
-    setIsPressEnabled(true);
-  };
-
 
   return (
-    <ScrollView contentContainerStyle={styles.container}
-      onScrollBeginDrag={handleScrollBegin}
-      onScrollEndDrag={handleScrollEnd}
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <Searchbar
       style={styles.searchBar}
       placeholder="Search"
       onChangeText={onChangeSearch}
       onSubmitEditing={onSubmitEditing}
+      placeholderTextColor={textLight}
+      inputStyle={{ color: textLight }}
       onClearIconPress={() => {
         setUsers([])
       }}
       value={searchQuery} />
       {users.map((user, index) => (
-        <UserProfile key={index} user={user} />
+        <UserProfile key={index} user={user} navigation={navigation}/>
       ))}
     </ScrollView>
   );
@@ -112,14 +116,16 @@ export default SearchUser;
 const styles = StyleSheet.create({
     container: {
       alignItems: "center",
-      paddingVertical: 5
+      paddingVertical: 5,
+      backgroundColor:background,
+      flexGrow:1
     },
     userProfileContainer: {
-      width: "95%",
-      backgroundColor: "#ccc",
+      width: "90%",
+      backgroundColor: tertiaryColor,
       padding: 15,
       borderRadius: 20,
-      marginVertical: 5,
+      marginVertical: 8,
       flexDirection: "row",
     },
     profileImage: {
@@ -131,9 +137,11 @@ const styles = StyleSheet.create({
     displayname: {
       fontSize: 18,
       fontWeight: "bold",
+      color:textLight,
     },
     username: {
       fontSize: 15,
+      color:textLight,
     },
     namesContainer:{
       flexDirection:"column",
@@ -147,6 +155,6 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       marginBottom: 10,
       marginTop: 10,
-      backgroundColor: "#cfcfcf",
+      backgroundColor: primaryColor,
     },
 });

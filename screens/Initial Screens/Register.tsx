@@ -1,6 +1,13 @@
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
-import { Button, TextInput, Text } from "react-native-paper";
+import {
+  Button,
+  TextInput,
+  Text,
+  ActivityIndicator,
+  Modal,
+  Portal,
+} from "react-native-paper";
 import Logo from "../../components/Logo";
 import { Navigation } from "../../types/types";
 import { useAuth } from "../../context/AuthContext";
@@ -8,10 +15,16 @@ import { useAuth } from "../../context/AuthContext";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { background, primaryColor, textLight } from "../../components/colors";
 
 type Props = {
   navigation: Navigation;
 };
+
+const GOOGLE_ERR_MSG = "Error fetching from Google. Please try again";
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -24,14 +37,19 @@ const Register = ({ navigation }: Props) => {
   const [username, setUsername] = React.useState("");
   const [pass, setPass] = React.useState("");
   const [passConfirmation, setPassConfirmation] = React.useState("");
-
   const { onRegister, setLogout, onRegisterGoogle } = useAuth();
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
 
-  const [userInfo, setUserInfo] = React.useState(null);
+  const hideLoadingIndicator = () => {
+    setLoadingVisible(false);
+  };
+  const showLoadingIndicator = () => {
+    setLoadingVisible(true);
+  };
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
-      "463820808275-497078tjprmogvgrjb35apbp172eemnu.apps.googleusercontent.com",
+      "463820808275-tjqtu14eadrj8cvhig35seb0luvprp15.apps.googleusercontent.com",
     webClientId:
       "463820808275-1e2fcu04hn09dvcn8aujhl1op5hlhbep.apps.googleusercontent.com",
   });
@@ -39,18 +57,20 @@ const Register = ({ navigation }: Props) => {
   const getUserInfo = async (token: string) => {
     if (!token) return;
     try {
-      const response = await fetch(
+      const response = await axios.get(
         "https://www.googleapis.com/userinfo/v2/me",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      const user = await response.json();
-      //await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserInfo(user);
+      const userInfo = await response.data;
+      return userInfo;
     } catch (error) {
-      // alert error
+      alert(GOOGLE_ERR_MSG);
+      return null;
     }
   };
 
@@ -59,8 +79,9 @@ const Register = ({ navigation }: Props) => {
   }, [response]);
 
   async function handleEffect() {
+    let userInfo = null;
     if (response?.type === "success" && response.authentication) {
-      getUserInfo(response.authentication.accessToken);
+      userInfo = await getUserInfo(response.authentication.accessToken);
     } else {
       return;
     }
@@ -70,22 +91,28 @@ const Register = ({ navigation }: Props) => {
     if (userInfo) {
       email = (userInfo as any).email;
       name = (userInfo as any).name;
-      alert("Failed to fetch from Google. Please try again.")
     } else {
+      alert(GOOGLE_ERR_MSG);
       return;
     }
     let result = null;
-    if (email) {
+    if (email && name) {
+      showLoadingIndicator();
       result = await onRegisterGoogle!(name, email);
     } else {
-      alert("Failed to fetch from Google. Please try again.")
+      alert(GOOGLE_ERR_MSG);
       return;
     }
 
     if (result && result.error) {
+      hideLoadingIndicator();
       alert(result.message);
     } else {
-      navigation.navigate("TabNavigator");
+      storeUsername(email);
+      hideLoadingIndicator();
+      navigation.navigate("Interests", {
+        username: email,
+      });
     }
   }
 
@@ -139,29 +166,62 @@ const Register = ({ navigation }: Props) => {
       return;
     }
 
+    showLoadingIndicator();
     const result = await onRegister!(username, mail, pass);
 
     if (result && result.error) {
-
+      hideLoadingIndicator();
       alert(result.message);
-
     } else {
-
-      // await setLogout!(); 
-      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem("username", username);
+      hideLoadingIndicator();
       navigation.navigate("PinConfirmation", {
         username: username,
         mode: "confirmReg",
       });
     }
+    hideLoadingIndicator();
   };
 
   const handleGoogleRegister = async () => {
     await promptAsync();
-  }
+  };
+
+  const storeUsername = async (email: string) => {
+    try {
+      const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
+      const respUsername = response.data.name;
+      
+      await AsyncStorage.setItem("username", respUsername);
+    } catch (e) {
+      //
+    }
+  };
 
   return (
     <View style={styles.container}>
+      <Portal>
+        <Modal
+          visible={loadingVisible}
+          dismissable={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <ActivityIndicator
+              animating={loadingVisible}
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
         Create Account
@@ -201,16 +261,18 @@ const Register = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20 }}
+        style={styles.button}
         mode="contained"
+        labelStyle={{color:textLight}}
         onPress={() => register()}
       >
         Sign Up
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 0 }}
+        style={styles.button}
         mode="contained"
+        labelStyle={{color:textLight}}
         onPress={() => {
           handleGoogleRegister();
         }}
@@ -240,6 +302,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   text: {
     marginBottom: 10,
@@ -249,4 +312,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: width * 0.7,
   },
+  button: {
+    width: width*0.7,
+    marginVertical: 10,
+    backgroundColor:primaryColor
+  }
 });

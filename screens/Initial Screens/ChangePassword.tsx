@@ -1,11 +1,19 @@
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Modal,
+  Portal,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import React from "react";
 import axios from "axios";
 import { API_URL } from "@env";
 import { Navigation } from "../../types/types";
 import { useRoute } from "@react-navigation/native";
 import Logo from "../../components/Logo";
+import { background, primaryColor, textLight } from "../../components/colors";
 
 const { width } = Dimensions.get("window");
 const apiUrl = API_URL;
@@ -25,6 +33,14 @@ const ChangePassword = ({ navigation }: Props) => {
   const [password, setPassword] = React.useState("");
   const [passwordConfirmation, setPasswordConfirmation] = React.useState("");
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{7,32}$/;
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+
+  const hideLoadingIndicator = () => {
+    setLoadingVisible(false);
+  };
+  const showLoadingIndicator = () => {
+    setLoadingVisible(true);
+  };
 
   const route = useRoute<RouteParams>();
   const data = route.params;
@@ -36,6 +52,7 @@ const ChangePassword = ({ navigation }: Props) => {
       return;
     }
 
+    showLoadingIndicator();
     try {
       await axios.post(`${apiUrl}/users/setPassword`, {
         username,
@@ -43,9 +60,11 @@ const ChangePassword = ({ navigation }: Props) => {
         password,
       });
 
+      hideLoadingIndicator();
       alert("Password changed");
       navigation.navigate("StartScreen");
     } catch (e) {
+      hideLoadingIndicator();
       alert((e as any).response.data.message);
     }
   };
@@ -83,6 +102,28 @@ const ChangePassword = ({ navigation }: Props) => {
 
   return (
     <View style={styles.container}>
+      <Portal>
+        <Modal
+          visible={loadingVisible}
+          dismissable={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <ActivityIndicator
+              animating={loadingVisible}
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Logo />
       <Text style={styles.text} variant="headlineMedium">
         Change Password
@@ -111,7 +152,8 @@ const ChangePassword = ({ navigation }: Props) => {
       </View>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 20 }}
+        style={styles.button}
+        labelStyle={{color:textLight}}
         mode="contained"
         onPress={() => handleSend()}
       >
@@ -119,7 +161,8 @@ const ChangePassword = ({ navigation }: Props) => {
       </Button>
 
       <Button
-        style={{ width: width * 0.65, marginVertical: 5 }}
+        style={styles.button}
+        labelStyle={{color:textLight}}
         mode="contained"
         onPress={() => handleCancel()}
       >
@@ -136,6 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   text: {
     marginBottom: 10,
@@ -145,4 +189,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: width * 0.7,
   },
+  button: {
+    width: width*0.4,
+    marginVertical: 10,
+    backgroundColor:primaryColor
+  }
 });

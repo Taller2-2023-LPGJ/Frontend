@@ -1,6 +1,8 @@
 import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { registerIndieID } from "native-notify"
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -39,7 +41,7 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string
   ) => {
-    //console.log(`${apiUrl}/users/signup`);
+    
     try {
       const result = await axios.post(`${apiUrl}/users/signup`, {
         username,
@@ -67,6 +69,9 @@ export const AuthProvider = ({ children }: any) => {
 
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
+      registerIndieID(userIdentifier, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
+      
+      //unregisterIndieDevice(userIdentifier, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
 
       return result;
     } catch (e) {
@@ -75,9 +80,13 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
+    console.log("Logging out")
     // reset axios header
     axios.defaults.headers.common["token"] = "";
 
+    // remove stored username
+    await AsyncStorage.removeItem('username');
+    
     // reset auth state
     setAuthState({
       token: null,
@@ -94,7 +103,7 @@ export const AuthProvider = ({ children }: any) => {
 
       setAuthState({
         token: result.data.token,
-        authenticated: true,
+        authenticated: false,
       });
 
       // Attach token to header
@@ -102,7 +111,7 @@ export const AuthProvider = ({ children }: any) => {
 
       return result;
     } catch (e) {
-      return { error: true, message: (e as any).response.data.message };
+      return { error: true,message: (e as any).response.data.message};
     }
   };
 
@@ -121,7 +130,7 @@ export const AuthProvider = ({ children }: any) => {
       axios.defaults.headers.common["token"] = `${result.data.token}`;
       return result;
     } catch (e) {
-      return { error: true, message: (e as any).response.data.message };
+      return {error: true,message: (e as any).response.data.message};
     }
   };
 

@@ -3,6 +3,10 @@ import React from "react";
 import { Appbar, Button, Text, TextInput } from "react-native-paper";
 import { Navigation } from "../../types/types";
 import Logo from "../../components/Logo";
+import { StatusBar } from 'expo-status-bar';
+import { background, primaryColor, textLight } from "../../components/colors";
+
+
 
 type Props = {
   navigation: Navigation;
@@ -13,12 +17,21 @@ const { width } = Dimensions.get("window");
 const StartScreen = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
-      <Logo />
-      <Text style={styles.text}>SnapMsg</Text>
+      <StatusBar style="light"/>
+      <View style={styles.topContainer}>
+        
+        <Logo />
+        
 
-      <View>
+        <Text style={styles.text}>
+          See what's happening in the world right now.
+        </Text>
+      </View>
+
+      <View style={styles.buttonContainer}>
         <Button
           style={styles.button}
+          labelStyle={{color:textLight}}
           mode="contained"
           onPress={() => navigation.navigate("Login")}
         >
@@ -27,6 +40,7 @@ const StartScreen = ({ navigation }: Props) => {
 
         <Button
           style={styles.button}
+          labelStyle={{color:textLight}}
           mode="contained"
           onPress={() => navigation.navigate("Register")}
         >
@@ -42,16 +56,31 @@ export default StartScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 20,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:background
   },
   button: {
-    margin: 8,
-    width: width * 0.65,
+    width: width*0.7,
+    marginVertical: 10,
+    backgroundColor:primaryColor
   },
   text: {
-    marginBottom: 40,
-    fontSize: width * 0.05,
+    fontSize: width * 0.065,
+    marginTop: 0,
+  },
+  buttonContainer: {
+    marginTop: 60,
+    flexDirection: "column",
+  },
+  topContainer: {
+    flex: 9 / 10,
+    alignItems: "center",
+    padding: 10,
+  },
+  subtitle: {
+    fontSize: width * 0.04,
+    marginTop: 0,
   },
 });

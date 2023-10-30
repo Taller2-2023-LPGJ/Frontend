@@ -1,12 +1,30 @@
-import React from 'react';
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import FeedTemplate from '../Feed/FeedTemplate';
+import { Navigation } from '../../../types/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { secondaryColor } from '../../../components/colors';
 
-function ProfileSnapMSGs() {
+type Props = {
+  navigation: Navigation;
+};
+
+const ProfileSnapMSGs = ({ navigation }: Props) => {
+  const [username, setUsername] = useState("")
+  const getData = async () => {
+    let result = await AsyncStorage.getItem("username");
+    if (result != null){
+      setUsername(result)
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
-    <View
-    style={styles.container}
-    >
-      <Text>Profile SnapMSGs</Text>
+    <View style={{flexGrow:1, backgroundColor:secondaryColor}}>
+      {username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:username, id:-1}}></FeedTemplate>:null}
     </View>
   );
 }
