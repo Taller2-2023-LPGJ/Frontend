@@ -1,6 +1,12 @@
-import { View, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  RefreshControl,
+} from "react-native";
 import { Button, Text } from "react-native-paper";
-import React from "react";
+import React, { useCallback } from "react";
 import { Card, Title, Paragraph } from "react-native-paper";
 import { useState, useEffect } from "react";
 import {
@@ -10,6 +16,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { background } from "../../../components/colors";
 import { Navigation } from "../../../types/types";
+import { useFocusEffect } from "@react-navigation/native";
 
 type Notification = {
   notification: NotificationData;
@@ -32,38 +39,55 @@ type Props = {
 export default function Notifications({ navigation }: Props) {
   const [data, setData] = useState<NotificationData[]>([]);
   const NotificationCard = ({ notification }: Notification) => {
-
     return (
       <Card
         style={styles.card}
-        onPress={() => console.log(`navigate to snapmsg id: ${notification.title.split(' ')[1]}`)}
+        onPress={() =>
+          console.log(
+            `navigate to snapmsg id: ${notification.title.split(" ")[1]}`
+          )
+        }
       >
         <Card.Content>
           <View style={styles.cardTitle}>
-          <Title>{notification.title.split(' ')[0]}</Title>
-            <Paragraph
+            <Title>{notification.title.split(" ")[0]}</Title>
+            <Button
+              mode="contained"
+              style={{ backgroundColor: "#FF6B6B" }}
               onPress={async () =>
                 await handleDeleteNotification(notification.notification_id)
               }
             >
               X
-            </Paragraph>
+            </Button>
           </View>
           <Paragraph>{notification.message}</Paragraph>
           <Paragraph>At: {notification.date}</Paragraph>
-          <Paragraph>Id: {notification.title.split(' ')[1]}</Paragraph>
+          <Paragraph>Id: {notification.title.split(" ")[1]}</Paragraph>
         </Card.Content>
       </Card>
     );
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    handleEffect();
+    setRefreshing(false);
+  }, []);
+
   const NotificationsList = ({ data }: NotificationList) => {
     return (
-      <View>
-        {data.map((notification, index) => (
-          <NotificationCard key={index} notification={notification} />
-        ))}
-      </View>
+      <FlatList
+        data={data}
+        renderItem={({ item, index }) => (
+          <NotificationCard key={index} notification={item} />
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
     );
   };
 
@@ -89,31 +113,30 @@ export default function Notifications({ navigation }: Props) {
     setData(notifications);
   };
 
-  useEffect(() => {
-    handleEffect();
-  },);
+  useFocusEffect(
+    React.useCallback(() => {
+      handleEffect();
+    }, [])
+  );
 
   return (
-    <ScrollView contentContainerStyle={{backgroundColor:background}}>
-      <View style={styles.container}>
-        {data ? (
-          <View style={styles.itemsContainer}>
-            <NotificationsList data={data} />
-          </View>
-        ) : (
-          <View style={{backgroundColor:background}}>
-            <Text>0 Notifications</Text>
-            
-          </View>
-        )}
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      {data.length ? (
+        <View style={styles.itemsContainer}>
+          <NotificationsList data={data} />
+        </View>
+      ) : (
+        <View style={{ backgroundColor: background }}>
+          <Button>0 Notifications</Button>
+        </View>
+      )}
+    </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:background
+    marginTop: 10,
   },
   itemsContainer: {
     margin: 1,

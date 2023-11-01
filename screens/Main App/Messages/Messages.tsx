@@ -51,8 +51,8 @@ const ChatList = ({ navigation }: Props) => {
     const profilePictureRef = storageRef.child(`${username}/avatar`);
 
     try {
-      await profilePictureRef.getDownloadURL();
-      return profilePictureRef.getDownloadURL();
+      const pp = await profilePictureRef.getDownloadURL();
+      return pp;
     } catch (error) {
       // If the file doesn't exist, return the default URL
       return default_pp_url;
@@ -63,19 +63,23 @@ const ChatList = ({ navigation }: Props) => {
   const fetchActiveChats = async () => {
     setIsLoading(true);
     const username = await getUsername();
+
     const starCountRef = ref(db, "chats/" + username);
-
     onValue(starCountRef, async (snapshot) => {
-      const data: ChatListData = snapshot.val();
-      const usernames = Object.keys(data);
-      const newActiveChats: ChatCardInfo[] = [];
-      for (const username of usernames) {
-        const avatar = await checkUserProfilePicture(username);
-        newActiveChats.push({ username, avatar });
-      }
+      if (snapshot.exists()) {
+        const data: ChatListData = snapshot.val();
+        const usernames = Object.keys(data);
+        const newActiveChats: ChatCardInfo[] = [];
+        for (const username of usernames) {
+          const avatar = await checkUserProfilePicture(username);
+          newActiveChats.push({ username, avatar });
+        }
 
-      setActiveChats(newActiveChats);
-      setIsLoading(false);
+        setActiveChats(newActiveChats);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     });
   };
 
@@ -125,13 +129,19 @@ const ChatList = ({ navigation }: Props) => {
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          data={activeChats}
-          renderItem={renderItem}
-        />
+        <View>
+          {activeChats.length ? (
+            <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              data={activeChats}
+              renderItem={renderItem}
+            />
+          ) : (
+            <Text>Your messages will appear here</Text>
+          )}
+        </View>
       )}
     </View>
   );
@@ -144,7 +154,7 @@ const FetchData = () => {
     const starCountRef = ref(db, "chats/" + username);
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
-      console.log(data);
+      //console.log(data);
       // const newPosts = Object.keys(data).map((key) => ({
       //   id: key,
       //   ...data[key],
@@ -156,9 +166,9 @@ const FetchData = () => {
 
   // function to add data to firebase realtime db
   const addDataOn = async () => {
-    let receptor = "pablo1232";
+    let receptor = "lucas1234";
     let username = "lucas123";
-    let body = "Hola que tal";
+    let body = "Hola que tal!";
 
     const newMessageRef = push(ref(db, "chats/" + receptor + "/" + username)); // Generate a unique key for the new message
 
@@ -179,14 +189,13 @@ const FetchData = () => {
 
   return (
     <View>
-      {/* <Button
-        style={styles.button}
+      <Button
         labelStyle={{ color: textLight }}
         mode="contained"
         onPress={addDataOn}
       >
         Send Message
-      </Button> */}
+      </Button>
     </View>
   );
 };
@@ -226,22 +235,3 @@ const styles = StyleSheet.create({
     borderBottomColor: textLight,
   },
 });
-
-// const startRealtimeListener = async () => {
-// const username = await AsyncStorage.getItem("username");
-
-// const chatRef = ref(db, "chats/" + username);
-
-//   // This callback will be triggered when a new chat message is added.
-//   onChildAdded(chatRef, (snapshot) => {
-//     const newChatMessage = snapshot.val();
-
-//     // Revisar de quien es ese mensaje
-
-//     console.log("New message received:", newChatMessage);
-//     // You can update your UI or do any necessary processing with the new message.
-//   });
-// };
-
-// To start the real-time listener, call this function when your chat app loads.
-//startRealtimeListener();
