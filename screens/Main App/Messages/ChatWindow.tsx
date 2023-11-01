@@ -106,13 +106,15 @@ const ChatWindow = ({ navigation }: Props) => {
         text: newChatMessage.body,
         isMyMessage: isMine,
       };
-
-      const messageExists = messages.some(
-        (message) => message.id === newMessage.id
-      );
-      if (!messageExists) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      }
+      
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      
+      // const messageExists = messages.some(
+      //   (message) => message.id === newMessage.id
+      // );
+      // if (!messageExists) {
+      //   setMessages((prevMessages) => [...prevMessages, newMessage]);
+      // }
     });
   };
 
