@@ -2,7 +2,8 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { registerIndieID } from "native-notify"
+import { registerIndieID } from "native-notify";
+import * as SecureStore from "expo-secure-store";
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -20,6 +21,10 @@ interface AuthProps {
   setToken?: (token: string) => void;
 }
 
+//const STORED_AUTH = "my-jwt";
+const STORED_IDENTIFIER = "my-ui";
+const NOTIFICATIONS_API =
+  "https://app.nativenotify.com/api/app/indie/sub/13586/SKYebTHATCXWbZ1Tlwlwle/";
 const apiUrl = API_URL;
 const AuthContext = createContext<AuthProps>({});
 
@@ -41,14 +46,13 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string
   ) => {
-    
     try {
       const result = await axios.post(`${apiUrl}/users/signup`, {
         username,
         email,
         password,
       });
-
+      
       return result;
     } catch (e) {
       return { error: true, message: (e as any).response.data.message };
@@ -56,6 +60,19 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const login = async (userIdentifier: string, password: string) => {
+    // const result = await SecureStore.getItemAsync(STORED_AUTH);
+    // if (result) {
+    //   setAuthState({
+    //     token: result,
+    //     authenticated: true,
+    //   });
+
+    //   // Attach token to header
+    //   axios.defaults.headers.common["token"] = `${result}`;
+
+    //   return;
+    // }
+
     try {
       const result = await axios.post(`${apiUrl}/users/signin`, {
         userIdentifier,
@@ -69,9 +86,15 @@ export const AuthProvider = ({ children }: any) => {
 
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
-      registerIndieID(userIdentifier, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
-      
-      //unregisterIndieDevice(userIdentifier, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
+
+      // Store the token
+      // await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
+
+      // Store the identifier
+      await SecureStore.setItemAsync(STORED_IDENTIFIER, userIdentifier);
+
+      // Register device to receive notifications
+      registerIndieID(userIdentifier, 13586, "SKYebTHATCXWbZ1Tlwlwle");
 
       return result;
     } catch (e) {
@@ -80,18 +103,29 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
-    console.log("Logging out")
+    console.log("Logging out");
     // reset axios header
     axios.defaults.headers.common["token"] = "";
 
+    const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
+
+    // removed stored token
+    // await SecureStore.deleteItemAsync(STORED_AUTH);
+
     // remove stored username
-    await AsyncStorage.removeItem('username');
-    
+    await AsyncStorage.removeItem("username");
+
     // reset auth state
     setAuthState({
       token: null,
       authenticated: null,
     });
+
+    // Unregister device for notifications
+    await axios.delete(`${NOTIFICATIONS_API}${identifier}`);
+
+    // removed stored identifier
+    await SecureStore.deleteItemAsync(STORED_IDENTIFIER);
   };
 
   const registerGoogle = async (name: string, email: string) => {
@@ -109,9 +143,15 @@ export const AuthProvider = ({ children }: any) => {
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
 
+      // Store the identifier
+      await SecureStore.setItemAsync(STORED_IDENTIFIER, email);
+
+      // Register device to receive notifications
+      registerIndieID(email, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+
       return result;
     } catch (e) {
-      return { error: true,message: (e as any).response.data.message};
+      return { error: true, message: (e as any).response.data.message };
     }
   };
 
@@ -126,11 +166,18 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: true,
       });
 
+      // Store the identifier
+      await SecureStore.setItemAsync(STORED_IDENTIFIER, email);
+
+      // Register device to receive notifications
+      registerIndieID(email, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
+
       return result;
     } catch (e) {
-      return {error: true,message: (e as any).response.data.message};
+      return { error: true, message: (e as any).response.data.message };
     }
   };
 

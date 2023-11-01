@@ -5,14 +5,33 @@ import { Navigation } from "../../types/types";
 import Logo from "../../components/Logo";
 import { StatusBar } from "expo-status-bar";
 import { background, primaryColor, textLight } from "../../components/colors";
+import { useAuth } from "../../context/AuthContext";
+import * as SecureStore from "expo-secure-store";
 
 type Props = {
   navigation: Navigation;
 };
 
+// const STORED_AUTH = "my-jwt";
 const { width } = Dimensions.get("window");
 
 const StartScreen = ({ navigation }: Props) => {
+  // const { onLogin } = useAuth();
+
+  // // Try to log in using stored data
+  // const handleEffect = async () => {
+  //   const result = await SecureStore.getItemAsync(STORED_AUTH);
+  //   if (result) {
+  //     await onLogin!("", "");
+  //   } else {
+  //     //
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handleEffect();
+  // }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
