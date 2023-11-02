@@ -1,8 +1,18 @@
-import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from "react-native";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Navigation } from "../../../types/types";
-import { useRoute } from "@react-navigation/native";
+import {
+  ParamListBase,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getDatabase,
@@ -10,17 +20,11 @@ import {
   onValue,
   push,
   ref,
+  serverTimestamp,
   set,
 } from "firebase/database";
-import { db } from "../../../components/config";
 
-import {
-  collection,
-  addDoc,
-  orderBy,
-  query,
-  onSnapshot,
-} from "firebase/firestore";
+import { firebase, db } from "../../../components/config";
 
 type Props = {
   navigation: Navigation;
@@ -39,11 +43,94 @@ interface Message {
   isMyMessage: boolean;
 }
 
+type CustomHeaderProps = {
+  username: string; // Replace ParamListBase with your specific param list
+  pp_url: string;
+  navigation: Navigation;
+};
+
+const default_pp_url =
+  "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
+
+const CustomHeader: React.FC<CustomHeaderProps> = ({
+  username,
+  pp_url,
+  navigation,
+}: CustomHeaderProps) => {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginTop: 0,
+        marginBottom: 20,
+        padding: 5,
+        backgroundColor: background,
+      }}
+    >
+      <IconButton
+        icon="arrow-left"
+        onPress={() => {
+          navigation.navigate("Messages", {
+            screen: "Chats",
+          });
+        }}
+      />
+
+      <Image
+        source={{
+          uri: pp_url,
+        }}
+        style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 0 }}
+      />
+
+      <Text style={{ marginLeft: 10, fontSize: 16 }}>@{username}</Text>
+    </View>
+  );
+};
+
 const ChatWindow = ({ navigation }: Props) => {
   const route = useRoute<RouteParams>();
   const data = route.params;
   const chattingWithUsername = data.username;
-  const [key, setKey] = useState("a");
+
+  const checkUserProfilePicture = async (username: string) => {
+    const storageRef = firebase.storage().ref();
+    const profilePictureRef = storageRef.child(`${username}/avatar`);
+
+    try {
+      const pp = await profilePictureRef.getDownloadURL();
+      return pp;
+    } catch (error) {
+      // If the file doesn't exist, return the default URL
+      return default_pp_url;
+    }
+  };
+  const navigation2 = useNavigation();
+
+  const HeaderSetup = async () => {
+    const profile_pic = await checkUserProfilePicture(chattingWithUsername);
+
+    navigation2.setOptions({
+      tabBarVisible: false,
+    });
+
+    navigation2.setOptions({
+      header: (props: React.JSX.IntrinsicAttributes & CustomHeaderProps) => (
+        <CustomHeader
+          username={chattingWithUsername}
+          pp_url={profile_pic}
+          navigation={navigation}
+        />
+      ),
+    });
+  };
+
+  // Use useEffect to set the header options when the component mounts
+  useEffect(() => {
+    HeaderSetup();
+  }, []);
 
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -85,8 +172,6 @@ const ChatWindow = ({ navigation }: Props) => {
   };
 
   const startRealtimeListener = (loggedInUserUsername: string | null) => {
-    
-
     const chatRef = ref(
       db,
       "chats/" + loggedInUserUsername + "/" + chattingWithUsername
@@ -106,9 +191,9 @@ const ChatWindow = ({ navigation }: Props) => {
         text: newChatMessage.body,
         isMyMessage: isMine,
       };
-      
+
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-      
+
       // const messageExists = messages.some(
       //   (message) => message.id === newMessage.id
       // );
@@ -118,18 +203,14 @@ const ChatWindow = ({ navigation }: Props) => {
     });
   };
 
-  
-
   const handleEffect = async () => {
     const loggedInUserUsername = await AsyncStorage.getItem("username");
-    startRealtimeListener(loggedInUserUsername);
+    //startRealtimeListener(loggedInUserUsername);
   };
 
   useEffect(() => {
     handleEffect();
   }, []);
-
-
 
   return (
     <View style={styles.container}>
@@ -149,18 +230,23 @@ const ChatWindow = ({ navigation }: Props) => {
       />
       <View style={styles.inputContainer}>
         <TextInput
+          mode="outlined"
           style={styles.input}
           placeholder="Type your message..."
           value={inputText}
           onChangeText={(t) => setInputText(t)}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
+        <IconButton
+          icon="send"
+          style={styles.sendButton}
+          onPress={handleSend}
+        />
       </View>
     </View>
   );
 };
+
+import { background } from "../../../components/colors";
 
 const styles = StyleSheet.create({
   container: {
@@ -175,7 +261,7 @@ const styles = StyleSheet.create({
   },
   otherMessageContainer: {
     alignSelf: "flex-start",
-    backgroundColor: "darkred",
+    backgroundColor: "darkgreen",
     padding: 10,
     margin: 5,
     borderRadius: 10,
@@ -186,23 +272,18 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
-    borderTopWidth: 1,
-    borderTopColor: "lightgray",
+    margin: 10,
   },
   input: {
     flex: 1,
     paddingVertical: 10,
   },
   sendButton: {
-    backgroundColor: "lightblue",
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    backgroundColor: background,
     marginLeft: 10,
-  },
-  sendButtonText: {
-    fontSize: 16,
-    color: "white",
   },
 });
 

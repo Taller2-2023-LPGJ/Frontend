@@ -126,9 +126,9 @@ export default function Notifications({ navigation }: Props) {
           <NotificationsList data={data} />
         </View>
       ) : (
-        <View style={{ backgroundColor: background }}>
+        <ScrollView style={{ backgroundColor: background }}>
           <Button>0 Notifications</Button>
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 10,
+    backgroundColor: background
   },
   itemsContainer: {
     margin: 1,

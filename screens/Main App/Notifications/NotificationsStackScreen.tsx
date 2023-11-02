@@ -7,7 +7,7 @@ const NotificationsStack = createNativeStackNavigator();
 const NotificationsStackScreen = () => {
     return (
         <NotificationsStack.Navigator>
-          <NotificationsStack.Screen options={{title:"Alerts"}} name="Alerts2" component={Notifications} />
+          <NotificationsStack.Screen options={{title:"Notifications"}} name="Alerts2" component={Notifications} />
         </NotificationsStack.Navigator>
       );
 }

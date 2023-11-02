@@ -11,7 +11,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 export function TabNavigator() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator labeled={true}>
       <Tab.Screen
         options={{
           tabBarIcon(props) {
