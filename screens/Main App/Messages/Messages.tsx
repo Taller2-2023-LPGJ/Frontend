@@ -5,14 +5,20 @@ import {
   TouchableOpacity,
   View,
   Image,
-  ScrollView,
   RefreshControl,
 } from "react-native";
-import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  IconButton,
+  Modal,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import React, { useEffect, useState } from "react";
 
 import { firebase, db } from "../../../components/config";
-import { onValue, push, ref, set } from "firebase/database";
+import { onValue, push, ref, remove, set } from "firebase/database";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const default_pp_url =
@@ -46,6 +52,12 @@ type Props = {
 const ChatList = ({ navigation }: Props) => {
   const [activeChats, setActiveChats] = useState<ChatCardInfo[]>([]);
 
+  const handleDeleteChat = async (chattingWithUsername: string) => {
+    const username = await getUsername();
+    await remove(ref(db, "chats/" + username + "/" + chattingWithUsername));
+    await fetchActiveChats();
+  };
+
   const checkUserProfilePicture = async (username: string) => {
     const storageRef = firebase.storage().ref();
     const profilePictureRef = storageRef.child(`${username}/avatar`);
@@ -78,6 +90,7 @@ const ChatList = ({ navigation }: Props) => {
         setActiveChats(newActiveChats);
         setIsLoading(false);
       } else {
+        setActiveChats([]);
         setIsLoading(false);
       }
     });
@@ -108,7 +121,20 @@ const ChatList = ({ navigation }: Props) => {
             marginRight: 18,
           }}
         />
-        <Text style={{ fontSize: 24 }}>@{item.username}</Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ fontSize: 24 }}>@{item.username}</Text>
+          <IconButton
+            icon="trash-can"
+            onPress={() => handleDeleteChat(item.username)}
+          />
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -125,7 +151,9 @@ const ChatList = ({ navigation }: Props) => {
   return (
     <View>
       {isLoading ? (
-        <View style={{ justifyContent: "center", marginVertical: width / 2.5 }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center",marginLeft:"45%" }}
+        >
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
@@ -139,7 +167,12 @@ const ChatList = ({ navigation }: Props) => {
               renderItem={renderItem}
             />
           ) : (
-            <Text>Your messages will appear here</Text>
+            <View style={styles.infoContainer}>
+              <Text style={styles.message}>Welcome to your inbox!</Text>
+              <Text style={{ marginTop: 5 }}>
+                New Messages Will Appear Here 📬
+              </Text>
+            </View>
           )}
         </View>
       )}
@@ -147,58 +180,58 @@ const ChatList = ({ navigation }: Props) => {
   );
 };
 
-const FetchData = () => {
-  // get todos los chats para 'lucas'
-  const getData = async () => {
-    const username = await getUsername();
-    const starCountRef = ref(db, "chats/" + username);
-    onValue(starCountRef, (snapshot) => {
-      const data = snapshot.val();
-      //console.log(data);
-      // const newPosts = Object.keys(data).map((key) => ({
-      //   id: key,
-      //   ...data[key],
-      // }));
+// const FetchData = () => {
+//   // get todos los chats para 'lucas'
+//   const getData = async () => {
+//     const username = await getUsername();
+//     const starCountRef = ref(db, "chats/" + username);
+//     onValue(starCountRef, (snapshot) => {
+//       const data = snapshot.val();
+//       //console.log(data);
+//       // const newPosts = Object.keys(data).map((key) => ({
+//       //   id: key,
+//       //   ...data[key],
+//       // }));
 
-      // console.log(newPosts);
-    });
-  };
+//       // console.log(newPosts);
+//     });
+//   };
 
-  // function to add data to firebase realtime db
-  const addDataOn = async () => {
-    let receptor = "lucas1234";
-    let username = "lucas123";
-    let body = "Hola que tal!";
+//   // function to add data to firebase realtime db
+//   const addDataOn = async () => {
+//     let receptor = "lucas1234";
+//     let username = "lucas123";
+//     let body = "Hola que tal!";
 
-    const newMessageRef = push(ref(db, "chats/" + receptor + "/" + username)); // Generate a unique key for the new message
+//     const newMessageRef = push(ref(db, "chats/" + receptor + "/" + username)); // Generate a unique key for the new message
 
-    // Set the message data under the unique key
-    set(newMessageRef, {
-      sender: username,
-      body: body,
-    });
+//     // Set the message data under the unique key
+//     set(newMessageRef, {
+//       sender: username,
+//       body: body,
+//     });
 
-    const newMessageRef2 = push(ref(db, "chats/" + username + "/" + receptor)); // Generate a unique key for the new message
+//     const newMessageRef2 = push(ref(db, "chats/" + username + "/" + receptor)); // Generate a unique key for the new message
 
-    // Set the message data under the unique key
-    set(newMessageRef2, {
-      sender: username,
-      body: body,
-    });
-  };
+//     // Set the message data under the unique key
+//     set(newMessageRef2, {
+//       sender: username,
+//       body: body,
+//     });
+//   };
 
-  return (
-    <View>
-      <Button
-        labelStyle={{ color: textLight }}
-        mode="contained"
-        onPress={addDataOn}
-      >
-        Send Message
-      </Button>
-    </View>
-  );
-};
+//   return (
+//     <View>
+//       <Button
+//         labelStyle={{ color: textLight }}
+//         mode="contained"
+//         onPress={addDataOn}
+//       >
+//         Send Message
+//       </Button>
+//     </View>
+//   );
+// };
 
 const Messages = ({ navigation }: Props) => {
   return (
@@ -221,11 +254,10 @@ import { Navigation } from "../../../types/types";
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 5,
+    marginTop: 10,
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: background,
+    alignItems: "flex-start",
   },
   card: {
     width: width,
@@ -233,5 +265,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: textLight,
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    marginLeft: "6%",
+  },
+  message: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

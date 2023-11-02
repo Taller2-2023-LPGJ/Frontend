@@ -112,7 +112,7 @@ export default function Notifications({ navigation }: Props) {
       13586,
       "SKYebTHATCXWbZ1Tlwlwle"
     );
-    console.log(notifications);
+    //console.log(notifications);
     setData(notifications);
   };
 
@@ -130,9 +130,7 @@ export default function Notifications({ navigation }: Props) {
         </View>
       ) : (
         <View style={styles.infoContainer}>
-          <Text style={styles.message}>
-            Your notifications will appear here
-          </Text>
+          <Text style={styles.message}>Notification Center</Text>
           <Text style={{ marginTop: 5 }}>
             Incoming messages, mentions, and trending posts!
           </Text>
@@ -163,8 +161,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   message: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: "bold",
-    textAlign: "center",
+    textAlign: "left",
   },
 });

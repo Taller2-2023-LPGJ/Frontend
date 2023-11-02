@@ -20,6 +20,7 @@ import {
   onValue,
   push,
   ref,
+  remove,
   serverTimestamp,
   set,
 } from "firebase/database";
@@ -146,7 +147,6 @@ const ChatWindow = ({ navigation }: Props) => {
 
     // Generate a unique key for the new message
     const newMessageRef = push(ref(db, "chats/" + receptor + "/" + sender));
-
     // Set the message data under the unique key
     set(newMessageRef, {
       sender: sender,
@@ -205,7 +205,7 @@ const ChatWindow = ({ navigation }: Props) => {
 
   const handleEffect = async () => {
     const loggedInUserUsername = await AsyncStorage.getItem("username");
-    //startRealtimeListener(loggedInUserUsername);
+    startRealtimeListener(loggedInUserUsername);
   };
 
   useEffect(() => {
