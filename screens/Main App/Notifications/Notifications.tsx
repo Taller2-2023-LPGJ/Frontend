@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import {
   deleteIndieNotificationInbox,
   getIndieNotificationInbox,
+  getPushDataInForeground,
+  getPushDataObject,
 } from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { background } from "../../../components/colors";
@@ -110,6 +112,7 @@ export default function Notifications({ navigation }: Props) {
       13586,
       "SKYebTHATCXWbZ1Tlwlwle"
     );
+    console.log(notifications);
     setData(notifications);
   };
 
@@ -126,9 +129,14 @@ export default function Notifications({ navigation }: Props) {
           <NotificationsList data={data} />
         </View>
       ) : (
-        <ScrollView style={{ backgroundColor: background }}>
-          <Button>0 Notifications</Button>
-        </ScrollView>
+        <View style={styles.infoContainer}>
+          <Text style={styles.message}>
+            Your notifications will appear here
+          </Text>
+          <Text style={{ marginTop: 5 }}>
+            Incoming messages, mentions, and trending posts!
+          </Text>
+        </View>
       )}
     </View>
   );
@@ -137,7 +145,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 10,
-    backgroundColor: background
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    marginLeft: "5%",
   },
   itemsContainer: {
     margin: 1,
@@ -148,5 +161,10 @@ const styles = StyleSheet.create({
   cardTitle: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  message: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
