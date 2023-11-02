@@ -6,6 +6,7 @@ import {
   View,
   Image,
   RefreshControl,
+  Alert,
 } from "react-native";
 import {
   ActivityIndicator,
@@ -53,9 +54,26 @@ const ChatList = ({ navigation }: Props) => {
   const [activeChats, setActiveChats] = useState<ChatCardInfo[]>([]);
 
   const handleDeleteChat = async (chattingWithUsername: string) => {
-    const username = await getUsername();
-    await remove(ref(db, "chats/" + username + "/" + chattingWithUsername));
-    await fetchActiveChats();
+    Alert.alert(
+      "Confirmation",
+      "Are you sure you want to delete this chat?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: async () => {
+            const username = await getUsername();
+            await remove(
+              ref(db, "chats/" + username + "/" + chattingWithUsername)
+            );
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const checkUserProfilePicture = async (username: string) => {
@@ -152,7 +170,12 @@ const ChatList = ({ navigation }: Props) => {
     <View>
       {isLoading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center",marginLeft:"45%" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginLeft: "45%",
+          }}
         >
           <ActivityIndicator size="large" animating={true} />
         </View>
