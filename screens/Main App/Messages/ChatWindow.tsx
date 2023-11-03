@@ -201,7 +201,9 @@ const ChatWindow = ({ navigation }: Props) => {
 
       // unread message. Send notification
       if (data.status === "unread") {
-        
+        const pushData =
+          "{ " + '"type": "message","goto":' + '"' + sender + '"} ';
+
         await axios.post(
           `https://app.nativenotify.com/api/indie/notification`,
           {
@@ -210,12 +212,10 @@ const ChatWindow = ({ navigation }: Props) => {
             appToken: "SKYebTHATCXWbZ1Tlwlwle",
             title: sender,
             message: text,
-            pushData: '{ "test1": "test1_val","test2":"test2_val" }',
+            pushData: pushData,
           }
         );
-
       } else {
-       
       }
     });
   };

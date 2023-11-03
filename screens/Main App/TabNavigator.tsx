@@ -8,13 +8,35 @@ import NotificationsStackScreen from "./Notifications/NotificationsStackScreen";
 import MessagesStackStackScreen from "./Messages/MessagesStackScreen";
 import { getPushDataObject } from "native-notify";
 import { useEffect } from "react";
+import { Navigation } from "../../types/types";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createMaterialBottomTabNavigator();
 
-export function TabNavigator() {
+type Props = {
+  navigation: Navigation;
+};
+
+export function TabNavigator({ navigation }: Props) {
   let pushDataObject = getPushDataObject();
   useEffect(() => {
-    console.log(pushDataObject);
+    if (Object.keys(pushDataObject).length !== 0) {
+      const type = pushDataObject.type;
+      const goto = pushDataObject.goto;
+
+      if (type === "message") {
+        
+        navigation.navigate("Messages", {
+          screen: "ChatWindow",
+          params: { username: goto },
+        });
+      } else {
+        // type === trending --> go to trending tweet
+        // type === mention --> go to mentioned tweet
+      }
+    } else {
+      // No push data object read
+    }
   }, [pushDataObject]);
 
   return (
@@ -114,3 +136,5 @@ export function TabNavigator() {
     </Tab.Navigator>
   );
 }
+
+export default TabNavigator;
