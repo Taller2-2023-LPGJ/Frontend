@@ -20,9 +20,11 @@ import {
   onValue,
   push,
   ref,
+  off,
   remove,
   serverTimestamp,
   set,
+  update,
 } from "firebase/database";
 
 import { firebase, db } from "../../../components/config";
@@ -45,10 +47,14 @@ interface Message {
 }
 
 type CustomHeaderProps = {
-  username: string; // Replace ParamListBase with your specific param list
+  username: string; // chattingWithUsername
   pp_url: string;
   navigation: Navigation;
 };
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const default_pp_url =
   "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
@@ -58,6 +64,15 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   pp_url,
   navigation,
 }: CustomHeaderProps) => {
+  const handleExitChat = async () => {
+    const loggedInUserUsername = await AsyncStorage.getItem("username");
+    const chatRef = ref(db, "chats/" + loggedInUserUsername + "/" + username);
+    off(chatRef);
+    navigation.navigate("Messages", {
+      screen: "Chats",
+    });
+  };
+
   return (
     <View
       style={{
@@ -70,14 +85,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
         backgroundColor: background,
       }}
     >
-      <IconButton
-        icon="arrow-left"
-        onPress={() => {
-          navigation.navigate("Messages", {
-            screen: "Chats",
-          });
-        }}
-      />
+      <IconButton icon="arrow-left" onPress={handleExitChat} />
 
       <Image
         source={{
@@ -137,6 +145,7 @@ const ChatWindow = ({ navigation }: Props) => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSend = async () => {
+    setInputText("");
     if (inputText.trim() === "") return;
 
     const text = inputText.trim();
@@ -145,30 +154,70 @@ const ChatWindow = ({ navigation }: Props) => {
     let receptor = chattingWithUsername;
     let sender = loggedInUserUsername;
 
-    // Generate a unique key for the new message
+    // Message ref for the receptors db
     const newMessageRef = push(ref(db, "chats/" + receptor + "/" + sender));
-    // Set the message data under the unique key
+
+    // Message ref for the senders db
+    const newMessageRef2 = push(ref(db, "chats/" + sender + "/" + receptor));
+
+    // Set the message data in the receptors db
+    // This includes the id for the senders message
     set(newMessageRef, {
       sender: sender,
       body: text,
       id: newMessageRef.toString().split("/")[
         newMessageRef.toString().split("/").length - 1
       ],
+      status: "unread",
     });
 
-    // Generate a unique key for the new message
-    const newMessageRef2 = push(ref(db, "chats/" + sender + "/" + receptor));
-
-    // Set the message data under the unique key
+    // Set the message data in the senders db
+    // This includes the id for the receptors message
     set(newMessageRef2, {
       sender: sender,
       body: text,
       id: newMessageRef2.toString().split("/")[
         newMessageRef2.toString().split("/").length - 1
       ],
+      status: "unread",
     });
 
-    setInputText("");
+    await sleep(3000);
+
+    const receiverMsgStatus = ref(
+      db,
+      "chats/" +
+        receptor +
+        "/" +
+        sender +
+        "/" +
+        newMessageRef.toString().split("/")[
+          newMessageRef.toString().split("/").length - 1
+        ]
+    );
+
+    onValue(receiverMsgStatus, async (snapshot) => {
+      const data = snapshot.val();
+
+      // unread message. Send notification
+      if (data.status === "unread") {
+        
+        await axios.post(
+          `https://app.nativenotify.com/api/indie/notification`,
+          {
+            subID: receptor,
+            appId: "13586",
+            appToken: "SKYebTHATCXWbZ1Tlwlwle",
+            title: sender,
+            message: text,
+            pushData: '{ "test1": "test1_val","test2":"test2_val" }',
+          }
+        );
+
+      } else {
+       
+      }
+    });
   };
 
   const startRealtimeListener = (loggedInUserUsername: string | null) => {
@@ -184,6 +233,24 @@ const ChatWindow = ({ navigation }: Props) => {
       let isMine = false;
       if (newChatMessage.sender === loggedInUserUsername) {
         isMine = true;
+      } else if (newChatMessage.status === "unread") {
+        const updatedMessage = {
+          sender: newChatMessage.sender,
+          id: newChatMessage.id,
+          body: newChatMessage.body,
+          status: "read",
+        };
+
+        const updates: { [key: string]: any } = {};
+        updates[
+          "chats/" +
+            loggedInUserUsername +
+            "/" +
+            newChatMessage.sender +
+            "/" +
+            newChatMessage.id
+        ] = updatedMessage;
+        update(ref(db), updates);
       }
 
       const newMessage: Message = {
@@ -247,6 +314,7 @@ const ChatWindow = ({ navigation }: Props) => {
 };
 
 import { background } from "../../../components/colors";
+import axios from "axios";
 
 const styles = StyleSheet.create({
   container: {

@@ -6,10 +6,17 @@ import SearchStackScreen from "./Search/SearchStackScreen";
 import SettingsStackScreen from "./Settings/SettingsStackScreen";
 import NotificationsStackScreen from "./Notifications/NotificationsStackScreen";
 import MessagesStackStackScreen from "./Messages/MessagesStackScreen";
+import { getPushDataObject } from "native-notify";
+import { useEffect } from "react";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export function TabNavigator() {
+  let pushDataObject = getPushDataObject();
+  useEffect(() => {
+    console.log(pushDataObject);
+  }, [pushDataObject]);
+
   return (
     <Tab.Navigator labeled={true}>
       <Tab.Screen

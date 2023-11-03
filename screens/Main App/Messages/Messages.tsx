@@ -148,10 +148,10 @@ const ChatList = ({ navigation }: Props) => {
           }}
         >
           <Text style={{ fontSize: 24 }}>@{item.username}</Text>
-          <IconButton
+          {/* <IconButton
             icon="trash-can"
             onPress={() => handleDeleteChat(item.username)}
-          />
+          /> */}
         </View>
       </View>
     </TouchableOpacity>
