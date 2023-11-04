@@ -5,7 +5,12 @@ import {
   FlatList,
   RefreshControl,
 } from "react-native";
-import { Button, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  IconButton,
+  Text,
+} from "react-native-paper";
 import React, { useCallback } from "react";
 import { Card, Title, Paragraph } from "react-native-paper";
 import { useState, useEffect } from "react";
@@ -16,7 +21,6 @@ import {
   getPushDataObject,
 } from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { background } from "../../../components/colors";
 import { Navigation } from "../../../types/types";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -41,31 +45,46 @@ type Props = {
 export default function Notifications({ navigation }: Props) {
   const [data, setData] = useState<NotificationData[]>([]);
   const NotificationCard = ({ notification }: Notification) => {
+    /*
+    Notification formats
+    --> Message received: title = $sender_username  ,body = message text
+    --> Mentioned:        title = SnapMsg Mention   ,body = Mentioned in a tweet $tweet_id
+    --> Trending:         title = Trending post     ,body = Trending tweet related to [topic] $tweet_id 
+    */
+
+    let navigateFunction:() => void;
+    // Title length = 1 word --> message notification
+    if (notification.title.split(" ").length === 1) {
+      navigateFunction = () => {
+        navigation.navigate("Messages", {
+          screen: "ChatWindow",
+          params: { username: notification.title },
+        });
+      };
+
+      // Else, mention or trending post notification
+    } else {
+      // navigateFunction => navigate to snapMsg
+    }
+
     return (
-      <Card
-        style={styles.card}
-        onPress={() =>
-          console.log(
-            `navigate to snapmsg id: ${notification.title.split(" ")[1]}`
-          )
-        }
-      >
+      <Card style={styles.card} onPress={() => navigateFunction()}>
         <Card.Content>
           <View style={styles.cardTitle}>
-            <Title>{notification.title.split(" ")[0]}</Title>
-            <Button
-              mode="contained"
-              style={{ backgroundColor: "#FF6B6B" }}
-              onPress={async () =>
-                await handleDeleteNotification(notification.notification_id)
-              }
-            >
-              X
-            </Button>
+            <Title>{notification.title}</Title>
+            <IconButton
+              icon="trash-can"
+              style={{ backgroundColor: "black" }}
+              onPress={async () => {
+                try {
+                  await handleDeleteNotification(notification.notification_id);
+                } catch (e) {
+                  //
+                }
+              }}
+            />
           </View>
           <Paragraph>{notification.message}</Paragraph>
-          <Paragraph>At: {notification.date}</Paragraph>
-          <Paragraph>Id: {notification.title.split(" ")[1]}</Paragraph>
         </Card.Content>
       </Card>
     );
@@ -74,9 +93,11 @@ export default function Notifications({ navigation }: Props) {
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
+    setIsLoading(true);
     setRefreshing(true);
     handleEffect();
     setRefreshing(false);
+    setIsLoading(false);
   }, []);
 
   const NotificationsList = ({ data }: NotificationList) => {
@@ -113,26 +134,47 @@ export default function Notifications({ navigation }: Props) {
       "SKYebTHATCXWbZ1Tlwlwle"
     );
     //console.log(notifications);
+    setIsLoading(false);
     setData(notifications);
   };
 
   useFocusEffect(
     React.useCallback(() => {
       handleEffect();
+
+      // Set up an interval to run the effect every 5 seconds
+      // const intervalId = setInterval(() => {
+      //   handleEffect();
+      // }, 5000); // 5000 milliseconds = 5 seconds
+
+      // // Clear the interval when the component unmounts
+      // return () => {
+      //   clearInterval(intervalId);
+      // };
     }, [])
   );
+
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <View style={styles.container}>
       {data.length ? (
-        <View style={styles.itemsContainer}>
-          <NotificationsList data={data} />
+        <View>
+          {isLoading ? (
+            <View style={{ justifyContent: "center" }}>
+              <ActivityIndicator size="large" animating={true} />
+            </View>
+          ) : (
+            <View style={styles.itemsContainer}>
+              <NotificationsList data={data} />
+            </View>
+          )}
         </View>
       ) : (
         <View style={styles.infoContainer}>
           <Text style={styles.message}>Notification Center</Text>
           <Text style={{ marginTop: 5 }}>
-            Incoming messages, mentions, and trending posts!
+            Incoming Messages, Mentions, and Trending Posts!
           </Text>
         </View>
       )}
@@ -154,6 +196,8 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   card: {
+    marginLeft: 5,
+    marginRight: 5,
     marginBottom: 20,
   },
   cardTitle: {
