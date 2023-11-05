@@ -1,27 +1,42 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Appbar, Button, Text, TextInput } from "react-native-paper";
 import { Navigation } from "../../types/types";
 import Logo from "../../components/Logo";
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from "expo-status-bar";
 import { background, primaryColor, textLight } from "../../components/colors";
-
-
+import { useAuth } from "../../context/AuthContext";
+import * as SecureStore from "expo-secure-store";
 
 type Props = {
   navigation: Navigation;
 };
 
+// const STORED_AUTH = "my-jwt";
 const { width } = Dimensions.get("window");
 
 const StartScreen = ({ navigation }: Props) => {
+  // const { onLogin } = useAuth();
+
+  // // Try to log in using stored data
+  // const handleEffect = async () => {
+  //   const result = await SecureStore.getItemAsync(STORED_AUTH);
+  //   if (result) {
+  //     await onLogin!("", "");
+  //   } else {
+  //     //
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handleEffect();
+  // }, []);
+
   return (
     <View style={styles.container}>
-      <StatusBar style="light"/>
+      <StatusBar style="light" />
       <View style={styles.topContainer}>
-        
         <Logo />
-        
 
         <Text style={styles.text}>
           See what's happening in the world right now.
@@ -31,7 +46,7 @@ const StartScreen = ({ navigation }: Props) => {
       <View style={styles.buttonContainer}>
         <Button
           style={styles.button}
-          labelStyle={{color:textLight}}
+          labelStyle={{ color: textLight }}
           mode="contained"
           onPress={() => navigation.navigate("Login")}
         >
@@ -40,7 +55,7 @@ const StartScreen = ({ navigation }: Props) => {
 
         <Button
           style={styles.button}
-          labelStyle={{color:textLight}}
+          labelStyle={{ color: textLight }}
           mode="contained"
           onPress={() => navigation.navigate("Register")}
         >
@@ -59,12 +74,12 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor:background
+    backgroundColor: background,
   },
   button: {
-    width: width*0.7,
+    width: width * 0.7,
     marginVertical: 10,
-    backgroundColor:primaryColor
+    backgroundColor: primaryColor,
   },
   text: {
     fontSize: width * 0.065,

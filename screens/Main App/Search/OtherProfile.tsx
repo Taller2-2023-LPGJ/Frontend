@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, ScrollView } from "react-native";
-import { ActivityIndicator, Button } from "react-native-paper";
-import { Navigation } from '../../../types/types';
-import { useRoute } from '@react-navigation/native';
-import axios, { AxiosResponse } from 'axios';
-import { API_URL } from '@env';
-import FeedTemplate from '../Feed/FeedTemplate';
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  ScrollView,
+} from "react-native";
+import { ActivityIndicator, Button, IconButton } from "react-native-paper";
+import { Navigation } from "../../../types/types";
+import { useRoute } from "@react-navigation/native";
+import axios, { AxiosResponse } from "axios";
+import { API_URL } from "@env";
+import FeedTemplate from "../Feed/FeedTemplate";
 
-const apiUrl = API_URL
+const apiUrl = API_URL;
 
 const { height, width } = Dimensions.get("window");
 
@@ -40,15 +47,15 @@ function OtherProfile({ navigation }: Props) {
     if (data.username != null) {
       let api_result: AxiosResponse<any, any>;
       try {
-        api_result = await axios.get(`${API_URL}/profile/${data.username}`); 
+        api_result = await axios.get(`${API_URL}/profile/${data.username}`);
         setDisplayName(api_result.data.displayName);
         setLocation(api_result.data.location);
         setBio(api_result.data.biography);
-        setFollowed(api_result.data.followed)
-        setFollowers(api_result.data.followers)
-        setFollowing(api_result.data.following)
-        setImage(api_result.data.profilePicture)
-        setVerified(api_result.data.verified)
+        setFollowed(api_result.data.followed);
+        setFollowers(api_result.data.followers);
+        setFollowing(api_result.data.following);
+        setImage(api_result.data.profilePicture);
+        setVerified(api_result.data.verified);
         setisLoading(false);
       } catch (e) {
         if ((e as any).response.status == "401") {
@@ -62,12 +69,18 @@ function OtherProfile({ navigation }: Props) {
     }
   };
   useEffect(() => {
-    setisLoading(true)
+    setisLoading(true);
     getData();
   }, [data]);
 
   return (
-    <ScrollView contentContainerStyle={{alignItems:"center", backgroundColor:background}} nestedScrollEnabled={true}>
+    <ScrollView
+      contentContainerStyle={{
+        alignItems: "center",
+        backgroundColor: background,
+      }}
+      nestedScrollEnabled={true}
+    >
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -76,48 +89,26 @@ function OtherProfile({ navigation }: Props) {
         </View>
       ) : (
         <View>
-          <Image 
-          source={{
-            uri: image,
-          }}
-          style={styles.profileImage}
+          <Image
+            source={{
+              uri: image,
+            }}
+            style={styles.profileImage}
           />
-
-          {following ? 
-          (<View>
-            <Button
-              style={styles.followButton}
-              labelStyle={{color:textLight}}
-              mode="outlined"
-              onPress={async () => {
-                try {
-                  await axios.delete(`${apiUrl}/content/follow/${data.username}`);
-                  setFollowing(!following)
-                  setFollowers(followers-1)
-                } catch (e) {
-                  const { onLogout } = useAuth();
-                  if ((e as any).response.status == "401") {
-                    onLogout!();
-                    alert((e as any).response.data.message);
-                  } else {
-                    alert((e as any).response.data.message);
-                  }
-                }
-              } }
-              >
-                Unfollow
-              </Button>
-            </View>)
-            :
-              (<Button
+          <View style={styles.buttonRow}>
+          {following ? (
+            <View>
+              <Button
                 style={styles.followButton}
-                labelStyle={{color:textLight}}
+                labelStyle={{ color: textLight }}
                 mode="outlined"
                 onPress={async () => {
                   try {
-                    const response = await axios.post(`${apiUrl}/content/follow/${data.username}`);
-                    setFollowing(!following)
-                    setFollowers(followers+1)
+                    await axios.delete(
+                      `${apiUrl}/content/follow/${data.username}`
+                    );
+                    setFollowing(!following);
+                    setFollowers(followers - 1);
                   } catch (e) {
                     const { onLogout } = useAuth();
                     if ((e as any).response.status == "401") {
@@ -127,41 +118,100 @@ function OtherProfile({ navigation }: Props) {
                       alert((e as any).response.data.message);
                     }
                   }
-                } }
+                }}
               >
-                Follow
+                Unfollow
               </Button>
-              )
-            }
+            </View>
+          ) : (
+            <Button
+              style={styles.followButton}
+              labelStyle={{ color: textLight }}
+              mode="outlined"
+              onPress={async () => {
+                try {
+                  const response = await axios.post(
+                    `${apiUrl}/content/follow/${data.username}`
+                  );
+                  setFollowing(!following);
+                  setFollowers(followers + 1);
+                } catch (e) {
+                  const { onLogout } = useAuth();
+                  if ((e as any).response.status == "401") {
+                    onLogout!();
+                    alert((e as any).response.data.message);
+                  } else {
+                    alert((e as any).response.data.message);
+                  }
+                }
+              }}
+            >
+              Follow
+            </Button>
+          )}
+          <IconButton
+            style={styles.chatButton}
+            mode="outlined"
+            icon="message"
+            onPress={() => {
+              navigation.navigate("Messages", {
+                screen: "ChatWindow",
+                params: { username: data.username },
+              });
+            }}
+          />
+          </View>
 
           <View style={styles.userInfoContainer}>
-            <Text style={styles.displayname}>{displayName}
-            {verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:10}} name="check-decagram" /> : null}
+            <Text style={styles.displayname}>
+              {displayName}
+              {verified ? (
+                <Icon
+                  size={15}
+                  color={textLight}
+                  style={{ marginTop: 5, marginLeft: 10 }}
+                  name="check-decagram"
+                />
+              ) : null}
             </Text>
-            <Text style={styles.bio}>{"@"}{data.username}</Text>
+            <Text style={styles.bio}>
+              {"@"}
+              {data.username}
+            </Text>
+
             <Text style={styles.bio}>{location}</Text>
             <Text style={styles.bio}>{bio}</Text>
             <Text style={styles.bio}>
-              <Text style={{fontWeight: "bold"}}>{followed}</Text> following{" "}
-              <Text style={{fontWeight: "bold"}}>{followers}</Text> followers
+              <Text style={{ fontWeight: "bold" }}>{followed}</Text> following{" "}
+              <Text style={{ fontWeight: "bold" }}>{followers}</Text> followers
             </Text>
           </View>
-            
+
           <View style={styles.postsContainer}>
-            {data.username != ""? <FeedTemplate navigation={navigation} feedType="ProfileFeed" feedParams={{username:data.username, id:-1}}></FeedTemplate>:null}
+            {data.username != "" ? (
+              <FeedTemplate
+                navigation={navigation}
+                feedType="ProfileFeed"
+                feedParams={{ username: data.username, id: -1 }}
+              ></FeedTemplate>
+            ) : null}
           </View>
         </View>
-        )}
-    </ScrollView>  
+      )}
+    </ScrollView>
   );
 }
 
 export default OtherProfile;
-import { accent, background, primaryColor, secondaryColor, textLight} from "../../../components/colors";
-import { useAuth } from '../../../context/AuthContext';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
+import {
+  accent,
+  background,
+  primaryColor,
+  secondaryColor,
+  textLight,
+} from "../../../components/colors";
+import { useAuth } from "../../../context/AuthContext";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const styles = StyleSheet.create({
   container: {
@@ -173,7 +223,7 @@ const styles = StyleSheet.create({
     borderRadius: 75,
     marginTop: 15,
     marginBottom: 15,
-    alignSelf:"center"
+    alignSelf: "center",
   },
   editProfileButton: {
     fontSize: 20,
@@ -183,22 +233,22 @@ const styles = StyleSheet.create({
   },
   userInfoContainer: {
     borderRadius: 5,
-    width: width-50,
+    width: width - 50,
     padding: 10,
     marginVertical: 10,
     borderWidth: 2,
     borderColor: primaryColor,
-    alignSelf:"center"
+    alignSelf: "center",
   },
   displayname: {
     fontSize: 20,
     fontWeight: "bold",
-    color:textLight,
+    color: textLight,
   },
   bio: {
     fontSize: 16,
     marginTop: 5,
-    color:textLight,
+    color: textLight,
   },
   followCount: {
     fontSize: 16,
@@ -210,11 +260,11 @@ const styles = StyleSheet.create({
   postsContainer: {
     borderRadius: 5,
     height: height - 165,
-    width: width-50,
+    width: width - 50,
     borderWidth: 2,
     borderColor: primaryColor,
-    backgroundColor:secondaryColor,
-    alignSelf:'center'
+    backgroundColor: secondaryColor,
+    alignSelf: "center",
   },
   displaynameRow: {
     flexDirection: "row",
@@ -237,7 +287,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     backgroundColor: primaryColor,
-    borderColor:primaryColor,
+    borderColor: primaryColor,
     width: "40%",
+  },
+  chatButton: {
+    justifyContent: "center",
+    alignItems:"center",
+    alignSelf: "center",
+    backgroundColor: primaryColor,
+    borderColor: primaryColor,
+    marginLeft:10,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent:'center'
   },
 });

@@ -32,12 +32,6 @@ const Settings = () => {
     }
   };
 
-  // // Logs out & stops receiving notifications for this user
-  // const handleRemoveAccountFromDevice = async () => {
-  //   const username = await AsyncStorage.getItem("username");
-  //   unregisterIndieDevice(username, 13586, 'SKYebTHATCXWbZ1Tlwlwle');
-  //   onLogout!()
-  // }
 
   return (
     <View style={styles.container}>
