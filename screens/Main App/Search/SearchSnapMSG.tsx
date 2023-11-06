@@ -19,6 +19,7 @@ type Props = {
 };
 
 const SearchSnapMSG = ({ navigation }: Props) => {
+  const { onLogout } = useAuth();
 
   const navigation2 = useNavigation();
 
@@ -35,10 +36,11 @@ const SearchSnapMSG = ({ navigation }: Props) => {
     let api_result: AxiosResponse<any, any>
 
       try {
-        //api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`); //SEARCH TEXT
+        //api_result = await axios.get(`${API_URL}/content/post?body=${searchQuery}`);
+        api_result = await axios.get(`${API_URL}/content/follow/pablom/followed?page=0`);
+        console.log(api_result.data)
         //setUsers(api_result.data)
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);

@@ -97,7 +97,6 @@ function OtherProfile({ navigation }: Props) {
           />
           <View style={styles.buttonRow}>
           {following ? (
-            <View>
               <Button
                 style={styles.followButton}
                 labelStyle={{ color: textLight }}
@@ -122,7 +121,6 @@ function OtherProfile({ navigation }: Props) {
               >
                 Unfollow
               </Button>
-            </View>
           ) : (
             <Button
               style={styles.followButton}

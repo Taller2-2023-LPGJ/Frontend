@@ -1,6 +1,6 @@
 import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Navigation } from "../../../types/types";
 import { ActivityIndicator, Button } from "react-native-paper";
@@ -42,15 +42,16 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
     const [isShared, setisShared] = useState(snapMSGInfo.shared);
     const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
-
     const likePost = async () => {
       let id = snapMSGInfo.id
       try {
         if (isLiked) {
           await axios.delete(`${apiUrl}/content/like/${id}`);
+          snapMSGInfo.likes -= 1;
           setisLiked(false)
         } else {
           await axios.post(`${apiUrl}/content/like/${id}`);
+          snapMSGInfo.likes += 1;
           setisLiked(true)
         }
       } catch (e) {
@@ -78,9 +79,11 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
               try {
                 if (isShared) {
                   await axios.delete(`${apiUrl}/content/share/${id}`);
+                  snapMSGInfo.shares -= 1;
                   setisShared(false)
                 } else {
                   await axios.post(`${apiUrl}/content/share/${id}`);
+                  snapMSGInfo.shares += 1;
                   setisShared(true)
                 }
               } catch (e) {
@@ -319,6 +322,16 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
       }
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setPosts([])
+      setEndOfFeed(true)
+      setCurrentPage(0)
+      addPost()
+      setEndOfFeed(false)
+    }, [])
+  );
 
   useEffect(() => {
     addPost(); 
