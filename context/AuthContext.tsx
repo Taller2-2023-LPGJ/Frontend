@@ -25,6 +25,9 @@ interface AuthProps {
 const STORED_IDENTIFIER = "my-ui";
 const NOTIFICATIONS_API =
   "https://app.nativenotify.com/api/app/indie/sub/13586/SKYebTHATCXWbZ1Tlwlwle/";
+const USERS_SEARCH_URL =
+  "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
+
 const apiUrl = API_URL;
 const AuthContext = createContext<AuthProps>({});
 
@@ -52,7 +55,7 @@ export const AuthProvider = ({ children }: any) => {
         email,
         password,
       });
-      
+
       return result;
     } catch (e) {
       return { error: true, message: (e as any).response.data.message };
@@ -90,11 +93,28 @@ export const AuthProvider = ({ children }: any) => {
       // Store the token
       // await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
-      // Store the identifier
-      await SecureStore.setItemAsync(STORED_IDENTIFIER, userIdentifier);
+      // If user logs using his email, fetch the username.
+      if (userIdentifier.includes("@")) {
+        try {
+          const response = await axios.get(
+            `${USERS_SEARCH_URL}${userIdentifier}`,
+            {}
+          );
+          const respUsername = response.data.name;
 
-      // Register device to receive notifications
-      registerIndieID(userIdentifier, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+          // Store the identifier
+          await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+          // Register device to receive notifications
+          registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        } catch (e) {
+          //
+        }
+      } else {
+        // Store the identifier
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, userIdentifier);
+        // Register device to receive notifications
+        registerIndieID(userIdentifier, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+      }
 
       return result;
     } catch (e) {
@@ -143,11 +163,20 @@ export const AuthProvider = ({ children }: any) => {
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
 
-      // Store the identifier
-      await SecureStore.setItemAsync(STORED_IDENTIFIER, email);
+      try {
+        const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
+        const respUsername = response.data.name;
 
-      // Register device to receive notifications
-      registerIndieID(email, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        // Store the identifier
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+        // Register device to receive notifications
+        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+
+        // Store the identifier
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+      } catch (e) {
+        //
+      }
 
       return result;
     } catch (e) {
@@ -166,11 +195,23 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: true,
       });
 
-      // Store the identifier
-      await SecureStore.setItemAsync(STORED_IDENTIFIER, email);
+      try {
+        const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
+        const respUsername = response.data.name;
 
-      // Register device to receive notifications
-      registerIndieID(email, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        // Store the identifier
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+
+        // Register device to receive notifications
+        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+
+        // Store the identifier
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+      } catch (e) {
+        //
+      }
+
+
 
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
