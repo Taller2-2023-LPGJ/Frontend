@@ -207,11 +207,10 @@ export const AuthProvider = ({ children }: any) => {
 
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+        await AsyncStorage.setItem("username", respUsername);
       } catch (e) {
         //
       }
-
-
 
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
