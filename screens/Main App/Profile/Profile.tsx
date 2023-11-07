@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Dimensions, ScrollView } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, IconButton, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProfileSnapMSGs from "./ProfileSnapMSGs";
@@ -117,19 +117,32 @@ const Profile = ({ navigation }: ProfileProps) => {
           />
 
           <View style={styles.userInfoContainer}>
-            <View style={styles.displaynameRow}>
-              <Text style={styles.displayname}>{user.displayname}
-              {user.verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:10}} name="check-decagram" /> : null}
-              </Text>
-              <Text
-                style={styles.editProfileButton}
-                onPress={() => {
-                  navigation.navigate("EditProfile");
-                }}
-              >
-                Edit profile
-              </Text>
-            </View>
+          <View style={styles.displaynameRow}>
+  <Text style={styles.displayname}>
+    {user.displayname}
+    {user.verified ? (
+      <Icon size={15} color={textLight} style={{ marginTop: 5, marginLeft: 10 }} name="check-decagram" />
+    ) : null}
+  </Text>
+  <View style={styles.buttonContainer}>
+    <Text
+      style={styles.editProfileButton}
+      onPress={() => {
+        navigation.navigate("EditProfile");
+      }}
+    >
+      Edit profile
+    </Text>
+    <Text
+      style={styles.editProfileButton}
+      onPress={() => {
+        navigation.navigate("User Stats");
+      }}
+    >
+      📊
+    </Text>
+  </View>
+</View>
             <Text style={styles.bio}>
               {"@"}
               {user.username}
@@ -189,6 +202,7 @@ const styles = StyleSheet.create({
     backgroundColor:primaryColor,
     padding:5,
     borderRadius:15,
+    marginRight: 5
   },
   userInfoContainer: {
     borderRadius: 5,
@@ -225,6 +239,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   location: {
