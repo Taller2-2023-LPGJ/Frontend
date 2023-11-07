@@ -1,11 +1,13 @@
 import { View, StyleSheet } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { ActivityIndicator, Button, List, Text } from "react-native-paper";
 import React, { useCallback, useEffect, useState } from "react";
 import { background } from "../../../components/colors";
-import { TouchableOpacity } from "react-native";
 import { DatePickerModal } from "react-native-paper-dates";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { registerTranslation } from "react-native-paper-dates";
+import axios from "axios";
 registerTranslation("en", {
   save: "Save",
   selectSingle: "Select date",
@@ -30,30 +32,66 @@ type DateRange = {
   endDate: Date | undefined;
 };
 
+type ResponseData = {
+  numberPublications: string;
+  numberLikes: string;
+  numberComments: string;
+  numberSharedPosts: string;
+};
+
 type StringRange = {
   startDate: string | undefined;
   endDate: string | undefined;
 };
 
 const UserStats = () => {
-  const [range, setRange] = useState<DateRange>({
-    startDate: undefined,
-    endDate: undefined,
-  });
+  const [data, setData] = useState<ResponseData | null>(null);
+
   const [open, setOpen] = useState(false);
 
-  const clearDates = () => {
-    setRange({ startDate: undefined, endDate: undefined });
-    setSelectedDates({ startDate: undefined, endDate: undefined });
-  };
+  // Last Week, Last Month, Last Year, Custom
+  const [selectedPeriod, setSelectedPeriod] = useState("Last Week");
 
+  // set initial period as "Last Week"
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const previousDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 7
+  );
+  const previousYear = previousDay.getFullYear();
+  const previousMonth = previousDay.getMonth() + 1;
+  const previousDate = previousDay.getDate();
+  const formattedDate = `${year}-${month}-${day}`;
+  const formattedPreviousDate = `${previousYear}-${previousMonth}-${previousDate}`;
   const [selectedDates, setSelectedDates] = useState<StringRange>({
-    startDate: undefined,
-    endDate: undefined,
+    startDate: formattedPreviousDate,
+    endDate: formattedDate,
   });
 
-  useEffect(() => {
+  const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const threeSixtyFiveDaysAgo = new Date(
+    today.getTime() - 365 * 24 * 60 * 60 * 1000
+  );
+
+  // estos tambien tienen que arrancar con modo Last Week
+  const [range, setRange] = useState<DateRange>({
+    startDate: sevenDaysAgo,
+    endDate: today,
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleEffect = async () => {
     if (range.startDate && range.endDate) {
+      setIsLoading(true);
+
       const startDate: Date = new Date(range.startDate);
       const startYear: number = startDate.getFullYear();
       const startMonth: string = (startDate.getMonth() + 1)
@@ -73,7 +111,23 @@ const UserStats = () => {
       const strEndDate: string = `${endYear}-${endMonth}-${endDay}`;
 
       setSelectedDates({ startDate: strStartDate, endDate: strEndDate });
+
+      const username = await AsyncStorage.getItem("username");
+      const url = `${API_URL}/content/statistics/post/${username}?startdate=${strStartDate}&finaldate=${strEndDate}`;
+
+      try {
+        const data = await axios.get(url, {});
+        setData(data.data);
+        setIsLoading(false);
+      } catch (e) {
+        alert("Error fetching data");
+        setIsLoading(false);
+      }
     }
+  };
+
+  useEffect(() => {
+    handleEffect();
   }, [range]);
 
   const onDismiss = useCallback(() => {
@@ -88,11 +142,52 @@ const UserStats = () => {
     [setOpen, setRange]
   );
 
+  const handlePressList = () => setExpanded(!expanded);
+
+  const handleSelection = (period: string) => {
+    console.log(`selected period: ${period}`);
+    setSelectedPeriod(period);
+    setExpanded(false);
+
+    if (period === "Custom") {
+      setOpen(true);
+    } else if (period === "Last 7 days") {
+      setRange({ startDate: sevenDaysAgo, endDate: today });
+    } else if (period === "Last 30 days") {
+      setRange({ startDate: thirtyDaysAgo, endDate: today });
+    } else if (period === "Last 365 days") {
+      setRange({ startDate: threeSixtyFiveDaysAgo, endDate: today });
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Button onPress={() => setOpen(true)} uppercase={false} mode="outlined">
-        Pick range
-      </Button>
+      <View style={{ flexDirection: "row" }}>
+        <Text>Period: </Text>
+
+        <List.Accordion
+          style={{ width: 300 }}
+          title={selectedPeriod}
+          id="1"
+          expanded={expanded}
+          onPress={handlePressList}
+        >
+          <List.Item
+            title="Last 7 days"
+            onPress={() => handleSelection("Last 7 days")}
+          />
+          <List.Item
+            title="Last 30 days"
+            onPress={() => handleSelection("Last 30 days")}
+          />
+          <List.Item
+            title="Last 365 days"
+            onPress={() => handleSelection("Last 365 days")}
+          />
+          <List.Item title="Custom" onPress={() => handleSelection("Custom")} />
+        </List.Accordion>
+      </View>
+
       <DatePickerModal
         locale="en"
         mode="range"
@@ -103,10 +198,23 @@ const UserStats = () => {
         onConfirm={onConfirm}
       />
 
-      <Button onPress={clearDates}>Clear dates</Button>
+      <View>
+        {isLoading ? (
+          <View style={{ justifyContent: "center" }}>
+            <ActivityIndicator size="large" animating={true} />
+          </View>
+        ) : (
+          <View>
+            <Text>StartDate Date: {selectedDates.startDate}</Text>
+            <Text>EndDate Date: {selectedDates.endDate}</Text>
 
-      <Text>StartDate Date: {selectedDates.startDate}</Text>
-      <Text>EndDate Date: {selectedDates.endDate}</Text>
+            <Text>1: {data?.numberPublications}</Text>
+            <Text>2: {data?.numberLikes}</Text>
+            <Text>3: {data?.numberComments}</Text>
+            <Text>4: {data?.numberSharedPosts}</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
