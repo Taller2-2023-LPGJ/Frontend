@@ -1,7 +1,13 @@
-import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, Button, List, Text } from "react-native-paper";
+import { View, StyleSheet, Dimensions } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  List,
+  Text,
+  Surface,
+} from "react-native-paper";
 import React, { useCallback, useEffect, useState } from "react";
-import { background } from "../../../components/colors";
+import { background, primaryColor, secondaryColor } from "../../../components/colors";
 import { DatePickerModal } from "react-native-paper-dates";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -44,6 +50,10 @@ type StringRange = {
   endDate: string | undefined;
 };
 
+const { width } = Dimensions.get("window");
+
+
+
 const UserStats = () => {
   const [data, setData] = useState<ResponseData | null>(null);
 
@@ -78,7 +88,6 @@ const UserStats = () => {
     today.getTime() - 365 * 24 * 60 * 60 * 1000
   );
 
-  // estos tambien tienen que arrancar con modo Last Week
   const [range, setRange] = useState<DateRange>({
     startDate: sevenDaysAgo,
     endDate: today,
@@ -145,7 +154,6 @@ const UserStats = () => {
   const handlePressList = () => setExpanded(!expanded);
 
   const handleSelection = (period: string) => {
-    console.log(`selected period: ${period}`);
     setSelectedPeriod(period);
     setExpanded(false);
 
@@ -162,30 +170,35 @@ const UserStats = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row" }}>
-        <Text>Period: </Text>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Surface style={styles.surface}>
+          <Text style={{ fontSize: 24, margin: 20 }}>Period: </Text>
 
-        <List.Accordion
-          style={{ width: 300 }}
-          title={selectedPeriod}
-          id="1"
-          expanded={expanded}
-          onPress={handlePressList}
-        >
-          <List.Item
-            title="Last 7 days"
-            onPress={() => handleSelection("Last 7 days")}
-          />
-          <List.Item
-            title="Last 30 days"
-            onPress={() => handleSelection("Last 30 days")}
-          />
-          <List.Item
-            title="Last 365 days"
-            onPress={() => handleSelection("Last 365 days")}
-          />
-          <List.Item title="Custom" onPress={() => handleSelection("Custom")} />
-        </List.Accordion>
+          <List.Accordion
+            style={{ width: width * 0.5 }}
+            title={selectedPeriod}
+            id="1"
+            expanded={expanded}
+            onPress={handlePressList}
+          >
+            <List.Item
+              title="Last 7 days"
+              onPress={() => handleSelection("Last 7 days")}
+            />
+            <List.Item
+              title="Last 30 days"
+              onPress={() => handleSelection("Last 30 days")}
+            />
+            <List.Item
+              title="Last 365 days"
+              onPress={() => handleSelection("Last 365 days")}
+            />
+            <List.Item
+              title="Custom"
+              onPress={() => handleSelection("Custom")}
+            />
+          </List.Accordion>
+        </Surface>
       </View>
 
       <DatePickerModal
@@ -200,18 +213,27 @@ const UserStats = () => {
 
       <View>
         {isLoading ? (
-          <View style={{ justifyContent: "center" }}>
+          <View style={{ justifyContent: "center", height: width }}>
             <ActivityIndicator size="large" animating={true} />
           </View>
         ) : (
           <View>
-            <Text>StartDate Date: {selectedDates.startDate}</Text>
-            <Text>EndDate Date: {selectedDates.endDate}</Text>
-
-            <Text>1: {data?.numberPublications}</Text>
-            <Text>2: {data?.numberLikes}</Text>
-            <Text>3: {data?.numberComments}</Text>
-            <Text>4: {data?.numberSharedPosts}</Text>
+            <Surface style={styles.datesSurface}>
+              <Text style={{ fontSize: 20, marginBottom:5,marginLeft:5}}>📅 From: {range.startDate?.toDateString()}</Text>
+              <Text style={{ fontSize: 20,marginLeft:5}}>📅 To: {range.endDate?.toDateString()}</Text>
+            </Surface>
+            <Surface style={styles.infoSurface}>
+              <Text style={{ fontSize: 22}}>Posts made: {data?.numberPublications} ✍️</Text>
+            </Surface>
+            <Surface style={styles.infoSurface}>
+              <Text style={{ fontSize: 22}}>Likes received: {data?.numberLikes} ❤️</Text>
+            </Surface>
+            <Surface style={styles.infoSurface}>
+              <Text style={{ fontSize: 22}}>Comments received: {data?.numberComments} 💬</Text>
+            </Surface>
+            <Surface style={styles.infoSurface}>
+              <Text style={{ fontSize: 22}}>Shared posts: {data?.numberSharedPosts} 📫</Text>
+            </Surface>
           </View>
         )}
       </View>
@@ -226,5 +248,47 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: background,
     flex: 1,
+  },
+  surface: {
+    padding: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    marginTop: width*0.05,
+    marginBottom: width*0.08,
+    width: width * 0.9,
+    backgroundColor: secondaryColor,
+    borderColor: primaryColor,
+    borderWidth: 2,
+  },
+  bottomSurface: {
+    padding: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    width: width * 0.9,
+    marginBottom: 10,
+    backgroundColor: secondaryColor,
+    borderColor: primaryColor,
+    borderWidth: 2,
+  },
+  datesSurface: {
+    padding: 10,
+    alignItems: "flex-start",
+    justifyContent: "center",
+    width: width * 0.9,
+    marginBottom: 20,
+    backgroundColor: secondaryColor,
+    borderColor: primaryColor,
+    borderWidth: 2,
+  },
+  infoSurface: {
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    width: width * 0.9,
+    marginBottom: 10,
+    backgroundColor: secondaryColor,
+    borderColor: primaryColor,
+    borderWidth: 2,
   },
 });
