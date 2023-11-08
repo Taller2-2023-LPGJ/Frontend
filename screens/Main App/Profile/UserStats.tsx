@@ -232,7 +232,7 @@ const UserStats = () => {
               <Text style={{ fontSize: 22}}>Comments received: {data?.numberComments} 💬</Text>
             </Surface>
             <Surface style={styles.infoSurface}>
-              <Text style={{ fontSize: 22}}>Shared posts: {data?.numberSharedPosts} 📫</Text>
+              <Text style={{ fontSize: 22}}>Posts shared: {data?.numberSharedPosts} 📫</Text>
             </Surface>
           </View>
         )}
