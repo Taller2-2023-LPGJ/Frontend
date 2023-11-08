@@ -53,7 +53,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
       try {
         let api_result = await axios.get(`${API_URL}/content/follow/pablom/followers`);
         setFollowers(api_result.data.followers)
-        setFilteredFollowers(followers)
+        setFilteredFollowers(api_result.data.followers)
       } catch (e) {
         if ((e as any).response.status == "401") {
           onLogout!();
@@ -87,7 +87,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
     }
 
     const handleAddMention = (mention: any) => {
-      setText(text+"@"+mention)
+      setText(text+"@"+mention+" ")
       setOpenMentions(false)
     };
 
@@ -148,7 +148,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
           <View style={styles.feedContainer}>
            <View style={{flexDirection:"row"}}>
               <Text style={styles.topText}> {title}</Text>
-              <Icon size={(25)} color={textLight} name={"at"} onPress={handleChangeOpenTag} style={{marginTop:30, marginLeft:70}}/>
+              <Icon size={(25)} color={openMentions? accent : textLight} name={"at"} onPress={handleChangeOpenTag} style={{marginTop:30, marginLeft:70}}/>
             </View>
             {openMentions? 
               <View style={styles.tagEntryContainer}>
@@ -160,8 +160,8 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                   value={mentionSearch}
                   style={[styles.tagEntry]}
                   />
-                  {filteredFollowers.map((follower) => (
-                    <TouchableOpacity style={styles.possibleTags} onPress={() => {
+                  {filteredFollowers.map((follower, index) => (
+                    <TouchableOpacity  key={index} style={styles.possibleTags} onPress={() => {
                       handleAddMention(follower)
                     }}>
                       <Text style={{fontSize:17, color:textLight}}>{follower} </Text>

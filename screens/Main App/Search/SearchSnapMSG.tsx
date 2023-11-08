@@ -8,10 +8,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../../../types/types';
 import { background, primaryColor, secondaryColor, tertiaryColor, textLight } from '../../../components/colors';
 import { useAuth } from '../../../context/AuthContext';
+import { SnapMSG } from '../Feed/FeedTemplate';
 
-interface User {
+interface SnapMSGInfo {
+  author: string;
   displayName: string;
-  username: string;
+  creationDate: string;
+  body: string;
+  editingDate: string;
+  id: number;
+  tags: string[];
+  fav: boolean;
+  liked: boolean;
+  likes: number;
+  parentId: number;
+  sharedAt: string[];
+  sharedBy: string[];
+  shares: number;
+  shared: boolean;
+  privacy: boolean;
+  picture: string;
+  replies: number;
+  verified: boolean;
 }
 
 type Props = {
@@ -23,23 +41,27 @@ const SearchSnapMSG = ({ navigation }: Props) => {
 
   const navigation2 = useNavigation();
 
-
   React.useEffect(() =>
   navigation2.addListener("beforeRemove", (e) => {
     e.preventDefault();
   })
   );
 
-  const [users, setUsers] = useState([]);
+  const [snapMSGs, setSnapMSGs] = useState<SnapMSGInfo[]>([]);
 
-  const getUsers = async () => {
+  const getSnapMSGs = async () => {
+    setSnapMSGs([])
     let api_result: AxiosResponse<any, any>
-
       try {
-        //api_result = await axios.get(`${API_URL}/content/post?body=${searchQuery}`);
-        api_result = await axios.get(`${API_URL}/content/follow/pablom/followed?page=0`);
-        console.log(api_result.data)
-        //setUsers(api_result.data)
+        let parsed_search = searchQuery
+        if (searchQuery.startsWith('#')){
+          parsed_search = searchQuery.replace(/#/g, "%23");
+        }
+        console.log(parsed_search)
+        api_result = await axios.get(`${API_URL}/content/post?body=${parsed_search}`);
+        if (api_result.data.message == null) {
+          setSnapMSGs(api_result.data)
+        }
       } catch (e) {
         if ((e as any).response.status == "401") {
           onLogout!();
@@ -53,7 +75,7 @@ const SearchSnapMSG = ({ navigation }: Props) => {
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
-  const onSubmitEditing = (_: any) => getUsers()
+  const onSubmitEditing = (_: any) => getSnapMSGs()
 
 
   return (
@@ -66,11 +88,11 @@ const SearchSnapMSG = ({ navigation }: Props) => {
       placeholderTextColor={textLight}
       inputStyle={{ color: textLight }}
       onClearIconPress={() => {
-        setUsers([])
+        setSnapMSGs([])
       }}
       value={searchQuery} />
-      {users.map((user, index) => (
-        null
+      {snapMSGs.map((snapMSG, index) => (
+        <SnapMSG key={index} snapMSGInfo={snapMSG} navigation={navigation} scale={1} disabled={false}/>
       ))}
     </ScrollView>
   );
@@ -83,7 +105,7 @@ const styles = StyleSheet.create({
     container: {
       alignItems: "center",
       paddingVertical: 5,
-      backgroundColor:background,
+      backgroundColor:secondaryColor,
       flexGrow:1
     },
     userProfileContainer: {

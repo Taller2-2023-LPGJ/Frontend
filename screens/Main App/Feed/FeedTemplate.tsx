@@ -38,7 +38,7 @@ interface SnapMSGInfo {
 const { height } = Dimensions.get("window");
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
-    
+  const { onLogout } = useAuth();
     const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
     const [isShared, setisShared] = useState(snapMSGInfo.shared);
     const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
@@ -55,7 +55,6 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisLiked(true)
         }
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);
@@ -87,7 +86,6 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                   setisShared(true)
                 }
               } catch (e) {
-                const { onLogout } = useAuth();
                 if ((e as any).response.status == "401") {
                   onLogout!();
                   alert((e as any).response.data.message);
@@ -116,7 +114,6 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisFavourite(true)
         }
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);

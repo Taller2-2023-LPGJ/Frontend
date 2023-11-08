@@ -3,7 +3,6 @@ import React from "react";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from "@react-navigation/native";
 import SearchUser from './SearchUser';
-import SearchHashtag from './SearchHashtag';
 import SearchSnapMSG from "./SearchSnapMSG";
 import { Searchbar } from 'react-native-paper';
 import { accent, primaryColor, secondaryColor } from "../../../components/colors";
@@ -23,7 +22,6 @@ const Search = () => {
         }}
       >
         <Tab.Screen name="Users" component={SearchUser} />
-        <Tab.Screen name="Hashtag" component={SearchHashtag} />
         <Tab.Screen name="SnapMSG" component={SearchSnapMSG} />
       </Tab.Navigator></>
   );

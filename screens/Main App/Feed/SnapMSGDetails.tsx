@@ -44,6 +44,7 @@ type SnapMSGDetailsRouteParams = {
 const SnapMSGDetails = ({ navigation}: Props) => {
   const route = useRoute<RouteProp<Record<string, SnapMSGDetailsRouteParams>, string>>()
   const navigation2 = useNavigation()
+  const { onLogout } = useAuth();
   const [username, setUsername] = useState("")
   const [isReply, setIsReply] = useState(false)
   const [reply, setReply] = useState()
@@ -56,7 +57,6 @@ const SnapMSGDetails = ({ navigation}: Props) => {
         await axios.delete(`${apiUrl}/content/post/${id}`);
         navigation2.goBack()
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);
