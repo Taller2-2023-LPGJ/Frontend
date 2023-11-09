@@ -191,16 +191,18 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                 <Text style={{flex: 1,color:textLight, textAlign: 'right', fontSize:(15*scale)}}>{timeAgo(snapMSGInfo.creationDate)}</Text>
             </View>
 
-            <View style={{flexDirection:"row"}}>
+            
+            <Text>
               {snapMSGInfo.body.split(" ").map((word, i) => (
-                <View key={i} style={{alignContent:"flex-end"}}>
+                <Text key={i}>
                   {word.startsWith("@") || word.startsWith("#") ? 
                   <Text style={{fontSize:(15*scale),color:accent}}>{word+" "}</Text>
                   :<Text style={{fontSize:(15*scale),color:textLight}}>{word+" "}</Text>
                   }
-                </View>
+                </Text>
               ))}
-            </View>
+            </Text>
+            
 
             <View style={[styles.row, styles.centeredRow]}>
 
