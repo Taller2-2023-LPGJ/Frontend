@@ -57,7 +57,6 @@ const SearchSnapMSG = ({ navigation }: Props) => {
         if (searchQuery.startsWith('#')){
           parsed_search = searchQuery.replace(/#/g, "%23");
         }
-        console.log(parsed_search)
         api_result = await axios.get(`${API_URL}/content/post?body=${parsed_search}`);
         if (api_result.data.message == null) {
           setSnapMSGs(api_result.data)
