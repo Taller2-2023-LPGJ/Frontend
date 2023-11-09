@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Button } from 'react-native-paper';
 import { Navigation } from '../../../types/types';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from "axios";
 import { API_URL } from '@env';
-import { background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
+import { accent, background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
 import { useAuth } from '../../../context/AuthContext';
 const apiUrl = API_URL;
 
@@ -28,6 +28,12 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
     const navigation2 = useNavigation();
     const [text, setText] = useState(editParams.body);
     const [postPrivacy, setPostPrivacy] = useState(editParams.privacy);
+    const [followers, setFollowers] = useState<string[]>([])
+    const [filteredFollowers, setFilteredFollowers] = useState(followers)
+    const [openMentions, setOpenMentions] = useState(false)
+    const [mentionSearch, setMentionSearch] = useState("")
+    const { onLogout } = useAuth();
+
     let title = ""
     switch (actionType) {
         case "Write":
@@ -43,14 +49,48 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
           return
       }
 
+    const getFollowers = async () => {
+      try {
+        let api_result = await axios.get(`${API_URL}/content/follow/pablom/followers`);
+        setFollowers(api_result.data.followers)
+        setFilteredFollowers(api_result.data.followers)
+      } catch (e) {
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
+      }
+    }
+      
+    useEffect(() => {
+      getFollowers()
+    }, []);
 
     const handleChangePrivacy = () => {
       setPostPrivacy(!postPrivacy)
     }
 
     const handleTextChange = (newText: any) => {
-        setText(newText);
+      setText(newText);
     };
+
+    const handleTagSearchChange = (newText: any) => {
+      setMentionSearch(newText);
+      let result = followers.filter(item => item.toLowerCase().includes(newText.toLowerCase()));
+      setFilteredFollowers(result)
+    };
+
+    const handleChangeOpenTag = () => {
+      setOpenMentions(!openMentions)
+    }
+
+    const handleAddMention = (mention: any) => {
+      setText(text+"@"+mention+" ")
+      setOpenMentions(false)
+    };
+
 
     const handleSendSnapMSG = () => {
         if (remainingCharacters == 250){
@@ -87,7 +127,6 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     break
                             }
                           } catch (e) {
-                            const { onLogout } = useAuth();
                             if ((e as any).response.status == "401") {
                               onLogout!();
                               alert((e as any).response.data.message);
@@ -107,7 +146,30 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
     return (
         <View style={styles.container}>
           <View style={styles.feedContainer}>
-            <Text style={styles.topText}> {title}</Text>
+           <View style={{flexDirection:"row"}}>
+              <Text style={styles.topText}> {title}</Text>
+              <Icon size={(25)} color={openMentions? accent : textLight} name={"at"} onPress={handleChangeOpenTag} style={{marginTop:30, marginLeft:70}}/>
+            </View>
+            {openMentions? 
+              <View style={styles.tagEntryContainer}>
+                <ScrollView contentContainerStyle={{width:"100%"}}>
+                  <TextInput
+                  placeholder="Tag user"
+                  placeholderTextColor={textLight}
+                  onChangeText={handleTagSearchChange}
+                  value={mentionSearch}
+                  style={[styles.tagEntry]}
+                  />
+                  {filteredFollowers.map((follower, index) => (
+                    <TouchableOpacity  key={index} style={styles.possibleTags} onPress={() => {
+                      handleAddMention(follower)
+                    }}>
+                      <Text style={{fontSize:17, color:textLight}}>{follower} </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>  
+              : null}
             <TextInput
                 placeholder="Type something here..."
                 placeholderTextColor={textLight}
@@ -126,9 +188,9 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
             <Text style={{fontSize:16, color:textLight}}>
                 Characters remaining: {remainingCharacters} / 250
             </Text>
-            <Icon size={(40)} color={textLight} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{margin:30}}/>
           </View>
           <View style={styles.buttonContainer}>
+          <Icon size={(40)} color={textLight} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{marginBottom:15, marginRight:15}}/>
             <Button 
               style={styles.writeSnapMSGButton}
               labelStyle={{color:textLight}}
@@ -169,9 +231,32 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "row",
         paddingTop: 10,
         backgroundColor: background,
         width: "100%",
+    },
+    tagEntryContainer: {
+      backgroundColor: primaryColor,
+      position: 'absolute',
+      marginTop: 50,
+      borderRadius: 10,
+      height:"65%",
+      width: "65%",
+      zIndex:2,
+      alignItems:"center",
+      borderWidth:2,
+      borderColor:background
+    },
+    tagEntry: {
+      backgroundColor: background,
+      padding:10,
+      borderRadius: 25,
+      height:40,
+      width: 200,
+      fontSize: 15,
+      color:textLight,
+      marginVertical:10,
     },
     textEntry: {
         padding: 20,
@@ -188,5 +273,11 @@ const styles = StyleSheet.create({
         marginTop:30, 
         fontSize:20,
         color:textLight
+    },
+    possibleTags: {
+      backgroundColor:secondaryColor,
+      padding: 8,
+      marginVertical:5,
+      borderRadius:7,
     }
   });

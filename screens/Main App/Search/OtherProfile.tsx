@@ -32,7 +32,7 @@ type RouteParams = {
 function OtherProfile({ navigation }: Props) {
   const route = useRoute<RouteParams>();
   const data = route.params;
-
+  const { onLogout } = useAuth();
   const [displayName, setDisplayName] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [bio, setBio] = React.useState("");
@@ -59,7 +59,6 @@ function OtherProfile({ navigation }: Props) {
         setisLoading(false);
       } catch (e) {
         if ((e as any).response.status == "401") {
-          const { onLogout } = useAuth();
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -97,7 +96,6 @@ function OtherProfile({ navigation }: Props) {
           />
           <View style={styles.buttonRow}>
           {following ? (
-            <View>
               <Button
                 style={styles.followButton}
                 labelStyle={{ color: textLight }}
@@ -110,7 +108,6 @@ function OtherProfile({ navigation }: Props) {
                     setFollowing(!following);
                     setFollowers(followers - 1);
                   } catch (e) {
-                    const { onLogout } = useAuth();
                     if ((e as any).response.status == "401") {
                       onLogout!();
                       alert((e as any).response.data.message);
@@ -122,7 +119,6 @@ function OtherProfile({ navigation }: Props) {
               >
                 Unfollow
               </Button>
-            </View>
           ) : (
             <Button
               style={styles.followButton}
@@ -136,7 +132,6 @@ function OtherProfile({ navigation }: Props) {
                   setFollowing(!following);
                   setFollowers(followers + 1);
                 } catch (e) {
-                  const { onLogout } = useAuth();
                   if ((e as any).response.status == "401") {
                     onLogout!();
                     alert((e as any).response.data.message);

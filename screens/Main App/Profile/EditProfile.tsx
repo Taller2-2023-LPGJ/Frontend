@@ -24,6 +24,7 @@ const default_avatar =
   "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
 
 const EditProfile = () => {
+  const { onLogout } = useAuth();
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -103,7 +104,6 @@ const EditProfile = () => {
         setCurrentProfilePicture(api_result.data.profilePicture);
         setIsLoadingProfileData(false);
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);
@@ -174,7 +174,6 @@ const EditProfile = () => {
           navigation.goBack();
         } catch (e) {
           setIsLoadingProfileData(false)
-          const { onLogout } = useAuth();
           if ((e as any).response.status == "401") {
             onLogout!();
             alert((e as any).response.data.message);

@@ -64,7 +64,9 @@ export default function Notifications({ navigation }: Props) {
 
       // Else, mention or trending post notification
     } else {
-      // navigateFunction => navigate to snapMsg
+      //navigateFunction = () => {
+      //  navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
+      //}
     }
 
     return (

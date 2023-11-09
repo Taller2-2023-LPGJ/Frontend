@@ -1,6 +1,6 @@
 import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Navigation } from "../../../types/types";
 import { ActivityIndicator, Button } from "react-native-paper";
@@ -38,23 +38,23 @@ interface SnapMSGInfo {
 const { height } = Dimensions.get("window");
 
 export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigation, scale: number, disabled: boolean }> = ({ snapMSGInfo,navigation, scale, disabled }) => {
-    
+    const { onLogout } = useAuth();
     const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
     const [isShared, setisShared] = useState(snapMSGInfo.shared);
     const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
-
     const likePost = async () => {
       let id = snapMSGInfo.id
       try {
         if (isLiked) {
           await axios.delete(`${apiUrl}/content/like/${id}`);
+          snapMSGInfo.likes -= 1;
           setisLiked(false)
         } else {
           await axios.post(`${apiUrl}/content/like/${id}`);
+          snapMSGInfo.likes += 1;
           setisLiked(true)
         }
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);
@@ -78,13 +78,14 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
               try {
                 if (isShared) {
                   await axios.delete(`${apiUrl}/content/share/${id}`);
+                  snapMSGInfo.shares -= 1;
                   setisShared(false)
                 } else {
                   await axios.post(`${apiUrl}/content/share/${id}`);
+                  snapMSGInfo.shares += 1;
                   setisShared(true)
                 }
               } catch (e) {
-                const { onLogout } = useAuth();
                 if ((e as any).response.status == "401") {
                   onLogout!();
                   alert((e as any).response.data.message);
@@ -113,7 +114,6 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisFavourite(true)
         }
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);
@@ -191,8 +191,15 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                 <Text style={{flex: 1,color:textLight, textAlign: 'right', fontSize:(15*scale)}}>{timeAgo(snapMSGInfo.creationDate)}</Text>
             </View>
 
-            <View style={styles.row}>
-                <Text style={{flex: 1, fontSize:(15*scale),color:textLight}}>{snapMSGInfo.body}</Text>
+            <View style={{flexDirection:"row"}}>
+              {snapMSGInfo.body.split(" ").map((word, i) => (
+                <View key={i} style={{alignContent:"flex-end"}}>
+                  {word.startsWith("@") || word.startsWith("#") ? 
+                  <Text style={{fontSize:(15*scale),color:accent}}>{word+" "}</Text>
+                  :<Text style={{fontSize:(15*scale),color:textLight}}>{word+" "}</Text>
+                  }
+                </View>
+              ))}
             </View>
 
             <View style={[styles.row, styles.centeredRow]}>
@@ -319,6 +326,18 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
       }
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (feedType == "GeneralFeed") {
+        setPosts([])
+        setEndOfFeed(true)
+        setCurrentPage(0)
+        addPost()
+        setEndOfFeed(false)
+      }
+    }, [])
+  );
 
   useEffect(() => {
     addPost(); 

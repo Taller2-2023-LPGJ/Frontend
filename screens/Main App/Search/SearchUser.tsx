@@ -64,7 +64,7 @@ const SearchUser = ({ navigation }: Props) => {
     e.preventDefault();
   })
   );
-
+  const { onLogout } = useAuth();
   const [users, setUsers] = useState([]);
 
   const getUsers = async () => {
@@ -74,7 +74,6 @@ const SearchUser = ({ navigation }: Props) => {
         api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`);
         setUsers(api_result.data)
       } catch (e) {
-        const { onLogout } = useAuth();
         if ((e as any).response.status == "401") {
           onLogout!();
           alert((e as any).response.data.message);
