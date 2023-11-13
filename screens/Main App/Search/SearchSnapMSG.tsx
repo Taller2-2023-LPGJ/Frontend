@@ -9,6 +9,7 @@ import { Navigation } from '../../../types/types';
 import { background, primaryColor, secondaryColor, tertiaryColor, textLight } from '../../../components/colors';
 import { useAuth } from '../../../context/AuthContext';
 import { SnapMSG } from '../Feed/FeedTemplate';
+import { ActivityIndicator } from "react-native-paper";
 
 interface SnapMSGInfo {
   author: string;
@@ -48,8 +49,12 @@ const SearchSnapMSG = ({ navigation }: Props) => {
   );
 
   const [snapMSGs, setSnapMSGs] = useState<SnapMSGInfo[]>([]);
+  let [currentPage, setCurrentPage] = useState(0)
+  let [noMoreResults, setNoMoreResults] = useState(false)
+  let [loadingMoreResults, setLoadingMoreResults] = useState(false)
 
   const getSnapMSGs = async () => {
+    setLoadingMoreResults(true)
     setSnapMSGs([])
     let api_result: AxiosResponse<any, any>
       try {
@@ -57,9 +62,13 @@ const SearchSnapMSG = ({ navigation }: Props) => {
         if (searchQuery.startsWith('#')){
           parsed_search = searchQuery.replace(/#/g, "%23");
         }
-        api_result = await axios.get(`${API_URL}/content/post?body=${parsed_search}`);
+        api_result = await axios.get(`${API_URL}/content/post?body=${parsed_search}&page=0`);
         if (api_result.data.message == null) {
           setSnapMSGs(api_result.data)
+          setCurrentPage(1)
+          if (api_result.data.length < 20) {
+            setNoMoreResults(true)
+          }
         }
       } catch (e) {
         if ((e as any).response.status == "401") {
@@ -69,8 +78,37 @@ const SearchSnapMSG = ({ navigation }: Props) => {
           alert((e as any).response.data.message);
         }
       }
+    setLoadingMoreResults(false)
   }
 
+  const loadMoreSnapMSGs = async () => {
+    setLoadingMoreResults(true)
+    let api_result: AxiosResponse<any, any>
+    try {
+      let parsed_search = searchQuery
+      if (searchQuery.startsWith('#')){
+        parsed_search = searchQuery.replace(/#/g, "%23");
+      }
+      api_result = await axios.get(`${API_URL}/content/post?body=${parsed_search}&page=${currentPage}`);
+      if (api_result.data.message == null) {
+        setSnapMSGs(snapMSGs.concat(api_result.data))
+        setCurrentPage(currentPage+1)
+        if (api_result.data.length < 20) {
+          setNoMoreResults(true)
+        }
+      } else {
+        setNoMoreResults(true)
+      }
+    } catch (e) {
+      if ((e as any).response.status == "401") {
+        onLogout!();
+        alert((e as any).response.data.message);
+      } else {
+        alert((e as any).response.data.message);
+      }
+    }
+    setLoadingMoreResults(false)
+  }
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
@@ -87,12 +125,29 @@ const SearchSnapMSG = ({ navigation }: Props) => {
       placeholderTextColor={textLight}
       inputStyle={{ color: textLight }}
       onClearIconPress={() => {
+        setNoMoreResults(false)
         setSnapMSGs([])
       }}
       value={searchQuery} />
       {snapMSGs.map((snapMSG, index) => (
         <SnapMSG key={index} snapMSGInfo={snapMSG} navigation={navigation} scale={1} disabled={false}/>
       ))}
+      {loadingMoreResults ? 
+      <View style={{ justifyContent: "center", marginVertical: 20 }}>
+        <ActivityIndicator size="large" animating={true} />
+      </View>
+      :(
+        (snapMSGs.length == 0) || noMoreResults ? 
+          <Text style={{color:textLight, alignSelf:"center", fontSize:18, padding:20}}>
+            {noMoreResults ? "No more results": "Search for SnapMSGs!"}
+          </Text>
+          :
+          <TouchableOpacity style={styles.loadMoreButton} onPress={loadMoreSnapMSGs}>
+          <Text style={{color:textLight, alignSelf:"center"}}>Load more SnapMSGs</Text>
+          </TouchableOpacity>
+      )}
+      
+      
     </ScrollView>
   );
 }
@@ -144,4 +199,11 @@ const styles = StyleSheet.create({
       marginTop: 10,
       backgroundColor: primaryColor,
     },
+    loadMoreButton: {
+      padding:30, 
+      backgroundColor:secondaryColor,
+      width:"100%",
+      borderBottomWidth:1,
+      borderBottomColor:primaryColor,
+    }
 });

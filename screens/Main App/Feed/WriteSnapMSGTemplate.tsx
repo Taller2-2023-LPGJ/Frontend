@@ -9,6 +9,7 @@ import { API_URL } from '@env';
 import { accent, background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
 import { useAuth } from '../../../context/AuthContext';
 import { MentionInput, MentionSuggestionsProps, replaceMentionValues  } from 'react-native-controlled-mentions'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const apiUrl = API_URL;
 
 
@@ -31,7 +32,6 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
     const [postPrivacy, setPostPrivacy] = useState(editParams.privacy);
     const [followers, setFollowers] = useState<{id:string,name:string}[]>([])
     const { onLogout } = useAuth();
-
     let title = ""
     switch (actionType) {
         case "Write":
@@ -49,12 +49,18 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
 
     const getFollowers = async () => {
       try {
-        let api_result = await axios.get(`${API_URL}/content/follow/pablom/followers`);
-        let parsed = api_result.data.followers.map((name: string, index: number) => ({
-          id: (index + 1).toString(),
-          name: name,
-        }));
-        setFollowers(parsed)
+        let result = await AsyncStorage.getItem("username");
+        if (result == null) {
+          alert("User not found");
+          return;
+        } else {
+          let api_result = await axios.get(`${API_URL}/content/follow/${result}/followers`);
+          let parsed = api_result.data.followers.map((name: string, index: number) => ({
+            id: (index + 1).toString(),
+            name: name,
+          }));
+          setFollowers(parsed)
+        }
       } catch (e) {
         if ((e as any).response.status == "401") {
           onLogout!();
@@ -108,8 +114,10 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     navigation2.goBack()
                                     break
                                 case 'Write':
+                                    console.log(`${apiUrl}/content/post ${body}`)
                                     await axios.post(`${apiUrl}/content/post`, {body, private: privacy, tags});
                                     navigation2.goBack()
+                                    console.log("b")
                                     break
                                 case 'Reply':
                                     let id = replyParams.id

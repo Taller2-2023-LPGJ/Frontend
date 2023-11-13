@@ -23,6 +23,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Navigation } from "../../../types/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAuth } from "../../../context/AuthContext";
+import { API_URL } from "@env";
+import axios from "axios";
 
 type Notification = {
   notification: NotificationData;
@@ -43,7 +46,9 @@ type Props = {
 };
 
 export default function Notifications({ navigation }: Props) {
+  const { onLogout } = useAuth();
   const [data, setData] = useState<NotificationData[]>([]);
+  const [post, setPost] = useState()
   const NotificationCard = ({ notification }: Notification) => {
     /*
     Notification formats
@@ -51,6 +56,19 @@ export default function Notifications({ navigation }: Props) {
     --> Mentioned:        title = SnapMsg Mention   ,body = Mentioned in a tweet $tweet_id
     --> Trending:         title = Trending post     ,body = Trending tweet related to [topic] $tweet_id 
     */
+
+    const getSnapMSGInfo = async () => {
+      try {
+        let api_result = await axios.get(`${API_URL}/content/post/id=`);
+      } catch (e) {
+        if ((e as any).response.status == "401") {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
+      }
+    }
 
     let navigateFunction:() => void;
     // Title length = 1 word --> message notification
@@ -64,6 +82,7 @@ export default function Notifications({ navigation }: Props) {
 
       // Else, mention or trending post notification
     } else {
+      //getSnapMSGInfo()
       //navigateFunction = () => {
       //  navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
       //}

@@ -80,9 +80,18 @@ const SnapMSGDetails = ({ navigation}: Props) => {
         setUsername(result)
       }
       if (snapMSGInfo.parentId != 0) {
-        setIsReply(true)
-        let result = await axios.get(`${apiUrl}/content/post?id=${snapMSGInfo.parentId}`)
-        setReply(result.data)
+        try {
+          setIsReply(true)
+          let result = await axios.get(`${apiUrl}/content/post?id=${snapMSGInfo.parentId}`)
+          setReply(result.data)
+        } catch (e) {
+          if ((e as any).response.status == "401") {
+            onLogout!();
+            alert((e as any).response.data.message);
+          } else {
+            alert((e as any).response.data.message);
+          }
+        }
       }
     }
 
