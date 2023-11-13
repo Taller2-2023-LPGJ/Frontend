@@ -204,17 +204,21 @@ const ChatWindow = ({ navigation }: Props) => {
         const pushData =
           "{ " + '"type": "message","goto":' + '"' + sender + '"} ';
 
-        await axios.post(
-          `https://app.nativenotify.com/api/indie/notification`,
-          {
-            subID: receptor,
-            appId: "13586",
-            appToken: "SKYebTHATCXWbZ1Tlwlwle",
-            title: sender,
-            message: text,
-            pushData: pushData,
-          }
-        );
+        try {
+          await axios.post(
+            `https://app.nativenotify.com/api/indie/notification`,
+            {
+              subID: receptor,
+              appId: "13586",
+              appToken: "SKYebTHATCXWbZ1Tlwlwle",
+              title: sender,
+              message: text,
+              pushData: pushData,
+            }
+          );
+        } catch (e) {
+          //
+        }
       } else {
       }
     });

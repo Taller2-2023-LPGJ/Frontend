@@ -48,7 +48,7 @@ type Props = {
 export default function Notifications({ navigation }: Props) {
   const { onLogout } = useAuth();
   const [data, setData] = useState<NotificationData[]>([]);
-  const [post, setPost] = useState()
+  const [post, setPost] = useState();
   const NotificationCard = ({ notification }: Notification) => {
     /*
     Notification formats
@@ -57,10 +57,10 @@ export default function Notifications({ navigation }: Props) {
     --> Trending:         title = Trending post     ,body = Trending tweet related to [topic] $tweet_id 
     */
 
-    const getSnapMSGInfo = async (id:string) => {
+    const getSnapMSGInfo = async (id: string) => {
       try {
-        let api_result = await axios.get(`${API_URL}/content/post/id=${id}`);
-        return api_result.data
+        let api_result = await axios.get(`${API_URL}/content/post?id=${id}`);
+        return api_result.data;
       } catch (e) {
         if ((e as any).response.status == "401") {
           onLogout!();
@@ -69,9 +69,9 @@ export default function Notifications({ navigation }: Props) {
           alert((e as any).response.data.message);
         }
       }
-    }
+    };
 
-    let navigateFunction:() => void;
+    let navigateFunction: () => void;
     // Title length = 1 word --> message notification
     if (notification.title.split(" ").length === 1) {
       navigateFunction = () => {
@@ -83,10 +83,14 @@ export default function Notifications({ navigation }: Props) {
 
       // Else, mention or trending post notification
     } else {
-      let snapMSGInfo = getSnapMSGInfo(notification.message.split(" ")[notification.message.split(" ").length - 1])
-      navigateFunction = () => {
-        navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
-      }
+      // let snapMSGInfo = getSnapMSGInfo(
+      //   notification.message.split(" ")[
+      //     notification.message.split(" ").length - 1
+      //   ]
+      // );
+      // navigateFunction = () => {
+      //   navigation.navigate("SnapMSGDetails", { SnapMSGInfo: snapMSGInfo });
+      // };
     }
 
     return (

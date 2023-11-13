@@ -77,7 +77,7 @@ const SearchUser = ({ navigation }: Props) => {
       try {
         api_result = await axios.get(`${API_URL}/profile?user=${searchQuery.toLowerCase()}&page=0`);
         setUsers(api_result.data)
-        if (api_result.data.length < 8) {
+        if (api_result.data.length < 10) {
           setNoMoreResults(true)
         }
         setCurrentPage(1)
@@ -103,7 +103,7 @@ const SearchUser = ({ navigation }: Props) => {
       try {
         api_result = await axios.get(`${API_URL}/profile?user=${searchQuery.toLowerCase()}&page=${currentPage}`);
         setUsers(users.concat(api_result.data))
-        if (api_result.data.length < 8) {
+        if (api_result.data.length < 10) {
           setNoMoreResults(true)
         }
         setCurrentPage(currentPage+1)
