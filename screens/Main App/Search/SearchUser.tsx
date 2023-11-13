@@ -129,6 +129,7 @@ const SearchUser = ({ navigation }: Props) => {
       inputStyle={{ color: textLight }}
       onClearIconPress={() => {
         setUsers([])
+        setNoMoreResults(false)
       }}
       value={searchQuery} />
       {users.map((user, index) => (

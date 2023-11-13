@@ -57,9 +57,10 @@ export default function Notifications({ navigation }: Props) {
     --> Trending:         title = Trending post     ,body = Trending tweet related to [topic] $tweet_id 
     */
 
-    const getSnapMSGInfo = async () => {
+    const getSnapMSGInfo = async (id:string) => {
       try {
-        let api_result = await axios.get(`${API_URL}/content/post/id=`);
+        let api_result = await axios.get(`${API_URL}/content/post/id=${id}`);
+        return api_result.data
       } catch (e) {
         if ((e as any).response.status == "401") {
           onLogout!();
@@ -82,10 +83,10 @@ export default function Notifications({ navigation }: Props) {
 
       // Else, mention or trending post notification
     } else {
-      //getSnapMSGInfo()
-      //navigateFunction = () => {
-      //  navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
-      //}
+      let snapMSGInfo = getSnapMSGInfo(notification.message.split(" ")[notification.message.split(" ").length - 1])
+      navigateFunction = () => {
+        navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
+      }
     }
 
     return (

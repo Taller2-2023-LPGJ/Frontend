@@ -249,6 +249,8 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
   const [posts, setPosts] = useState<SnapMSGInfo[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [endOfFeed, setEndOfFeed] = useState(false);
+  let timestampRefresh = new Date().getTime();
+
 
   const addPost = async () => {
     await sleep(100);
@@ -329,23 +331,8 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (feedType == "GeneralFeed") {
-        setPosts([])
-        setEndOfFeed(true)
-        setCurrentPage(0)
-        addPost()
-        setEndOfFeed(false)
-      }
-    }, [])
-  );
-
-  useEffect(() => {
-    addPost(); 
-  }, [currentPage]);
-
   const handleReloadFeed = () => {
+    timestampRefresh = new Date().getTime()
     setPosts([])
     if (endOfFeed) {
       setEndOfFeed(false)
@@ -357,6 +344,28 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     }
     
   }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (feedType == "GeneralFeed") {
+        let currentTime = new Date().getTime();
+        if ((currentTime - timestampRefresh)/1000 > 60) {
+          timestampRefresh = new Date().getTime()
+          setPosts([])
+          setEndOfFeed(true)
+          setCurrentPage(0)
+          addPost()
+          setEndOfFeed(false)
+        }
+      }
+    }, [])
+  );
+
+  useEffect(() => {
+    addPost(); 
+  }, [currentPage]);
+
+  
 
   return (
       <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
