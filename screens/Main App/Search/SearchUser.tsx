@@ -140,7 +140,7 @@ const SearchUser = ({ navigation }: Props) => {
         <ActivityIndicator size="large" animating={true} />
       </View>
       : 
-      (users.length == 0 ? 
+      (users.length == 0 || noMoreResults ? 
         <Text style={{color:textLight, alignSelf:"center", fontSize:18, padding:20}}>
           {noMoreResults ? "No more results" : "Search for users!"}
         </Text>
