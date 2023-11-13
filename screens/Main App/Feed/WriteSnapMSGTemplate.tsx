@@ -114,10 +114,8 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     navigation2.goBack()
                                     break
                                 case 'Write':
-                                    console.log(`${apiUrl}/content/post ${body}`)
                                     await axios.post(`${apiUrl}/content/post`, {body, private: privacy, tags});
                                     navigation2.goBack()
-                                    console.log("b")
                                     break
                                 case 'Reply':
                                     let id = replyParams.id
