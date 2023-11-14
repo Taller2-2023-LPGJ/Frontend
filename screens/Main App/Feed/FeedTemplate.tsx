@@ -42,6 +42,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
     const [isLiked, setisLiked] = useState(snapMSGInfo.liked);
     const [isShared, setisShared] = useState(snapMSGInfo.shared);
     const [isFavourite, setisFavourite] = useState(snapMSGInfo.fav);
+
     const likePost = async () => {
       let id = snapMSGInfo.id
       try {
@@ -125,7 +126,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
 
     const openSnapMSG = async () => {
       navigation.navigate("Feed2")
-      navigation.navigate("SnapMSGDetails", {SnapMSGInfo: snapMSGInfo})
+      navigation.navigate("SnapMSGDetails", {id: snapMSGInfo.id})
     }
 
     const openProfile = async () => {
