@@ -137,6 +137,7 @@ const ChatList = ({ navigation }: Props) => {
             height: 70,
             borderRadius: 35,
             marginRight: 18,
+            marginVertical:7
           }}
         />
         <View
@@ -167,7 +168,7 @@ const ChatList = ({ navigation }: Props) => {
   };
 
   return (
-    <View>
+    <View style={{backgroundColor:secondaryColor}}>
       {isLoading ? (
         <View
           style={{
@@ -277,7 +278,6 @@ import { Navigation } from "../../../types/types";
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
@@ -285,9 +285,8 @@ const styles = StyleSheet.create({
   card: {
     width: width,
     padding: 10,
-    marginBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: textLight,
+    borderBottomColor: primaryColor,
   },
   infoContainer: {
     flex: 1,

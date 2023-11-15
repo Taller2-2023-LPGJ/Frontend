@@ -26,6 +26,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../../context/AuthContext";
 import { API_URL } from "@env";
 import axios from "axios";
+import { secondaryColor } from "../../../components/colors";
 
 type Notification = {
   notification: NotificationData;
@@ -194,6 +195,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 10,
+    backgroundColor:secondaryColor
   },
   infoContainer: {
     flex: 1,
