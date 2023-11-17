@@ -45,7 +45,6 @@
     "react-native-gesture-handler": "~2.12.0",
     "react-native-gifted-chat": "^2.4.0",
     "react-native-google-places-autocomplete": "^2.5.2",
-    "react-native-i18n": "^2.0.15",
     "react-native-pager-view": "6.2.0",
     "react-native-paper": "^5.10.3",
     "react-native-paper-dates": "^0.20.3",
@@ -61,7 +60,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.14",
-    "@types/react-native-i18n": "^2.0.2",
     "@types/react-native-vector-icons": "^6.4.14",
     "react-native-dotenv": "^3.4.9",
     "typescript": "^5.1.3"
