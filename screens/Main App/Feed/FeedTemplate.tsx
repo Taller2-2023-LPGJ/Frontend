@@ -1,4 +1,4 @@
-import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert, Dimensions } from "react-native";
+import { ScrollView, Image, StyleSheet, Text, TouchableWithoutFeedback, View, TouchableOpacity, Alert, Dimensions, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -332,7 +332,10 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     }
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
   const handleReloadFeed = () => {
+    setRefreshing(true);
     timestampRefresh = new Date().getTime()
     setPosts([])
     if (endOfFeed) {
@@ -343,7 +346,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     } else {
       addPost()
     }
-    
+    setRefreshing(false);
   }
 
   useFocusEffect(
@@ -366,11 +369,13 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
     addPost(); 
   }, [currentPage]);
 
-  
+
+
 
   return (
-      <ScrollView contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
-        <Icon size={35} name={"reload"} color={textLight} style={{margin:15}} onPress={handleReloadFeed}/>
+      <ScrollView refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleReloadFeed} />
+      } contentContainerStyle={styles.containerContent} style={styles.container} nestedScrollEnabled={true} onScrollEndDrag={handleScroll}>
         {posts.map((post, index) => (
         <SnapMSG key={index} snapMSGInfo={post} navigation={navigation} scale={1} disabled={false}/>
         ))}
@@ -400,6 +405,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     backgroundColor:secondaryColor,
+    paddingTop:25
   },
   separatorBar: {
     width: "100%",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Share } from "react-native";
 import FeedTemplate, { SnapMSG } from './FeedTemplate';
 import { Navigation } from '../../../types/types';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -128,6 +128,19 @@ const SnapMSGDetails = ({ navigation}: Props) => {
       navigation.navigate("EditSnapMSG", {editParams: {body:snapMSGInfo.body, id:snapMSGInfo.id, privacy:snapMSGInfo.privacy}})
     }
 
+    const handleShare = async() => {
+      let message = "@"+snapMSGInfo.author+" just posted this on SnapMSG: \n\n'" + snapMSGInfo.body + "'\n\nCheck out more on the SnapMSG app"
+      const shareOptions = {
+        message: message
+      }
+
+      try {
+        const ShareResponse = await Share.share(shareOptions);
+      } catch(e) {
+        alert((e as any).response.data.message);
+      }
+    }
+
     return (
       <View style={{backgroundColor: secondaryColor, flex:1}}>
         {snapMSGInfo.parentId == -1 ? 
@@ -142,8 +155,13 @@ const SnapMSGDetails = ({ navigation}: Props) => {
                 <Icon size={35} color={textLight} name={snapMSGInfo.privacy ? "lock-outline" : "lock-open-variant-outline"} style={styles.snapMSGTool} />
                 <Icon size={35} color={textLight} name={"pencil-outline"} style={styles.snapMSGTool} onPress={editSnapMSG} />
                 <Icon size={35} color={textLight} name={"trash-can-outline"} style={styles.snapMSGTool} onPress={deleteSnapMSG} />
+                <Icon size={35} color={textLight} name={"share-outline"} style={styles.snapMSGTool} onPress={handleShare} />
               </View>
-            ) : null}
+            ) : 
+              <View style={styles.snapMSGToolsContainer}>
+                <Icon size={35} color={textLight} name={"share-outline"} style={styles.snapMSGTool} onPress={handleShare} />
+              </View>
+            }
 
             <View style={styles.separatorBar}></View>
             <Text style={{ fontSize: 22, margin: 5, color: textLight }}> Replies </Text>
