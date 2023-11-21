@@ -17,8 +17,6 @@ import { useState, useEffect } from "react";
 import {
   deleteIndieNotificationInbox,
   getIndieNotificationInbox,
-  getPushDataInForeground,
-  getPushDataObject,
 } from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Navigation } from "../../../types/types";

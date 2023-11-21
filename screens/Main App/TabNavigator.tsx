@@ -23,16 +23,18 @@ export function TabNavigator({ navigation }: Props) {
     if (Object.keys(pushDataObject).length !== 0) {
       const type = pushDataObject.type;
       const goto = pushDataObject.goto;
-
+      // Navigate to chat window
       if (type === "message") {
-        
         navigation.navigate("Messages", {
           screen: "ChatWindow",
           params: { username: goto },
         });
       } else {
-        // type === trending --> go to trending tweet
-        // type === mention --> go to mentioned tweet
+        // Navigate to post
+        navigation.navigate("Feed", {
+          screen: "SnapMSGDetails",
+          params: { id: parseInt(goto) },
+        });
       }
     } else {
       // No push data object read
