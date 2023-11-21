@@ -108,11 +108,11 @@ const Register = ({ navigation }: Props) => {
       hideLoadingIndicator();
       alert(result.message);
     } else {
-      storeUsername(email);
       hideLoadingIndicator();
       navigation.navigate("Interests", {
         username: email,
       });
+      storeUsername(email);
     }
   }
 
@@ -191,7 +191,7 @@ const Register = ({ navigation }: Props) => {
     try {
       const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
       const respUsername = response.data.name;
-      
+
       await AsyncStorage.setItem("username", respUsername);
     } catch (e) {
       //
@@ -263,7 +263,7 @@ const Register = ({ navigation }: Props) => {
       <Button
         style={styles.button}
         mode="contained"
-        labelStyle={{color:textLight}}
+        labelStyle={{ color: textLight }}
         onPress={() => register()}
       >
         Sign Up
@@ -272,7 +272,7 @@ const Register = ({ navigation }: Props) => {
       <Button
         style={styles.button}
         mode="contained"
-        labelStyle={{color:textLight}}
+        labelStyle={{ color: textLight }}
         onPress={() => {
           handleGoogleRegister();
         }}
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor:background
+    backgroundColor: background,
   },
   text: {
     marginBottom: 10,
@@ -313,8 +313,8 @@ const styles = StyleSheet.create({
     width: width * 0.7,
   },
   button: {
-    width: width*0.7,
+    width: width * 0.7,
     marginVertical: 10,
-    backgroundColor:primaryColor
-  }
+    backgroundColor: primaryColor,
+  },
 });
