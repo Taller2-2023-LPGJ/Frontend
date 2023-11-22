@@ -3,7 +3,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileStackScreen from "./Profile/ProfileStackScreen";
 import FeedStackScreen from "./Feed/FeedStackScreen";
 import SearchStackScreen from "./Search/SearchStackScreen";
-import SettingsStackScreen from "./Settings/SettingsStackScreen";
 import NotificationsStackScreen from "./Notifications/NotificationsStackScreen";
 import MessagesStackStackScreen from "./Messages/MessagesStackScreen";
 import { getPushDataObject } from "native-notify";
@@ -90,7 +89,7 @@ export function TabNavigator({ navigation }: Props) {
         name="Profile"
         component={ProfileStackScreen}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         options={{
           tabBarIcon(props) {
             return (
@@ -104,7 +103,7 @@ export function TabNavigator({ navigation }: Props) {
         }}
         name="Settings"
         component={SettingsStackScreen}
-      />
+      /> */}
       <Tab.Screen
         options={{
           tabBarIcon(props) {

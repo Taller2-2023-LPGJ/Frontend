@@ -219,8 +219,8 @@ const UserStats = () => {
         ) : (
           <View>
             <Surface style={styles.datesSurface}>
-              <Text style={{ fontSize: 20, marginBottom:5,marginLeft:5}}>📅 From: {range.startDate?.toDateString()}</Text>
-              <Text style={{ fontSize: 20,marginLeft:5}}>📅 To: {range.endDate?.toDateString()}</Text>
+              <Text style={{ fontSize: 20, marginBottom:5,marginLeft:5}}>From: {range.startDate?.toDateString()}</Text>
+              <Text style={{ fontSize: 20,marginLeft:5}}>To: {range.endDate?.toDateString()}</Text>
             </Surface>
             <Surface style={styles.infoSurface}>
               <Text style={{ fontSize: 22}}>Posts made: {data?.numberPublications} ✍️</Text>

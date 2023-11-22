@@ -182,7 +182,7 @@ export default function Notifications({ navigation }: Props) {
         <View style={styles.infoContainer}>
           <Text style={styles.message}>Notification Center</Text>
           <Text style={{ marginTop: 5 }}>
-            Incoming Messages, Mentions, and Trending Posts!
+            Incoming Messages and Mentions!
           </Text>
         </View>
       )}

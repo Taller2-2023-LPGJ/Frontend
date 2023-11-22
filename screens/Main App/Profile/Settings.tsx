@@ -1,7 +1,7 @@
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { Button } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import axios from "axios";
@@ -32,9 +32,19 @@ const Settings = () => {
     }
   };
 
-
   return (
     <View style={styles.container}>
+      <View style={styles.infoContainer}>
+        <Text style={styles.text}>About:</Text>
+        <Text style={styles.paragraph}>
+          Once a verification request is submitted, you will need to await
+          approval or rejection from an administrator.
+        </Text>
+        <Text style={styles.paragraph}>
+          If the verification is rejected, you may then proceed to reattempt the
+          verification of your profile.
+        </Text>
+      </View>
       <Button
         style={styles.buttonVerify}
         onPress={handleVerifyRequest}
@@ -46,10 +56,6 @@ const Settings = () => {
       <Button style={styles.buttonLogout} onPress={onLogout} mode="contained">
         Logout
       </Button>
-
-      {/*<Button style={styles.buttonLogout} onPress={handleRemoveAccountFromDevice} mode="contained">
-        Logout & Remove Account
-  </Button>*/}
     </View>
   );
 };
@@ -61,16 +67,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor:background
+    backgroundColor: background,
+  },
+  infoContainer: {
+    marginLeft:10,
+  },
+  paragraph: {
+    marginTop:5,
+    fontSize: 18
   },
   buttonLogout: {
-    width: width * 0.5,
+    width: width * 0.7,
     backgroundColor: "#FF6B6B",
   },
   buttonVerify: {
-    marginTop: 20,
+    marginTop: 30,
     marginBottom: 20,
-    width: width * 0.5,
+    width: width * 0.7,
   },
   text: {
     fontSize: width * 0.065,
