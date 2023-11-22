@@ -94,7 +94,6 @@ const PinConfirmation = ({ navigation }: Props) => {
           code,
         });
 
-        // set axios header:
         // Attach token to header
         axios.defaults.headers.common["token"] = `${result.data.token}`;
 

@@ -87,6 +87,9 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: true,
       });
 
+      // Attach token to header
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
+
       try {
         const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
         // Unregister device for notifications'
@@ -96,9 +99,6 @@ export const AuthProvider = ({ children }: any) => {
       } catch (e) {
         //
       }
-
-      // Attach token to header
-      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       // Store the token
       // await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
@@ -186,6 +186,9 @@ export const AuthProvider = ({ children }: any) => {
         email,
       });
 
+      // Attach token to header
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
+
       try {
         const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
         // Unregister device for notifications'
@@ -200,9 +203,6 @@ export const AuthProvider = ({ children }: any) => {
         token: result.data.token,
         authenticated: false,
       });
-
-      // Attach token to header
-      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       try {
         const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
@@ -231,6 +231,9 @@ export const AuthProvider = ({ children }: any) => {
       const result = await axios.post(`${apiUrl}/users/signingoogle`, {
         email,
       });
+
+        // Attach token to header
+        axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       try {
         const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
@@ -275,8 +278,6 @@ export const AuthProvider = ({ children }: any) => {
         //
       }
 
-      // Attach token to header
-      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       return result;
     } catch (e) {
