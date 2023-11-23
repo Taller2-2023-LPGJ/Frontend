@@ -17,8 +17,6 @@ import { useState, useEffect } from "react";
 import {
   deleteIndieNotificationInbox,
   getIndieNotificationInbox,
-  getPushDataInForeground,
-  getPushDataObject,
 } from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Navigation } from "../../../types/types";
@@ -184,7 +182,7 @@ export default function Notifications({ navigation }: Props) {
         <View style={styles.infoContainer}>
           <Text style={styles.message}>Notification Center</Text>
           <Text style={{ marginTop: 5 }}>
-            Incoming Messages, Mentions, and Trending Posts!
+            Incoming Messages and Mentions!
           </Text>
         </View>
       )}

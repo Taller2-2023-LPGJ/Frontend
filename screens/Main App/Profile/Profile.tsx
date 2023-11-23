@@ -141,6 +141,14 @@ const Profile = ({ navigation }: ProfileProps) => {
     >
       📊
     </Text>
+    <Text
+      style={styles.editProfileButton}
+      onPress={() => {
+        navigation.navigate("Settings3");
+      }}
+    >
+      ⚙️
+    </Text>
   </View>
 </View>
             <Text style={styles.bio}>

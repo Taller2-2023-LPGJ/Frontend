@@ -175,13 +175,14 @@ const ChatList = ({ navigation }: Props) => {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            marginLeft: "45%",
+            backgroundColor:secondaryColor,
+            width:width
           }}
         >
           <ActivityIndicator size="large" animating={true} />
         </View>
       ) : (
-        <View>
+        <View >
           {activeChats.length ? (
             <FlatList
               refreshControl={
@@ -293,6 +294,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     marginLeft: "6%",
+    backgroundColor:secondaryColor,
+    width: width
   },
   message: {
     fontSize: 28,

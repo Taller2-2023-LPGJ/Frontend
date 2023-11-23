@@ -34,6 +34,9 @@ type RouteParams = {
   path?: string | undefined;
 };
 
+const NOTIFICATIONS_API =
+  "https://app.nativenotify.com/api/app/indie/sub/13586/SKYebTHATCXWbZ1Tlwlwle/";
+
 const PinConfirmation = ({ navigation }: Props) => {
   const route = useRoute<RouteParams>();
   const data = route.params;
@@ -91,9 +94,18 @@ const PinConfirmation = ({ navigation }: Props) => {
           code,
         });
 
-        // set axios header:
         // Attach token to header
         axios.defaults.headers.common["token"] = `${result.data.token}`;
+
+        try {
+          const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
+          // Unregister device for notifications'
+          if (identifier !== null) {
+            await axios.delete(`${NOTIFICATIONS_API}${identifier}`);
+          }
+        } catch (e) {
+          //
+        }
 
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, username);

@@ -90,6 +90,16 @@ export const AuthProvider = ({ children }: any) => {
       // Attach token to header
       axios.defaults.headers.common["token"] = `${result.data.token}`;
 
+      try {
+        const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
+        // Unregister device for notifications'
+        if (identifier !== null) {
+          await axios.delete(`${NOTIFICATIONS_API}${identifier}`);
+        }
+      } catch (e) {
+        //
+      }
+
       // Store the token
       // await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
@@ -106,6 +116,17 @@ export const AuthProvider = ({ children }: any) => {
           await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
           // Register device to receive notifications
           registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+
+          try {
+            await axios.post(
+              "https://t2-gateway-snap-msg-auth-gateway-julianquino.cloud.okteto.net/content/notifications/sendnotificationsforuser",
+              {
+                respUsername,
+              }
+            );
+          } catch (e) {
+            //console.log("error fetching notifications...");
+          }
         } catch (e) {
           //
         }
@@ -114,6 +135,16 @@ export const AuthProvider = ({ children }: any) => {
         await SecureStore.setItemAsync(STORED_IDENTIFIER, userIdentifier);
         // Register device to receive notifications
         registerIndieID(userIdentifier, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        try {
+          await axios.post(
+            "https://t2-gateway-snap-msg-auth-gateway-julianquino.cloud.okteto.net/content/notifications/sendnotificationsforuser",
+            {
+              userIdentifier,
+            }
+          );
+        } catch (e) {
+          //console.log("error fetching notifications...");
+        }
       }
 
       return result;
@@ -123,7 +154,7 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
-    console.log("Logging out");
+    // console.log("Logging out");
     // reset axios header
     axios.defaults.headers.common["token"] = "";
 
@@ -155,13 +186,23 @@ export const AuthProvider = ({ children }: any) => {
         email,
       });
 
+      // Attach token to header
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
+
+      try {
+        const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
+        // Unregister device for notifications'
+        if (identifier !== null) {
+          await axios.delete(`${NOTIFICATIONS_API}${identifier}`);
+        }
+      } catch (e) {
+        //
+      }
+
       setAuthState({
         token: result.data.token,
         authenticated: false,
       });
-
-      // Attach token to header
-      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       try {
         const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
@@ -169,11 +210,12 @@ export const AuthProvider = ({ children }: any) => {
 
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
-        // Register device to receive notifications
-        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
 
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+
+        // Register device to receive notifications
+        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
       } catch (e) {
         //
       }
@@ -190,6 +232,19 @@ export const AuthProvider = ({ children }: any) => {
         email,
       });
 
+        // Attach token to header
+        axios.defaults.headers.common["token"] = `${result.data.token}`;
+
+      try {
+        const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
+        // Unregister device for notifications'
+        if (identifier !== null) {
+          await axios.delete(`${NOTIFICATIONS_API}${identifier}`);
+        }
+      } catch (e) {
+        //
+      }
+
       setAuthState({
         token: result.data.token,
         authenticated: true,
@@ -202,18 +257,27 @@ export const AuthProvider = ({ children }: any) => {
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
 
-        // Register device to receive notifications
-        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
-
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
         await AsyncStorage.setItem("username", respUsername);
+
+        // Register device to receive notifications
+        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+
+        try {
+          await axios.post(
+            "https://t2-gateway-snap-msg-auth-gateway-julianquino.cloud.okteto.net/content/notifications/sendnotificationsforuser",
+            {
+              respUsername,
+            }
+          );
+        } catch (e) {
+          // console.log("error fetching notifications...");
+        }
       } catch (e) {
         //
       }
 
-      // Attach token to header
-      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       return result;
     } catch (e) {

@@ -76,9 +76,10 @@ const Login = ({ navigation }: Props) => {
       hideLoadingIndicator();
       alert(result.message);
     } else {
-      await storeUsername(identifier);
+      
       hideLoadingIndicator();
       navigation.navigate("TabNavigator");
+      await storeUsername(identifier);
     }
   };
 
@@ -113,9 +114,9 @@ const Login = ({ navigation }: Props) => {
       hideLoadingIndicator();
       alert(result.message);
     } else {
-      await storeUsername(identifier);
       hideLoadingIndicator();
       navigation.navigate("TabNavigator");
+      await storeUsername(identifier);
     }
   }
 

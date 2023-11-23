@@ -4,6 +4,7 @@ import EditProfile from './EditProfile';
 import Profile from './Profile';
 import SnapMSGDetails from '../Feed/SnapMSGDetails';
 import UserStats from './UserStats';
+import Settings from './Settings';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ const ProfileStackScreen = () => {
           <ProfileStack.Screen options={{title:"Edit profile"}} name="EditProfile" component={EditProfile} />
           <ProfileStack.Screen options={{title:""}} name="SnapMSGDetails" component={SnapMSGDetails} />
           <ProfileStack.Screen options={{title:"SnapMsg Analytics"}} name="User Stats" component={UserStats} />
+          <ProfileStack.Screen options={{title:"Settings"}} name="Settings3" component={Settings} />
         </ProfileStack.Navigator>
       );
 }

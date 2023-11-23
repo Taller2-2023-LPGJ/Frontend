@@ -56,6 +56,25 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// async function sendNotificationWithTimeout() {
+//   // Wrap the sendNotification in a promise
+//   const notificationPromise = sendNotification();
+
+//   // Create a promise that resolves after 5 seconds
+//   const timeoutPromise = new Promise((_, reject) =>
+//     setTimeout(() => reject(new Error('Notification timed out')), 5000)
+//   );
+
+//   try {
+//     // Use Promise.race to wait for either the notification or the timeout
+//     await Promise.race([notificationPromise, timeoutPromise]);
+//     // success
+//   } catch (error) {
+//     // upload the notification to the backend
+//     uploadNotificationToBackend();
+//   }
+// }
+
 const default_pp_url =
   "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
 
@@ -204,21 +223,56 @@ const ChatWindow = ({ navigation }: Props) => {
         const pushData =
           "{ " + '"type": "message","goto":' + '"' + sender + '"} ';
 
+        // Wrap the sendNotification in a promise
+        const notificationPromise = axios.post(
+          `https://app.nativenotify.com/api/indie/notification`,
+          {
+            subID: receptor,
+            appId: "13586",
+            appToken: "SKYebTHATCXWbZ1Tlwlwle",
+            title: sender,
+            message: text,
+            pushData: pushData,
+          }
+        );
+
+        // Create a promise that resolves after 5 seconds
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Notification timed out")), 5000)
+        );
+
         try {
+          // Use Promise.race to wait for either the notification or the timeout
+          await Promise.race([notificationPromise, timeoutPromise]);
+          // success
+        } catch (error) {
+          // upload the notification to the backend
           await axios.post(
-            `https://app.nativenotify.com/api/indie/notification`,
+            `https://t2-gateway-snap-msg-auth-gateway-julianquino.cloud.okteto.net/content/notifications`,
             {
               subID: receptor,
-              appId: "13586",
-              appToken: "SKYebTHATCXWbZ1Tlwlwle",
-              title: sender,
+              sender: sender,
               message: text,
-              pushData: pushData,
+              type: 2,
             }
           );
-        } catch (e) {
-          //
         }
+
+        // try {
+        //   await axios.post(
+        //     `https://app.nativenotify.com/api/indie/notification`,
+        //     {
+        //       subID: receptor,
+        //       appId: "13586",
+        //       appToken: "SKYebTHATCXWbZ1Tlwlwle",
+        //       title: sender,
+        //       message: text,
+        //       pushData: pushData,
+        //     }
+        //   );
+        // } catch (e) {
+        //   //
+        // }
       } else {
       }
     });
