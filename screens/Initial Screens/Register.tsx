@@ -1,4 +1,5 @@
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
+import { HelperText } from "react-native-paper";
 import React, { useEffect } from "react";
 import {
   Button,
@@ -197,6 +198,7 @@ const Register = ({ navigation }: Props) => {
       //
     }
   };
+  
 
   return (
     <View style={styles.container}>

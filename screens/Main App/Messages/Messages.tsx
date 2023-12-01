@@ -14,7 +14,6 @@ import {
   IconButton,
   Modal,
   Text,
-  TextInput,
 } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 
@@ -281,7 +280,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "flex-start",
+    alignItems: "center",
+    backgroundColor:secondaryColor
   },
   card: {
     width: width,
