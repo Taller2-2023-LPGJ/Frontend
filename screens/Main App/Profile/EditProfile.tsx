@@ -9,7 +9,7 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
-import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
+import { ActivityIndicator, Button, Text, TextInput, HelperText } from "react-native-paper";
 import axios, { AxiosResponse } from "axios";
 import { API_URL } from "@env";
 import { useFocusEffect } from "@react-navigation/native";
@@ -140,6 +140,16 @@ const EditProfile = () => {
     setIsLoadingProfileData(true)
     if (displayName == "") {
       alert("Can't leave your display name empty");
+      setIsLoadingProfileData(false)
+    } else if (hasErrorsBio()){
+      alert("Bio is too long");
+      setIsLoadingProfileData(false)
+    } else if (hasErrorsDisplayName()){
+      alert("Display name is too long");
+      setIsLoadingProfileData(false)
+    } else if (hasErrorsLocation()){
+      alert("Location is too long");
+      setIsLoadingProfileData(false)
     } else {
 
       const result = await AsyncStorage.getItem("username");
@@ -164,9 +174,9 @@ const EditProfile = () => {
         let api_result: AxiosResponse<any, any>;
         try {
           const body = {
-            displayName: displayName,
-            location: location,
-            biography: bio,
+            displayName: displayName.trim(),
+            location: location.trim(),
+            biography: bio.trim(),
             profilePicture: pp_url,
           };
           api_result = await axios.put(`${API_URL}/profile`, body);
@@ -183,6 +193,18 @@ const EditProfile = () => {
         }
       }
     }
+  };
+
+  const hasErrorsDisplayName = () => {
+    return displayName.length > 15;
+  };
+
+  const hasErrorsLocation = () => {
+    return location.length > 20;
+  };
+
+  const hasErrorsBio = () => {
+    return bio.length > 80;
   };
 
   return (
@@ -247,6 +269,9 @@ const EditProfile = () => {
                   value={displayName}
                   onChangeText={(text) => setDisplayName(text)}
                 />
+                <HelperText type="error" visible={hasErrorsDisplayName()}>
+                  Display name must not exceed 15 characters
+                </HelperText>
               </View>
 
               <View style={styles.fieldContainer}>
@@ -256,6 +281,9 @@ const EditProfile = () => {
                   value={location}
                   onChangeText={(text) => setLocation(text)}
                 />
+                <HelperText type="error" visible={hasErrorsLocation()}>
+                  Location must not exceed 20 characters
+                </HelperText>
               </View>
 
               <View style={styles.fieldContainer}>
@@ -264,10 +292,13 @@ const EditProfile = () => {
                   style={styles.inputBio}
                   value={bio}
                   multiline={true}
-                  numberOfLines={5}
+                  numberOfLines={3}
                   textAlignVertical="top"
                   onChangeText={(text) => setBio(text)}
                 />
+                <HelperText type="error" visible={hasErrorsBio()}>
+                  Location must not exceed 80 characters
+                </HelperText>
               </View>
 
               <Button
@@ -341,7 +372,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   fieldContainer: {
-    marginBottom: 10,
+    marginBottom: 5,
   },
   label: {
     fontSize: 16,
