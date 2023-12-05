@@ -12,25 +12,25 @@ type Props = {
   navigation: Navigation;
 };
 
-// const STORED_AUTH = "my-jwt";
+const STORED_AUTH = "my-jwt";
 const { width } = Dimensions.get("window");
 
 const StartScreen = ({ navigation }: Props) => {
-  // const { onLogin } = useAuth();
+  const { onLogin } = useAuth();
 
-  // // Try to log in using stored data
-  // const handleEffect = async () => {
-  //   const result = await SecureStore.getItemAsync(STORED_AUTH);
-  //   if (result) {
-  //     await onLogin!("", "");
-  //   } else {
-  //     //
-  //   }
-  // };
+  // Try to log in using stored data
+  const handleEffect = async () => {
+    const result = await SecureStore.getItemAsync(STORED_AUTH);
+    if (result !== null) {
+      await onLogin!("", "");
+    } else {
+      console.log("null stored token...")
+    }
+  };
 
-  // useEffect(() => {
-  //   handleEffect();
-  // }, []);
+  useEffect(() => {
+    handleEffect();
+  }, []);
 
   return (
     <View style={styles.container}>
