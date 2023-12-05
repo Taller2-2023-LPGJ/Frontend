@@ -56,27 +56,43 @@ export default function Notifications({ navigation }: Props) {
     --> Trending:         title = Trending post     ,body = Trending tweet related to [topic] $tweet_id 
     */
 
-
-    let navigateFunction: () => void;
+    let navigateFunction: (id: String) => void;
     // Title length = 1 word --> message notification
     if (notification.title.split(" ").length === 1) {
-      navigateFunction = () => {
+      navigateFunction = async () => {
         navigation.navigate("Messages", {
           screen: "ChatWindow",
           params: { username: notification.title },
         });
+
+        try {
+          await handleDeleteNotification(notification.notification_id);
+        } catch (e) {
+          //
+        }
       };
 
       // Else, mention or trending post notification
     } else {
-      let id = notification.message.split(" ")[notification.message.split(" ").length - 1]
-       navigateFunction = () => {
-         navigation.navigate("SnapMSGDetails", { id: parseInt(id) });
-       };
+      let id =
+        notification.message.split(" ")[
+          notification.message.split(" ").length - 1
+        ];
+      navigateFunction = async () => {
+        navigation.navigate("SnapMSGDetails", { id: parseInt(id) });
+        try {
+          await handleDeleteNotification(notification.notification_id);
+        } catch (e) {
+          //
+        }
+      };
     }
 
     return (
-      <Card style={styles.card} onPress={() => navigateFunction()}>
+      <Card
+        style={styles.card}
+        onPress={() => navigateFunction(notification.notification_id)}
+      >
         <Card.Content>
           <View style={styles.cardTitle}>
             <Title>{notification.title}</Title>
@@ -127,8 +143,8 @@ export default function Notifications({ navigation }: Props) {
     let notifications = await deleteIndieNotificationInbox(
       username,
       notificationId,
-      13586,
-      "SKYebTHATCXWbZ1Tlwlwle"
+      16227,
+      "F0db46mP8E0ETDYekxQxr0"
     );
     setData(notifications);
   };
@@ -138,8 +154,8 @@ export default function Notifications({ navigation }: Props) {
 
     let notifications = await getIndieNotificationInbox(
       username,
-      13586,
-      "SKYebTHATCXWbZ1Tlwlwle"
+      16227,
+      "F0db46mP8E0ETDYekxQxr0"
     );
     //console.log(notifications);
     setIsLoading(false);
@@ -163,6 +179,7 @@ export default function Notifications({ navigation }: Props) {
   );
 
   const [isLoading, setIsLoading] = useState(true);
+  
 
   return (
     <View style={styles.container}>
@@ -181,9 +198,7 @@ export default function Notifications({ navigation }: Props) {
       ) : (
         <View style={styles.infoContainer}>
           <Text style={styles.message}>Notification Center</Text>
-          <Text style={{ marginTop: 5 }}>
-            Incoming Messages and Mentions!
-          </Text>
+          <Text style={{ marginTop: 5 }}>Incoming Messages and Mentions!</Text>
         </View>
       )}
     </View>
@@ -193,7 +208,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 10,
-    backgroundColor:secondaryColor
+    backgroundColor: secondaryColor,
   },
   infoContainer: {
     flex: 1,

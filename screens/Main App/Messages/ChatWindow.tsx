@@ -228,8 +228,8 @@ const ChatWindow = ({ navigation }: Props) => {
           `https://app.nativenotify.com/api/indie/notification`,
           {
             subID: receptor,
-            appId: "13586",
-            appToken: "SKYebTHATCXWbZ1Tlwlwle",
+            appId: "16227",
+            appToken: "F0db46mP8E0ETDYekxQxr0",
             title: sender,
             message: text,
             pushData: pushData,
@@ -264,7 +264,7 @@ const ChatWindow = ({ navigation }: Props) => {
         //     {
         //       subID: receptor,
         //       appId: "13586",
-        //       appToken: "SKYebTHATCXWbZ1Tlwlwle",
+        //       appToken: "F0db46mP8E0ETDYekxQxr0",
         //       title: sender,
         //       message: text,
         //       pushData: pushData,

@@ -24,7 +24,7 @@ interface AuthProps {
 //const STORED_AUTH = "my-jwt";
 const STORED_IDENTIFIER = "my-ui";
 const NOTIFICATIONS_API =
-  "https://app.nativenotify.com/api/app/indie/sub/13586/SKYebTHATCXWbZ1Tlwlwle/";
+  "https://app.nativenotify.com/api/app/indie/sub/16227/F0db46mP8E0ETDYekxQxr0/";
 const USERS_SEARCH_URL =
   "https://t2-users-snap-msg-auth-user-julianquino.cloud.okteto.net/users/searchuser?user=";
 
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }: any) => {
           // Store the identifier
           await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
           // Register device to receive notifications
-          registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+          registerIndieID(respUsername, 16227, "F0db46mP8E0ETDYekxQxr0");
 
           try {
             await axios.post(
@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: any) => {
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, userIdentifier);
         // Register device to receive notifications
-        registerIndieID(userIdentifier, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        registerIndieID(userIdentifier, 16227, "F0db46mP8E0ETDYekxQxr0");
         try {
           await axios.post(
             "https://t2-gateway-snap-msg-auth-gateway-julianquino.cloud.okteto.net/content/notifications/sendnotificationsforuser",
@@ -215,7 +215,7 @@ export const AuthProvider = ({ children }: any) => {
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
 
         // Register device to receive notifications
-        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        registerIndieID(respUsername, 16227, "F0db46mP8E0ETDYekxQxr0");
       } catch (e) {
         //
       }
@@ -262,7 +262,7 @@ export const AuthProvider = ({ children }: any) => {
         await AsyncStorage.setItem("username", respUsername);
 
         // Register device to receive notifications
-        registerIndieID(respUsername, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        registerIndieID(respUsername, 16227, "F0db46mP8E0ETDYekxQxr0");
 
         try {
           await axios.post(

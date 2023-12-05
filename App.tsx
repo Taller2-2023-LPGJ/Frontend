@@ -13,7 +13,8 @@ const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
 
 export default function App() {
   
-  registerNNPushToken(13586, "SKYebTHATCXWbZ1Tlwlwle");
+  //registerNNPushToken(13586, "SKYebTHATCXWbZ1Tlwlwle");
+  registerNNPushToken(16227, 'F0db46mP8E0ETDYekxQxr0');
 
   return (
     <AuthProvider>

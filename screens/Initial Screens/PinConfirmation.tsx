@@ -35,7 +35,7 @@ type RouteParams = {
 };
 
 const NOTIFICATIONS_API =
-  "https://app.nativenotify.com/api/app/indie/sub/13586/SKYebTHATCXWbZ1Tlwlwle/";
+  "https://app.nativenotify.com/api/app/indie/sub/16227/F0db46mP8E0ETDYekxQxr0/";
 
 const PinConfirmation = ({ navigation }: Props) => {
   const route = useRoute<RouteParams>();
@@ -111,7 +111,7 @@ const PinConfirmation = ({ navigation }: Props) => {
         await SecureStore.setItemAsync(STORED_IDENTIFIER, username);
 
         // Register device to receive notifications
-        registerIndieID(username, 13586, "SKYebTHATCXWbZ1Tlwlwle");
+        registerIndieID(username, 16227, "F0db46mP8E0ETDYekxQxr0");
 
         // estoy en modo offline ya.
         hideLoadingIndicator();
