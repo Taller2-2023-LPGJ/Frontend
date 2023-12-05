@@ -22,6 +22,7 @@ const CELL_COUNT = 6;
 const { width } = Dimensions.get("window");
 const apiUrl = API_URL;
 const STORED_IDENTIFIER = "my-ui";
+const STORED_AUTH = "my-jwt";
 
 type Props = {
   navigation: Navigation;
@@ -109,6 +110,9 @@ const PinConfirmation = ({ navigation }: Props) => {
 
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, username);
+
+        // Store the token
+      await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
         // Register device to receive notifications
         registerIndieID(username, 16227, "F0db46mP8E0ETDYekxQxr0");

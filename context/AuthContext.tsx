@@ -21,7 +21,7 @@ interface AuthProps {
   setToken?: (token: string) => void;
 }
 
-//const STORED_AUTH = "my-jwt";
+const STORED_AUTH = "my-jwt";
 const STORED_IDENTIFIER = "my-ui";
 const NOTIFICATIONS_API =
   "https://app.nativenotify.com/api/app/indie/sub/16227/F0db46mP8E0ETDYekxQxr0/";
@@ -63,18 +63,28 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const login = async (userIdentifier: string, password: string) => {
-    // const result = await SecureStore.getItemAsync(STORED_AUTH);
-    // if (result) {
-    //   setAuthState({
-    //     token: result,
-    //     authenticated: true,
-    //   });
+    const result = await SecureStore.getItemAsync(STORED_AUTH);
+    if (result !== null) {
+      const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
 
-    //   // Attach token to header
-    //   axios.defaults.headers.common["token"] = `${result}`;
+      if (identifier === null) {
+        console.log("no stored identifier...");
+        return;
+      }
 
-    //   return;
-    // }
+      // Register device to receive notifications
+      registerIndieID(identifier, 16227, "F0db46mP8E0ETDYekxQxr0");
+
+      setAuthState({
+        token: result,
+        authenticated: true,
+      });
+
+      // Attach token to header
+      axios.defaults.headers.common["token"] = `${result}`;
+
+      return;
+    }
 
     try {
       const result = await axios.post(`${apiUrl}/users/signin`, {
@@ -101,7 +111,7 @@ export const AuthProvider = ({ children }: any) => {
       }
 
       // Store the token
-      // await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
+      await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
       // If user logs using his email, fetch the username.
       if (userIdentifier.includes("@")) {
@@ -161,7 +171,7 @@ export const AuthProvider = ({ children }: any) => {
     const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
 
     // removed stored token
-    // await SecureStore.deleteItemAsync(STORED_AUTH);
+    await SecureStore.deleteItemAsync(STORED_AUTH);
 
     // remove stored username
     await AsyncStorage.removeItem("username");
@@ -211,8 +221,8 @@ export const AuthProvider = ({ children }: any) => {
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
 
-        // Store the identifier
-        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
+        // Store the token
+        await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
         // Register device to receive notifications
         registerIndieID(respUsername, 16227, "F0db46mP8E0ETDYekxQxr0");
@@ -232,8 +242,8 @@ export const AuthProvider = ({ children }: any) => {
         email,
       });
 
-        // Attach token to header
-        axios.defaults.headers.common["token"] = `${result.data.token}`;
+      // Attach token to header
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       try {
         const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
@@ -256,10 +266,10 @@ export const AuthProvider = ({ children }: any) => {
 
         // Store the identifier
         await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
-
-        // Store the identifier
-        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
         await AsyncStorage.setItem("username", respUsername);
+
+        // Store the token
+        await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
         // Register device to receive notifications
         registerIndieID(respUsername, 16227, "F0db46mP8E0ETDYekxQxr0");
@@ -277,7 +287,6 @@ export const AuthProvider = ({ children }: any) => {
       } catch (e) {
         //
       }
-
 
       return result;
     } catch (e) {
