@@ -334,6 +334,7 @@ const ChatWindow = ({ navigation }: Props) => {
   };
 
   useEffect(() => {
+    console.log("Listening...")
     handleEffect();
   }, []);
 

@@ -24,7 +24,7 @@ const StartScreen = ({ navigation }: Props) => {
     if (result !== null) {
       await onLogin!("", "");
     } else {
-      console.log("null stored token...")
+      //console.log("null stored token...")
     }
   };
 

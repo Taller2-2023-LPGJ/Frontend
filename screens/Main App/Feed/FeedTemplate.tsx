@@ -56,7 +56,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisLiked(true)
         }
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -87,7 +87,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
                   setisShared(true)
                 }
               } catch (e) {
-                if ((e as any).response.status == "401") {
+                if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
                   onLogout!();
                   alert((e as any).response.data.message);
                 } else {
@@ -115,7 +115,7 @@ export const SnapMSG: React.FC<{ snapMSGInfo: SnapMSGInfo, navigation: Navigatio
           setisFavourite(true)
         }
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -313,7 +313,7 @@ const FeedTemplate = ({ navigation, feedType, feedParams }: Props) => {
       }
       
     } catch (e) {
-      if ((e as any).response.status == "401") {
+      if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
         onLogout!();
         alert((e as any).response.data.message);
       } else {

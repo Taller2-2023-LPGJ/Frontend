@@ -58,7 +58,7 @@ function OtherProfile({ navigation }: Props) {
         setVerified(api_result.data.verified);
         setisLoading(false);
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -108,7 +108,7 @@ function OtherProfile({ navigation }: Props) {
                     setFollowing(!following);
                     setFollowers(followers - 1);
                   } catch (e) {
-                    if ((e as any).response.status == "401") {
+                    if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
                       onLogout!();
                       alert((e as any).response.data.message);
                     } else {
@@ -132,7 +132,7 @@ function OtherProfile({ navigation }: Props) {
                   setFollowing(!following);
                   setFollowers(followers + 1);
                 } catch (e) {
-                  if ((e as any).response.status == "401") {
+                  if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
                     onLogout!();
                     alert((e as any).response.data.message);
                   } else {

@@ -23,7 +23,7 @@ const Settings = () => {
       });
       alert("Your profile is now pending verification.");
     } catch (e) {
-      if ((e as any).response.status == "401") {
+      if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
         onLogout!();
         alert((e as any).response.data.message);
       } else {

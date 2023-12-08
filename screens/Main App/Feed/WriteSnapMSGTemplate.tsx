@@ -62,7 +62,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
           setFollowers(parsed)
         }
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -124,7 +124,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     break
                             }
                           } catch (e) {
-                            if ((e as any).response.status == "401") {
+                            if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
                               onLogout!();
                               alert((e as any).response.data.message);
                             } else {

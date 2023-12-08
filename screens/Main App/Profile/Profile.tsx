@@ -45,7 +45,7 @@ const Profile = ({ navigation }: ProfileProps) => {
         await AsyncStorage.setItem("username", username);
         result = username;
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -72,7 +72,7 @@ const Profile = ({ navigation }: ProfileProps) => {
         }));
         setisLoading(false);
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -100,7 +100,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const [user, setUser] = useState(initialUser);
 
   return (
-    <ScrollView contentContainerStyle={{backgroundColor:background}}>
+    <ScrollView contentContainerStyle={{ backgroundColor: background }}>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -117,40 +117,45 @@ const Profile = ({ navigation }: ProfileProps) => {
           />
 
           <View style={styles.userInfoContainer}>
-          <View style={styles.displaynameRow}>
-  <Text style={styles.displayname}>
-    {user.displayname}
-    {user.verified ? (
-      <Icon size={15} color={textLight} style={{ marginTop: 5, marginLeft: 10 }} name="check-decagram" />
-    ) : null}
-  </Text>
-  <View style={styles.buttonContainer}>
-    <Text
-      style={styles.editProfileButton}
-      onPress={() => {
-        navigation.navigate("EditProfile");
-      }}
-    >
-      Edit profile
-    </Text>
-    <Text
-      style={styles.editProfileButton}
-      onPress={() => {
-        navigation.navigate("User Stats");
-      }}
-    >
-      📊
-    </Text>
-    <Text
-      style={styles.editProfileButton}
-      onPress={() => {
-        navigation.navigate("Settings3");
-      }}
-    >
-      ⚙️
-    </Text>
-  </View>
-</View>
+            <View style={styles.displaynameRow}>
+              <Text style={styles.displayname}>
+                {user.displayname}
+                {user.verified ? (
+                  <Icon
+                    size={15}
+                    color={textLight}
+                    style={{ marginTop: 5, marginLeft: 10 }}
+                    name="check-decagram"
+                  />
+                ) : null}
+              </Text>
+              <View style={styles.buttonContainer}>
+                <Text
+                  style={styles.editProfileButton}
+                  onPress={() => {
+                    navigation.navigate("EditProfile");
+                  }}
+                >
+                  Edit profile
+                </Text>
+                <Text
+                  style={styles.editProfileButton}
+                  onPress={() => {
+                    navigation.navigate("User Stats");
+                  }}
+                >
+                  📊
+                </Text>
+                <Text
+                  style={styles.editProfileButton}
+                  onPress={() => {
+                    navigation.navigate("Settings3");
+                  }}
+                >
+                  ⚙️
+                </Text>
+              </View>
+            </View>
             <Text style={styles.bio}>
               {"@"}
               {user.username}
@@ -188,7 +193,13 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 };
 
-import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
+import {
+  accent,
+  background,
+  primaryColor,
+  secondaryColor,
+  textLight,
+} from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -207,10 +218,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: textLight,
     paddingHorizontal: 10,
-    backgroundColor:primaryColor,
-    padding:5,
-    borderRadius:15,
-    marginRight: 5
+    backgroundColor: primaryColor,
+    padding: 5,
+    borderRadius: 15,
+    marginRight: 5,
   },
   userInfoContainer: {
     borderRadius: 5,
@@ -219,7 +230,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 2,
     borderColor: primaryColor,
-    backgroundColor:secondaryColor
+    backgroundColor: secondaryColor,
   },
   displayname: {
     fontSize: 20,

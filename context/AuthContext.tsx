@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: any) => {
       const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
 
       if (identifier === null) {
-        console.log("no stored identifier...");
+        //console.log("no stored identifier...");
         return;
       }
 
