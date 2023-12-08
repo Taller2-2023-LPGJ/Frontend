@@ -133,22 +133,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     >
       Edit profile
     </Text>
-    <Text
-      style={styles.editProfileButton}
-      onPress={() => {
-        navigation.navigate("User Stats");
-      }}
-    >
-      📊
-    </Text>
-    <Text
-      style={styles.editProfileButton}
-      onPress={() => {
-        navigation.navigate("Settings3");
-      }}
-    >
-      ⚙️
-    </Text>
+    
   </View>
 </View>
             <Text style={styles.bio}>
@@ -158,11 +143,15 @@ const Profile = ({ navigation }: ProfileProps) => {
 
             <Text style={styles.bio}>{user.bio}</Text>
             <Text style={styles.location}>{user.location}</Text>
-
+            
             <Text style={styles.followCount}>
               <Text style={styles.boldText}>{user.followed}</Text> following{" "}
               <Text style={styles.boldText}>{user.followers}</Text> followers
             </Text>
+            <View style={{flexDirection:"row", marginTop:3}}>
+              <Icon size={(35)} style={{marginRight:5}} name={"chart-bar"} color={textLight} onPress={() => {navigation.navigate("User Stats");}}/>
+              <Icon size={(35)} name={"cog"} color={textLight} onPress={() => {navigation.navigate("Settings3");}}/>
+            </View>
           </View>
 
           <View style={styles.tweetsContainer}>
