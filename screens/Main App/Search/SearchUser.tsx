@@ -9,6 +9,7 @@ import { Navigation } from '../../../types/types';
 import { background, primaryColor, secondaryColor, tertiaryColor, textLight } from '../../../components/colors';
 import { useAuth } from '../../../context/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ActivityIndicator } from "react-native-paper";
 
 interface User {
   displayName: string;
@@ -64,24 +65,31 @@ const SearchUser = ({ navigation }: Props) => {
     e.preventDefault();
   })
   );
-
+  const { onLogout } = useAuth();
   const [users, setUsers] = useState([]);
-
+  let [noMoreResults,setNoMoreResults] = useState(false)
+  let [currentPage, setCurrentPage] = useState(1)
+  let [isLoading, setIsLoading] = useState(false)
+  
   const getUsers = async () => {
+    setIsLoading(true)
     let api_result: AxiosResponse<any, any>
-
       try {
-        api_result = await axios.get(`${API_URL}/profile?user=${searchQuery}`);
+        api_result = await axios.get(`${API_URL}/profile?user=${searchQuery.toLowerCase()}&page=0`);
         setUsers(api_result.data)
+        if (api_result.data.length < 10) {
+          setNoMoreResults(true)
+        }
+        setCurrentPage(1)
       } catch (e) {
-        const { onLogout } = useAuth();
-        if ((e as any).response.status == "401") {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
           alert((e as any).response.data.message);
         }
       }
+      setIsLoading(false)
   }
 
 
@@ -89,6 +97,26 @@ const SearchUser = ({ navigation }: Props) => {
   const onChangeSearch = (query: React.SetStateAction<string>) => setSearchQuery(query);
   const onSubmitEditing = (_: any) => getUsers()
 
+  const loadMoreUsers = async () => {
+    setIsLoading(true)
+    let api_result: AxiosResponse<any, any>
+      try {
+        api_result = await axios.get(`${API_URL}/profile?user=${searchQuery.toLowerCase()}&page=${currentPage}`);
+        setUsers(users.concat(api_result.data))
+        if (api_result.data.length < 10) {
+          setNoMoreResults(true)
+        }
+        setCurrentPage(currentPage+1)
+      } catch (e) {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
+      }
+      setIsLoading(false)
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -101,11 +129,28 @@ const SearchUser = ({ navigation }: Props) => {
       inputStyle={{ color: textLight }}
       onClearIconPress={() => {
         setUsers([])
+        setNoMoreResults(false)
       }}
       value={searchQuery} />
       {users.map((user, index) => (
         <UserProfile key={index} user={user} navigation={navigation}/>
       ))}
+      {isLoading ? 
+      <View style={{ justifyContent: "center", marginVertical: 20 }}>
+        <ActivityIndicator size="large" animating={true} />
+      </View>
+      : 
+      (users.length == 0 || noMoreResults ? 
+        <Text style={{color:textLight, alignSelf:"center", fontSize:18, padding:20}}>
+          {noMoreResults ? "No more results" : "Search for users!"}
+        </Text>
+        :
+        <TouchableOpacity style={styles.loadMoreButton} onPress={loadMoreUsers}>
+            <Text style={{color:textLight, alignSelf:"center"}}>Load more users</Text>
+        </TouchableOpacity>
+      )
+      }
+      
     </ScrollView>
   );
 }
@@ -157,4 +202,13 @@ const styles = StyleSheet.create({
       marginTop: 10,
       backgroundColor: primaryColor,
     },
+    loadMoreButton: {
+      padding:30, 
+      backgroundColor:background,
+      width:"100%",
+      borderBottomWidth:1,
+      borderTopWidth:1,
+      borderTopColor:primaryColor,
+      borderBottomColor:primaryColor,
+    }
 });

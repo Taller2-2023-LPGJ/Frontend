@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Dimensions, ScrollView } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, IconButton, Text } from "react-native-paper";
 import { Navigation } from "../../../types/types";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProfileSnapMSGs from "./ProfileSnapMSGs";
@@ -10,6 +10,7 @@ import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import ProfileFavourites from "./ProfileFavourites";
+import * as SecureStore from "expo-secure-store";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -18,6 +19,10 @@ const USERS_SEARCH_URL =
 
 interface ProfileProps {
   navigation: Navigation;
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const Profile = ({ navigation }: ProfileProps) => {
@@ -31,6 +36,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const { onLogout } = useAuth();
 
   const getData = async () => {
+    await sleep(100);
     let result = await AsyncStorage.getItem("username");
 
     if (!result) {
@@ -45,7 +51,10 @@ const Profile = ({ navigation }: ProfileProps) => {
         await AsyncStorage.setItem("username", username);
         result = username;
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if (
+          (e as any).response.status == "401" ||
+          (e as any).response.data.message.includes("blocked")
+        ) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -72,7 +81,10 @@ const Profile = ({ navigation }: ProfileProps) => {
         }));
         setisLoading(false);
       } catch (e) {
-        if ((e as any).response.status == "401") {
+        if (
+          (e as any).response.status == "401" ||
+          (e as any).response.data.message.includes("blocked")
+        ) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -100,7 +112,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const [user, setUser] = useState(initialUser);
 
   return (
-    <ScrollView contentContainerStyle={{backgroundColor:background}}>
+    <ScrollView contentContainerStyle={{ backgroundColor: background }}>
       {isLoading ? (
         <View
           style={{ justifyContent: "center", marginVertical: height / 2.5 }}
@@ -118,17 +130,27 @@ const Profile = ({ navigation }: ProfileProps) => {
 
           <View style={styles.userInfoContainer}>
             <View style={styles.displaynameRow}>
-              <Text style={styles.displayname}>{user.displayname}
-              {user.verified ? <Icon size={(15)} color={textLight} style={{marginTop:5, marginLeft:10}} name="check-decagram" /> : null}
+              <Text style={styles.displayname}>
+                {user.displayname}
+                {user.verified ? (
+                  <Icon
+                    size={15}
+                    color={textLight}
+                    style={{ marginTop: 5, marginLeft: 10 }}
+                    name="check-decagram"
+                  />
+                ) : null}
               </Text>
-              <Text
-                style={styles.editProfileButton}
-                onPress={() => {
-                  navigation.navigate("EditProfile");
-                }}
-              >
-                Edit profile
-              </Text>
+              <View style={styles.buttonContainer}>
+                <Text
+                  style={styles.editProfileButton}
+                  onPress={() => {
+                    navigation.navigate("EditProfile");
+                  }}
+                >
+                  Edit profile
+                </Text>
+              </View>
             </View>
             <Text style={styles.bio}>
               {"@"}
@@ -142,6 +164,25 @@ const Profile = ({ navigation }: ProfileProps) => {
               <Text style={styles.boldText}>{user.followed}</Text> following{" "}
               <Text style={styles.boldText}>{user.followers}</Text> followers
             </Text>
+            <View style={{ flexDirection: "row", marginTop: 3 }}>
+              <Icon
+                size={35}
+                style={{ marginRight: 5 }}
+                name={"chart-bar"}
+                color={textLight}
+                onPress={() => {
+                  navigation.navigate("User Stats");
+                }}
+              />
+              <Icon
+                size={35}
+                name={"cog"}
+                color={textLight}
+                onPress={() => {
+                  navigation.navigate("Settings3");
+                }}
+              />
+            </View>
           </View>
 
           <View style={styles.tweetsContainer}>
@@ -167,7 +208,13 @@ const Profile = ({ navigation }: ProfileProps) => {
   );
 };
 
-import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
+import {
+  accent,
+  background,
+  primaryColor,
+  secondaryColor,
+  textLight,
+} from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -186,9 +233,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: textLight,
     paddingHorizontal: 10,
-    backgroundColor:primaryColor,
-    padding:5,
-    borderRadius:15,
+    backgroundColor: primaryColor,
+    padding: 5,
+    borderRadius: 15,
+    marginRight: 5,
   },
   userInfoContainer: {
     borderRadius: 5,
@@ -197,7 +245,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 2,
     borderColor: primaryColor,
-    backgroundColor:secondaryColor
+    backgroundColor: secondaryColor,
   },
   displayname: {
     fontSize: 20,
@@ -225,6 +273,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   location: {

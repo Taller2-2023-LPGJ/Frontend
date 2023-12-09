@@ -46,7 +46,10 @@ const Interests = ({ navigation }: Props) => {
   }, []);
 
   const getUsernameFromEmail = async () => {
+    
     if (username.includes("@")) {
+
+
       try {
         const response = await axios.get(`${USERS_SEARCH_URL}${username}`, {});
         const respUsername = response.data.name;
@@ -57,6 +60,7 @@ const Interests = ({ navigation }: Props) => {
         return;
       }
     } else {
+  
       setisLoading(false);
       return;
     }

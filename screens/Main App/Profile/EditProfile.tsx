@@ -9,7 +9,13 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
-import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TextInput,
+  HelperText,
+} from "react-native-paper";
 import axios, { AxiosResponse } from "axios";
 import { API_URL } from "@env";
 import { useFocusEffect } from "@react-navigation/native";
@@ -24,6 +30,7 @@ const default_avatar =
   "https://firebasestorage.googleapis.com/v0/b/snapmsg-399802.appspot.com/o/default_avatar.png?alt=media&token=2f003c2c-19ca-491c-b6b1-a08154231245";
 
 const EditProfile = () => {
+  const { onLogout } = useAuth();
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -38,7 +45,7 @@ const EditProfile = () => {
 
   const pickImage = async () => {
     // no permissions request is necessary for launching the img library
-    setisUploadingImage(true)
+    setisUploadingImage(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -47,10 +54,10 @@ const EditProfile = () => {
     });
 
     if (!result.canceled) {
-      setisUploadingImage(false)
+      setisUploadingImage(false);
       return result.assets[0].uri;
     } else {
-      setisUploadingImage(false)
+      setisUploadingImage(false);
       return "";
     }
   };
@@ -103,8 +110,10 @@ const EditProfile = () => {
         setCurrentProfilePicture(api_result.data.profilePicture);
         setIsLoadingProfileData(false);
       } catch (e) {
-        const { onLogout } = useAuth();
-        if ((e as any).response.status == "401") {
+        if (
+          (e as any).response.status == "401" ||
+          (e as any).response.data.message.includes("blocked")
+        ) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -137,25 +146,34 @@ const EditProfile = () => {
   };
 
   const tryEditProfile = async () => {
-    setIsLoadingProfileData(true)
+    setIsLoadingProfileData(true);
     if (displayName == "") {
       alert("Can't leave your display name empty");
+      setIsLoadingProfileData(false);
+    } else if (hasErrorsBio()) {
+      alert("Bio is too long");
+      setIsLoadingProfileData(false);
+    } else if (hasErrorsDisplayName()) {
+      alert("Display name is too long");
+      setIsLoadingProfileData(false);
+    } else if (hasErrorsLocation()) {
+      alert("Location is too long");
+      setIsLoadingProfileData(false);
     } else {
-
       const result = await AsyncStorage.getItem("username");
       let pp_url = "";
       if (profilePicture !== currentProfilePicture) {
-        if(profilePicture !== default_avatar) {
+        if (profilePicture !== default_avatar) {
           pp_url = await uploadMedia(profilePicture);
         } else {
-          pp_url = default_avatar
+          pp_url = default_avatar;
         }
       } else {
-        pp_url = profilePicture
+        pp_url = profilePicture;
       }
 
       if (pp_url === "") {
-        setIsLoadingProfileData(false)
+        setIsLoadingProfileData(false);
         alert("Error uploading Profile Picture");
         return;
       }
@@ -164,18 +182,20 @@ const EditProfile = () => {
         let api_result: AxiosResponse<any, any>;
         try {
           const body = {
-            displayName: displayName,
-            location: location,
-            biography: bio,
+            displayName: displayName.trim(),
+            location: location.trim(),
+            biography: bio.trim(),
             profilePicture: pp_url,
           };
           api_result = await axios.put(`${API_URL}/profile`, body);
-          setIsLoadingProfileData(false)
+          setIsLoadingProfileData(false);
           navigation.goBack();
         } catch (e) {
-          setIsLoadingProfileData(false)
-          const { onLogout } = useAuth();
-          if ((e as any).response.status == "401") {
+          setIsLoadingProfileData(false);
+          if (
+            (e as any).response.status == "401" ||
+            (e as any).response.data.message.includes("blocked")
+          ) {
             onLogout!();
             alert((e as any).response.data.message);
           } else {
@@ -184,6 +204,18 @@ const EditProfile = () => {
         }
       }
     }
+  };
+
+  const hasErrorsDisplayName = () => {
+    return displayName !== null && displayName.length > 15;
+  };
+
+  const hasErrorsLocation = () => {
+    return location !== null && location.length > 20;
+  };
+
+  const hasErrorsBio = () => {
+    return bio !== null && bio.length > 80;
   };
 
   return (
@@ -224,7 +256,7 @@ const EditProfile = () => {
                   style={styles.uploadButton}
                   mode="contained"
                   onPress={handleUploadButton}
-                  labelStyle={{color:textLight}}
+                  labelStyle={{ color: textLight }}
                 >
                   Upload
                 </Button>
@@ -233,7 +265,7 @@ const EditProfile = () => {
                   style={styles.removeButton}
                   mode="contained"
                   onPress={handleRemoveButton}
-                  labelStyle={{color:textLight}}
+                  labelStyle={{ color: textLight }}
                 >
                   Remove
                 </Button>
@@ -248,6 +280,9 @@ const EditProfile = () => {
                   value={displayName}
                   onChangeText={(text) => setDisplayName(text)}
                 />
+                <HelperText type="error" visible={hasErrorsDisplayName()}>
+                  Display name must not exceed 15 characters
+                </HelperText>
               </View>
 
               <View style={styles.fieldContainer}>
@@ -257,6 +292,9 @@ const EditProfile = () => {
                   value={location}
                   onChangeText={(text) => setLocation(text)}
                 />
+                <HelperText type="error" visible={hasErrorsLocation()}>
+                  Location must not exceed 20 characters
+                </HelperText>
               </View>
 
               <View style={styles.fieldContainer}>
@@ -265,15 +303,18 @@ const EditProfile = () => {
                   style={styles.inputBio}
                   value={bio}
                   multiline={true}
-                  numberOfLines={5}
+                  numberOfLines={3}
                   textAlignVertical="top"
                   onChangeText={(text) => setBio(text)}
                 />
+                <HelperText type="error" visible={hasErrorsBio()}>
+                  Location must not exceed 80 characters
+                </HelperText>
               </View>
 
               <Button
                 style={styles.saveButton}
-                labelStyle={{color:textLight}}
+                labelStyle={{ color: textLight }}
                 mode="contained"
                 onPress={() => {
                   tryEditProfile();
@@ -289,7 +330,13 @@ const EditProfile = () => {
   );
 };
 
-import { accent, background, primaryColor, secondaryColor, textLight } from "../../../components/colors";
+import {
+  accent,
+  background,
+  primaryColor,
+  secondaryColor,
+  textLight,
+} from "../../../components/colors";
 import { useAuth } from "../../../context/AuthContext";
 const { width } = Dimensions.get("window");
 
@@ -297,7 +344,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor:background
+    backgroundColor: background,
   },
   topContainer: {
     borderRadius: 10,
@@ -321,7 +368,7 @@ const styles = StyleSheet.create({
   uploadButton: {
     width: 120,
     marginBottom: 10,
-    backgroundColor:primaryColor
+    backgroundColor: primaryColor,
   },
   removeButton: {
     width: 120,
@@ -332,8 +379,8 @@ const styles = StyleSheet.create({
     width: 120,
     marginBottom: 10,
     marginTop: 20,
-    alignSelf:"flex-end",
-    backgroundColor:primaryColor
+    alignSelf: "flex-end",
+    backgroundColor: primaryColor,
   },
   bottomContainer: {
     flex: 1,
@@ -342,7 +389,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   fieldContainer: {
-    marginBottom: 10,
+    marginBottom: 5,
   },
   label: {
     fontSize: 16,

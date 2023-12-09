@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { FC, useEffect, useState } from 'react';
+import { Alert, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Button } from 'react-native-paper';
 import { Navigation } from '../../../types/types';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from "axios";
 import { API_URL } from '@env';
-import { background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
+import { accent, background, primaryColor, secondaryColor, textLight } from '../../../components/colors';
 import { useAuth } from '../../../context/AuthContext';
+import { MentionInput, MentionSuggestionsProps, replaceMentionValues  } from 'react-native-controlled-mentions'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const apiUrl = API_URL;
 
 
@@ -28,6 +30,8 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
     const navigation2 = useNavigation();
     const [text, setText] = useState(editParams.body);
     const [postPrivacy, setPostPrivacy] = useState(editParams.privacy);
+    const [followers, setFollowers] = useState<{id:string,name:string}[]>([])
+    const { onLogout } = useAuth();
     let title = ""
     switch (actionType) {
         case "Write":
@@ -43,22 +47,55 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
           return
       }
 
+    const getFollowers = async () => {
+      try {
+        let result = await AsyncStorage.getItem("username");
+        if (result == null) {
+          alert("User not found");
+          return;
+        } else {
+          let api_result = await axios.get(`${API_URL}/content/follow/${result}/followers`);
+          let parsed = api_result.data.followers.map((name: string, index: number) => ({
+            id: (index + 1).toString(),
+            name: name,
+          }));
+          setFollowers(parsed)
+        }
+      } catch (e) {
+        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
+          onLogout!();
+          alert((e as any).response.data.message);
+        } else {
+          alert((e as any).response.data.message);
+        }
+      }
+    }
+      
+    useEffect(() => {
+      getFollowers()
+    }, []);
 
     const handleChangePrivacy = () => {
       setPostPrivacy(!postPrivacy)
     }
 
     const handleTextChange = (newText: any) => {
-        setText(newText);
+      setText(newText);
     };
+
+
+    const handleAddMention = (mention: any) => {
+      setText(text+mention+" ")
+    };
+
 
     const handleSendSnapMSG = () => {
         if (remainingCharacters == 250){
             alert("You can't send an empty SnapMSG")
         } else {
-          let body = text
+          let body = replaceMentionValues(text, ({name}) => `@${name}`)
           let privacy = postPrivacy
-          let tags = ["Business"]
+          let tags: string[] = []
             remainingCharacters < 0 
             ? alert("You have exceeded the character limit.")
             : 
@@ -87,8 +124,7 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                                     break
                             }
                           } catch (e) {
-                            const { onLogout } = useAuth();
-                            if ((e as any).response.status == "401") {
+                            if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
                               onLogout!();
                               alert((e as any).response.data.message);
                             } else {
@@ -103,15 +139,41 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
     }
 
     const remainingCharacters = 250 - text.length;
+    
+    const renderSuggestions: FC<MentionSuggestionsProps> = ({keyword, onSuggestionPress}) => {
+      if (keyword == null) {
+        return null;
+      }
+    
+      return (
+        <View style={{backgroundColor:primaryColor, borderRadius:5}}>
+          {followers
+            .filter(one => one.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))
+            .map(one => (
+              <Pressable
+                key={one.id}
+                onPress={() => onSuggestionPress(one)}
+    
+                style={{paddingHorizontal: 10, paddingVertical:2}}
+              >
+                <Text style={{color:textLight, backgroundColor:background, borderRadius:5, padding:5}}>{one.name}</Text>
+              </Pressable>
+            ))
+          }
+        </View>
+      );
+    };
 
     return (
         <View style={styles.container}>
           <View style={styles.feedContainer}>
-            <Text style={styles.topText}> {title}</Text>
-            <TextInput
+           <View>
+              <Text style={styles.topText}> {title}</Text>
+            </View>
+            <MentionInput
                 placeholder="Type something here..."
                 placeholderTextColor={textLight}
-                onChangeText={handleTextChange}
+                onChange={handleTextChange}
                 value={text}
                 style={[
                     styles.textEntry,
@@ -122,13 +184,21 @@ const WriteSnapMSGTemplate = ({ navigation, actionType, editParams, replyParams}
                 textAlignVertical="top" 
                 multiline={true}
                 numberOfLines={4}
+                partTypes={[
+                  {
+                    trigger: '@',
+                    renderSuggestions,
+                    textStyle: {fontWeight: 'bold', color: accent},
+                    isBottomMentionSuggestionsRender:true,
+                  },
+                ]}
             />
             <Text style={{fontSize:16, color:textLight}}>
                 Characters remaining: {remainingCharacters} / 250
             </Text>
-            <Icon size={(40)} color={textLight} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{margin:30}}/>
           </View>
           <View style={styles.buttonContainer}>
+          <Icon size={(40)} color={textLight} name={postPrivacy? "lock-outline":"lock-open-variant-outline"} onPress={handleChangePrivacy} style={{marginBottom:15, marginRight:15}}/>
             <Button 
               style={styles.writeSnapMSGButton}
               labelStyle={{color:textLight}}
@@ -169,6 +239,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "row",
         paddingTop: 10,
         backgroundColor: background,
         width: "100%",
@@ -178,15 +249,20 @@ const styles = StyleSheet.create({
         margin: 20,
         borderRadius: 25,
         height:"55%",
-        width: "85%",
+        width: 350,
         fontSize: 18,
         color:textLight
     },
     topText: {
-        alignSelf:"flex-start", 
-        marginLeft: 30, 
+        alignSelf:"center", 
         marginTop:30, 
         fontSize:20,
         color:textLight
+    },
+    possibleTags: {
+      backgroundColor:secondaryColor,
+      padding: 8,
+      marginVertical:5,
+      borderRadius:7,
     }
   });

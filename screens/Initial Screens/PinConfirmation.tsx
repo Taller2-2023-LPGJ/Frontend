@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import {
-  ActivityIndicator,
-  Modal,
-  Portal,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { ActivityIndicator, Modal, Portal, Text } from "react-native-paper";
 import { API_URL } from "@env";
 import axios from "axios";
+import { registerIndieID } from "native-notify";
+import * as SecureStore from "expo-secure-store";
 
 import {
   CodeField,
@@ -25,6 +21,8 @@ import { background, primaryColor, textLight } from "../../components/colors";
 const CELL_COUNT = 6;
 const { width } = Dimensions.get("window");
 const apiUrl = API_URL;
+const STORED_IDENTIFIER = "my-ui";
+const STORED_AUTH = "my-jwt";
 
 type Props = {
   navigation: Navigation;
@@ -36,6 +34,9 @@ type RouteParams = {
   name: string;
   path?: string | undefined;
 };
+
+const NOTIFICATIONS_API =
+  "https://app.nativenotify.com/api/app/indie/sub/16227/F0db46mP8E0ETDYekxQxr0/";
 
 const PinConfirmation = ({ navigation }: Props) => {
   const route = useRoute<RouteParams>();
@@ -94,9 +95,27 @@ const PinConfirmation = ({ navigation }: Props) => {
           code,
         });
 
-        // set axios header:
         // Attach token to header
         axios.defaults.headers.common["token"] = `${result.data.token}`;
+
+        try {
+          const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
+          // Unregister device for notifications'
+          if (identifier !== null) {
+            await axios.delete(`${NOTIFICATIONS_API}${identifier}`);
+          }
+        } catch (e) {
+          //
+        }
+
+        // Store the identifier
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, username);
+
+        // Store the token
+      await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
+
+        // Register device to receive notifications
+        registerIndieID(username, 16227, "F0db46mP8E0ETDYekxQxr0");
 
         // estoy en modo offline ya.
         hideLoadingIndicator();
@@ -130,7 +149,6 @@ const PinConfirmation = ({ navigation }: Props) => {
   };
 
   const handleResend = async () => {
-
     showLoadingIndicator();
     try {
       await axios.post(`${apiUrl}/users/recoverPassword`, {
@@ -198,7 +216,7 @@ const PinConfirmation = ({ navigation }: Props) => {
 
       {passReset ? (
         <Button
-          style={{ width: width * 0.65, marginBottom: 30,borderRadius: 0 }}
+          style={{ width: width * 0.65, marginBottom: 30, borderRadius: 0 }}
           onPress={() => handleResend()}
         >
           Resend Code
@@ -214,7 +232,7 @@ const PinConfirmation = ({ navigation }: Props) => {
 
       <Button
         style={styles.button}
-        labelStyle={{color:textLight}}
+        labelStyle={{ color: textLight }}
         mode="contained"
         onPress={() => handleVerify()}
       >
@@ -232,7 +250,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor:background
+    backgroundColor: background,
   },
   title: { textAlign: "center", fontSize: 30 },
   codeFieldRoot: { marginTop: 20, marginBottom: 10 },
@@ -259,8 +277,8 @@ const styles = StyleSheet.create({
     width: width * 0.7,
   },
   button: {
-    width: width*0.7,
+    width: width * 0.7,
     marginVertical: 10,
-    backgroundColor:primaryColor
-  }
+    backgroundColor: primaryColor,
+  },
 });

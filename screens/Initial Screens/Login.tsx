@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API_URL } from "@env";
 import { background, primaryColor, textLight } from "../../components/colors";
+import * as SecureStore from "expo-secure-store";
 
 type Props = {
   navigation: Navigation;
@@ -45,13 +46,11 @@ const Login = ({ navigation }: Props) => {
           {}
         );
         const respUsername = response.data.name;
-        
         await AsyncStorage.setItem("username", respUsername);
       } catch (e) {
         //
       }
     } else {
-      
       await AsyncStorage.setItem("username", identifier);
     }
   };
@@ -76,9 +75,9 @@ const Login = ({ navigation }: Props) => {
       hideLoadingIndicator();
       alert(result.message);
     } else {
-      await storeUsername(identifier);
       hideLoadingIndicator();
       navigation.navigate("TabNavigator");
+      await storeUsername(identifier)
     }
   };
 
@@ -113,9 +112,9 @@ const Login = ({ navigation }: Props) => {
       hideLoadingIndicator();
       alert(result.message);
     } else {
-      await storeUsername(identifier);
       hideLoadingIndicator();
       navigation.navigate("TabNavigator");
+      await storeUsername((userInfo as any).email)
     }
   }
 
@@ -198,7 +197,7 @@ const Login = ({ navigation }: Props) => {
 
       <Button
         style={styles.button}
-        labelStyle={{color:textLight}}
+        labelStyle={{ color: textLight }}
         mode="contained"
         onPress={() => login()}
       >
@@ -207,7 +206,7 @@ const Login = ({ navigation }: Props) => {
 
       <Button
         style={styles.button}
-        labelStyle={{color:textLight}}
+        labelStyle={{ color: textLight }}
         mode="contained"
         onPress={() => {
           handleGoogleSignIn();
@@ -238,7 +237,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor:background
+    backgroundColor: background,
   },
   text: {
     marginBottom: 10,
@@ -249,8 +248,8 @@ const styles = StyleSheet.create({
     width: width * 0.7,
   },
   button: {
-    width: width*0.7,
+    width: width * 0.7,
     marginVertical: 10,
-    backgroundColor:primaryColor
-  }
+    backgroundColor: primaryColor,
+  },
 });

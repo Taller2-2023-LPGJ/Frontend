@@ -3,14 +3,49 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileStackScreen from "./Profile/ProfileStackScreen";
 import FeedStackScreen from "./Feed/FeedStackScreen";
 import SearchStackScreen from "./Search/SearchStackScreen";
-import SettingsStackScreen from "./Settings/SettingsStackScreen";
 import NotificationsStackScreen from "./Notifications/NotificationsStackScreen";
+import MessagesStackStackScreen from "./Messages/MessagesStackScreen";
+import { getPushDataObject } from "native-notify";
+import { useEffect } from "react";
+import { Navigation } from "../../types/types";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createMaterialBottomTabNavigator();
 
-export function TabNavigator() {
+type Props = {
+  navigation: Navigation;
+};
+
+export function TabNavigator({ navigation }: Props) {
+  let pushDataObject = getPushDataObject();
+  useEffect(() => {
+    if (Object.keys(pushDataObject).length !== 0) {
+      const type = pushDataObject.type;
+      const goto = pushDataObject.goto;
+      // Navigate to chat window
+      if (type === "message") {
+        navigation.navigate("Messages", {
+          screen: "ChatWindow",
+          params: { username: goto },
+        });
+      } else {
+        // Navigate to post
+        navigation.navigate("Feed", {
+          screen: "SnapMSGDetails",
+          params: { id: parseInt(goto) },
+        });
+      }
+    } else {
+      // No push data object read
+    }
+
+    //   // useEffect(() => {
+    //   //   alert(pushDataObject)
+    //   // }, [pushDataObject]);
+  }, [pushDataObject]);
+
   return (
-    <Tab.Navigator>
+    <Tab.Navigator labeled={true}>
       <Tab.Screen
         options={{
           tabBarIcon(props) {
@@ -58,7 +93,7 @@ export function TabNavigator() {
         name="Profile"
         component={ProfileStackScreen}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         options={{
           tabBarIcon(props) {
             return (
@@ -72,7 +107,7 @@ export function TabNavigator() {
         }}
         name="Settings"
         component={SettingsStackScreen}
-      />
+      /> */}
       <Tab.Screen
         options={{
           tabBarIcon(props) {
@@ -85,9 +120,26 @@ export function TabNavigator() {
             );
           },
         }}
-        name="Notifications"
+        name="Alerts"
         component={NotificationsStackScreen}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon(props) {
+            return (
+              <Icon
+                size={25}
+                name={props.focused ? "message" : "message-outline"}
+                {...props}
+              />
+            );
+          },
+        }}
+        name="Messages"
+        component={MessagesStackStackScreen}
       />
     </Tab.Navigator>
   );
 }
+
+export default TabNavigator;

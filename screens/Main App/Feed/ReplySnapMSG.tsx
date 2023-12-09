@@ -16,7 +16,7 @@ type ReplySnapMSGRouteParams = {
 const ReplySnapMSG = ({ navigation}: Props) => {
     const route = useRoute<RouteProp<Record<string, ReplySnapMSGRouteParams>, string>>()
     return (
-        <WriteSnapMSGTemplate navigation={navigation} actionType='Reply' editParams={{id:0, body: ""}} replyParams={{id:route.params.replyParams.id}}></WriteSnapMSGTemplate>
+        <WriteSnapMSGTemplate navigation={navigation} actionType='Reply' editParams={{id:0, body: "", privacy:false}} replyParams={{id:route.params.replyParams.id}}></WriteSnapMSGTemplate>
       );
 }
 
