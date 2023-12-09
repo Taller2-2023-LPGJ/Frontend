@@ -242,9 +242,6 @@ export const AuthProvider = ({ children }: any) => {
         email,
       });
 
-      // Attach token to header
-      axios.defaults.headers.common["token"] = `${result.data.token}`;
-
       try {
         const identifier = await SecureStore.getItemAsync(STORED_IDENTIFIER);
         // Unregister device for notifications'
@@ -254,6 +251,9 @@ export const AuthProvider = ({ children }: any) => {
       } catch (e) {
         //
       }
+
+      // Attach token to header
+      axios.defaults.headers.common["token"] = `${result.data.token}`;
 
       setAuthState({
         token: result.data.token,
@@ -265,14 +265,13 @@ export const AuthProvider = ({ children }: any) => {
         const respUsername = response.data.name;
 
         // Store the identifier
-        await SecureStore.setItemAsync(STORED_IDENTIFIER, respUsername);
-        await AsyncStorage.setItem("username", respUsername);
+        await SecureStore.setItemAsync(STORED_IDENTIFIER, response.data.name);
 
         // Store the token
         await SecureStore.setItemAsync(STORED_AUTH, result.data.token);
 
         // Register device to receive notifications
-        registerIndieID(respUsername, 16227, "F0db46mP8E0ETDYekxQxr0");
+        registerIndieID(response.data.name, 16227, "F0db46mP8E0ETDYekxQxr0");
 
         try {
           await axios.post(

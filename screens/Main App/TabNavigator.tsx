@@ -39,9 +39,9 @@ export function TabNavigator({ navigation }: Props) {
       // No push data object read
     }
 
-    // useEffect(() => {
-    //   alert(pushDataObject)
-    // }, [pushDataObject]);
+    //   // useEffect(() => {
+    //   //   alert(pushDataObject)
+    //   // }, [pushDataObject]);
   }, [pushDataObject]);
 
   return (

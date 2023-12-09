@@ -10,6 +10,7 @@ import axios, { AxiosResponse } from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import ProfileFavourites from "./ProfileFavourites";
+import * as SecureStore from "expo-secure-store";
 
 const Tab = createMaterialTopTabNavigator();
 const { height } = Dimensions.get("window");
@@ -18,6 +19,10 @@ const USERS_SEARCH_URL =
 
 interface ProfileProps {
   navigation: Navigation;
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const Profile = ({ navigation }: ProfileProps) => {
@@ -31,6 +36,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const { onLogout } = useAuth();
 
   const getData = async () => {
+    await sleep(100);
     let result = await AsyncStorage.getItem("username");
 
     if (!result) {
@@ -45,7 +51,10 @@ const Profile = ({ navigation }: ProfileProps) => {
         await AsyncStorage.setItem("username", username);
         result = username;
       } catch (e) {
-        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
+        if (
+          (e as any).response.status == "401" ||
+          (e as any).response.data.message.includes("blocked")
+        ) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -72,7 +81,10 @@ const Profile = ({ navigation }: ProfileProps) => {
         }));
         setisLoading(false);
       } catch (e) {
-        if ((e as any).response.status == "401" || (e as any).response.data.message.includes("blocked")) {
+        if (
+          (e as any).response.status == "401" ||
+          (e as any).response.data.message.includes("blocked")
+        ) {
           onLogout!();
           alert((e as any).response.data.message);
         } else {
@@ -117,25 +129,29 @@ const Profile = ({ navigation }: ProfileProps) => {
           />
 
           <View style={styles.userInfoContainer}>
-          <View style={styles.displaynameRow}>
-  <Text style={styles.displayname}>
-    {user.displayname}
-    {user.verified ? (
-      <Icon size={15} color={textLight} style={{ marginTop: 5, marginLeft: 10 }} name="check-decagram" />
-    ) : null}
-  </Text>
-  <View style={styles.buttonContainer}>
-    <Text
-      style={styles.editProfileButton}
-      onPress={() => {
-        navigation.navigate("EditProfile");
-      }}
-    >
-      Edit profile
-    </Text>
-    
-  </View>
-</View>
+            <View style={styles.displaynameRow}>
+              <Text style={styles.displayname}>
+                {user.displayname}
+                {user.verified ? (
+                  <Icon
+                    size={15}
+                    color={textLight}
+                    style={{ marginTop: 5, marginLeft: 10 }}
+                    name="check-decagram"
+                  />
+                ) : null}
+              </Text>
+              <View style={styles.buttonContainer}>
+                <Text
+                  style={styles.editProfileButton}
+                  onPress={() => {
+                    navigation.navigate("EditProfile");
+                  }}
+                >
+                  Edit profile
+                </Text>
+              </View>
+            </View>
             <Text style={styles.bio}>
               {"@"}
               {user.username}
@@ -143,14 +159,29 @@ const Profile = ({ navigation }: ProfileProps) => {
 
             <Text style={styles.bio}>{user.bio}</Text>
             <Text style={styles.location}>{user.location}</Text>
-            
+
             <Text style={styles.followCount}>
               <Text style={styles.boldText}>{user.followed}</Text> following{" "}
               <Text style={styles.boldText}>{user.followers}</Text> followers
             </Text>
-            <View style={{flexDirection:"row", marginTop:3}}>
-              <Icon size={(35)} style={{marginRight:5}} name={"chart-bar"} color={textLight} onPress={() => {navigation.navigate("User Stats");}}/>
-              <Icon size={(35)} name={"cog"} color={textLight} onPress={() => {navigation.navigate("Settings3");}}/>
+            <View style={{ flexDirection: "row", marginTop: 3 }}>
+              <Icon
+                size={35}
+                style={{ marginRight: 5 }}
+                name={"chart-bar"}
+                color={textLight}
+                onPress={() => {
+                  navigation.navigate("User Stats");
+                }}
+              />
+              <Icon
+                size={35}
+                name={"cog"}
+                color={textLight}
+                onPress={() => {
+                  navigation.navigate("Settings3");
+                }}
+              />
             </View>
           </View>
 

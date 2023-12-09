@@ -192,13 +192,11 @@ const Register = ({ navigation }: Props) => {
     try {
       const response = await axios.get(`${USERS_SEARCH_URL}${email}`, {});
       const respUsername = response.data.name;
-
       await AsyncStorage.setItem("username", respUsername);
     } catch (e) {
       //
     }
   };
-  
 
   return (
     <View style={styles.container}>
