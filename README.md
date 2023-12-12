@@ -27,7 +27,7 @@ React-Native-DotEnv
 
 Material design icons: https://pictogrammers.com/library/mdi/
 
-To install dependencias 
+To install all dependencies 
 
 * npm install
 
