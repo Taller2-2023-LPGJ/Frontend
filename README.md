@@ -25,5 +25,14 @@ React-Native-DotEnv
 
 * npm i react-native-dotenv
 
-
 Material design icons: https://pictogrammers.com/library/mdi/
+
+To install dependencias 
+
+* npm install
+
+To run the mobile app
+
+* npm start
+
+You can open the app on an emulator such as Android Studio or scan the QR code with the Expo Go app
